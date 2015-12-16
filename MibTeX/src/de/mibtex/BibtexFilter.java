@@ -12,9 +12,9 @@ package de.mibtex;
  * @author Thomas Thuem
  */
 abstract public class BibtexFilter {
-
-	abstract public String getTitle();
-
-	abstract public boolean include(BibtexEntry entry);
-
+    
+    abstract public String getTitle();
+    
+    abstract public boolean include(BibtexEntry entry);
+    
 }
