@@ -21,8 +21,8 @@ import de.mibtex.BibtexViewer;
  */
 public class ExportHTML extends Export {
     
-    public ExportHTML(String file) throws Exception {
-        super(file);
+    public ExportHTML(String path, String file) throws Exception {
+        super(path, file);
     }
     
     @Override
@@ -138,7 +138,7 @@ public class ExportHTML extends Export {
             content.append(".htm\">" + o + "</a><br/>\r\n");
         }
         writeFooter(content);
-        writeToFile(filename, content.toString());
+        writeToFile(BibtexViewer.HTML_DIR,filename, content.toString());
     }
     
     void writeToHTML(String filename, BibtexFilter filter) {
@@ -146,7 +146,7 @@ public class ExportHTML extends Export {
         writeHeader(content, "Literature");
         writeBibtex(content, filter);
         writeFooter(content);
-        writeToFile(filename, content.toString());
+        writeToFile(BibtexViewer.HTML_DIR,filename, content.toString());
     }
     
     private void writeHeader(StringBuilder builder, String title) {
@@ -174,17 +174,17 @@ public class ExportHTML extends Export {
         writeTableHeading(builder, "Title");
         writeTableHeading(builder, "Venue");
         writeTableHeading(builder, "Tag");
-        // builder.append("<th>Cites</th>");
+        writeTableHeading(builder,"Cites");
         writeTableHeading(builder, "Year");
         builder.append("</tr>\r\n");
-        for (BibtexEntry entry : entries)
+        for (BibtexEntry entry : entries.values())
             if (filter.include(entry)) {
                 builder.append("<tr>\r\n<td>");
                 builder.append(getHTMLAuthor(entry) + "</td><td>");
                 builder.append(getHTMLTitle(entry) + "</td><td>");
                 builder.append(getHTMLVenue(entry) + "</td><td>");
                 builder.append(getHTMLTags(entry) + "</td><td>");
-                // builder.append(entry.getCitations() + "</td><td>");
+                builder.append(entry.getCitations() + "</td><td>");
                 builder.append(getHTMLYear(entry) + "</td>\r\n");
                 builder.append("</tr>\r\n");
             }

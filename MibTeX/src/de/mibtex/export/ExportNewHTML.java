@@ -6,6 +6,7 @@
  */
 package de.mibtex.export;
 
+import java.io.File;
 import java.util.List;
 
 import de.mibtex.BibtexEntry;
@@ -17,16 +18,16 @@ import de.mibtex.BibtexViewer;
  * 
  * @author Christopher Sontag
  */
-public class ExportJSON extends Export{
+public class ExportNewHTML extends Export{
 
-    public ExportJSON(String path, String file) throws Exception {
+    public ExportNewHTML(String path, String file) throws Exception {
         super(path, file);
     }
 
     @Override
     public void writeDocument() {
         StringBuilder JSON = new StringBuilder();
-        JSON.append("["+System.getProperty("line.separator"));
+        JSON.append("[");
         for (BibtexEntry entry : entries.values()) {
             JSON.append("{")
             .append(getJSONAttribute("key",entry.key)+",")
@@ -36,10 +37,12 @@ public class ExportJSON extends Export{
             .append(getJSONAttribute("year", entry.year)+",")
             .append(getJSONAttribute("citations", entry.citations)+",")
             .append(getJSONAttribute("tags", entry.tagList))
-            .append("},"+System.getProperty("line.separator"));
+            .append("},");
         }
         JSON.append("]");
-        writeToFile(BibtexViewer.HTML_DIR,"literature.json",JSON.toString());
+        String input = readFromFile(BibtexViewer.BIBTEX_DIR,new File("index_in.html"));
+        input = input.replace("JSON_DATA_INSERT_HERE", JSON.toString());
+        writeToFile(BibtexViewer.HTML_DIR,"index.html",input);
     }
 
     private String getJSONAttribute(String key, int str) {

@@ -7,6 +7,7 @@
 package de.mibtex.export;
 
 import de.mibtex.BibtexEntry;
+import de.mibtex.BibtexViewer;
 
 /**
  * A class that generates a .csv file with all BibTeX entries
@@ -15,8 +16,8 @@ import de.mibtex.BibtexEntry;
  */
 public class ExportCSV extends Export {
     
-    public ExportCSV(String file) throws Exception {
-        super(file);
+    public ExportCSV(String path, String file) throws Exception {
+        super(path, file);
     }
     
     
@@ -24,12 +25,12 @@ public class ExportCSV extends Export {
     @Override
     public void writeDocument() {
         StringBuilder CSV = new StringBuilder();
-        for (BibtexEntry entry : entries){
+        for (BibtexEntry entry : entries.values()){
             CSV.append("\"" + entry.key + "\";").append("\"" + entry.author + "\";").append("\"" + entry.title + "\";")
                     .append("\"" + entry.venue + "\";").append(entry.year + ";").append(entry.citations + ";")
-                    .append("\"" + entry.tags + "\"" + BibtexEntry.lineSeperator);
+                    .append("\"" + entry.tags + "\"" + System.getProperty("line.separator"));
         }
-        writeToFile("literature.csv",CSV.toString());
+        writeToFile(BibtexViewer.HTML_DIR,"literature.csv",CSV.toString());
     }
     
 }

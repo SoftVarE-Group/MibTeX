@@ -8,8 +8,10 @@ package de.mibtex;
 
 import de.mibtex.export.Export;
 import de.mibtex.export.ExportCSV;
+import de.mibtex.export.ExportCitations;
 import de.mibtex.export.ExportHTML;
 import de.mibtex.export.ExportJSON;
+import de.mibtex.export.ExportNewHTML;
 
 /**
  * A class to export a given BibTeX file to another format
@@ -35,14 +37,13 @@ public class BibtexViewer {
      * 
      * BibtexViewer "C:\\Users\\tthuem\\workspace4.2.1\\tthuem-Bibtex\\"
      * "C:\\Users\\tthuem\\Dropbox\\Literatur\\" "HTML\\" "..\\Library\\"
-     * "Library\\" "tt-tags" "CSV/JSON/HTML" "true/false"
+     * "Library\\" "tt-tags" "CSV/JSON/HTML"
      * 
      * @param args array containing path to Bibtex file path to main directory
      *        relative path of the HTML to main directory relative path of PDF
      *        files to the HTML folder (for linking files in HTML) relative path
      *        of PDF files to main directory name of the tag containing your
-     *        keywords format for export (CSV/JSON/HTML) boolean for the
-     *        background citation service
+     *        keywords format for export (CSV/JSON/HTML)
      */
     public static void main(String[] args) {
         BIBTEX_DIR = args[0];
@@ -58,19 +59,9 @@ public class BibtexViewer {
             System.out
                     .println("Exportformat Parameter not recognized. Setting Exportformat to HTML");
         }
-        boolean citationService = false;
-        try {
-            citationService = Boolean.parseBoolean(args[6]);
-        } catch (Exception e) {
-            System.out.println("Citationservice Parameter not recognized. Service will not run!");
-        }
         try {
             if (format != null)
                 new BibtexViewer(format);
-            if (citationService) {
-                ScholarService scholarService = new ScholarService();
-                scholarService.start();
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,14 +71,20 @@ public class BibtexViewer {
         Export exporter = null;
         switch (format) {
             case "CSV":
-                exporter = new ExportCSV("literature.bib");
+                exporter = new ExportCSV(BibtexViewer.BIBTEX_DIR,"literature.bib");
                 break;
             case "JSON":
-                exporter = new ExportJSON("literature.bib");
+                exporter = new ExportJSON(BibtexViewer.BIBTEX_DIR,"literature.bib");
+                break;
+            case "Citations":
+                exporter = new ExportCitations(BibtexViewer.BIBTEX_DIR,"literature.bib",BibtexViewer.BIBTEX_DIR);
+                break;
+            case "HTML_NEW":
+                exporter = new ExportNewHTML(BibtexViewer.BIBTEX_DIR,"literature.bib");
                 break;
             case "HTML":
             default:
-                exporter = new ExportHTML("literature.bib");
+                exporter = new ExportHTML(BibtexViewer.BIBTEX_DIR,"literature.bib");
         }
         exporter.cleanOutputFolder();
         // exporter.printMissingPDFs();

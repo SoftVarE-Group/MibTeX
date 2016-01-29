@@ -6,6 +6,7 @@
  */
 package de.mibtex.export;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +18,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -32,6 +34,7 @@ import de.mibtex.BibtexEntry;
 import de.mibtex.BibtexFilter;
 import de.mibtex.BibtexViewer;
 import de.mibtex.Levenshtein;
+import de.mibtex.citationservice.CitationEntry;
 
 /**
  * A abstract class that implements often used methods for the exporters
@@ -40,7 +43,7 @@ import de.mibtex.Levenshtein;
  */
 public abstract class Export {
     
-    protected static List<BibtexEntry> entries;
+    protected static HashMap<String, BibtexEntry> entries;
     
     protected static List<String> authors;
     
@@ -52,10 +55,10 @@ public abstract class Export {
     
     protected static List<String> tags;
     
-    public Export(String file) throws Exception {
+    public Export(String path, String file) throws Exception {
         Reader reader = null;
         try {
-            reader = new FileReader(new File(BibtexViewer.BIBTEX_DIR + file));
+            reader = new FileReader(new File(path + file));
             BibTeXParser parser = new BibTeXParser() {
                 @Override
                 public void checkStringResolution(Key key, BibTeXString string) {
@@ -84,15 +87,46 @@ public abstract class Export {
     }
     
     private void extractEntries(BibTeXDatabase database) {
-        entries = new ArrayList<BibtexEntry>();
-        for (BibTeXObject object : database.getObjects())
-            if (object instanceof BibTeXEntry)
-                entries.add(new BibtexEntry((BibTeXEntry) object));
+        entries = new HashMap<String, BibtexEntry>();
+        for (BibTeXObject object : database.getObjects()) {
+            if (object instanceof BibTeXEntry) {
+                BibtexEntry bibtexEntry = new BibtexEntry((BibTeXEntry) object);
+                entries.put(bibtexEntry.key,bibtexEntry);
+            }
+        }
+        readCitations();
+    }
+    
+    private void readCitations() {
+        List<CitationEntry> citationsEntries = new ArrayList<CitationEntry>();
+        File fileHandle = new File(BibtexViewer.BIBTEX_DIR + "/citations.csv");
+        if (fileHandle.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(fileHandle))) {
+                for (String line; (line = br.readLine()) != null;) {
+                    String[] str = line.split(";");
+                    String key = (str[0]).replace("\"", "");
+                    String title = (str[1]).replace("\"", "");
+                    int citations = Integer.parseInt(str[2]);
+                    long lastUpdate = Long.parseLong(str[3]);
+                    
+                    citationsEntries.add(new CitationEntry(key, title, citations, lastUpdate));
+                }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            for (CitationEntry citationEntry: citationsEntries) {
+                BibtexEntry bibtexEntry = entries.get(citationEntry.getKey());
+                bibtexEntry.citations = citationEntry.getCitations();
+                bibtexEntry.lastUpdate = citationEntry.getLastUpdate();
+            }
+        }
+        
     }
     
     private void readAuthors() {
         authors = new ArrayList<String>();
-        for (BibtexEntry entry : entries)
+        for (BibtexEntry entry : entries.values())
             for (String author : entry.authorList)
                 if (!authors.contains(author))
                     authors.add(author);
@@ -101,14 +135,14 @@ public abstract class Export {
     
     private void readTitles() {
         titles = new ArrayList<String>();
-        for (BibtexEntry entry : entries)
+        for (BibtexEntry entry : entries.values())
             titles.add(entry.title);
         Collections.sort(titles);
     }
     
     private void readYears() {
         years = new ArrayList<Integer>();
-        for (BibtexEntry entry : entries)
+        for (BibtexEntry entry : entries.values())
             if (!years.contains(entry.year))
                 years.add(entry.year);
         Collections.sort(years);
@@ -116,7 +150,7 @@ public abstract class Export {
     
     private void readVenues() {
         venues = new ArrayList<String>();
-        for (BibtexEntry entry : entries)
+        for (BibtexEntry entry : entries.values())
             if (!venues.contains(entry.venue))
                 venues.add(entry.venue);
         Collections.sort(venues);
@@ -124,15 +158,32 @@ public abstract class Export {
     
     private void readTags() {
         tags = new ArrayList<String>();
-        for (BibtexEntry entry : entries)
+        for (BibtexEntry entry : entries.values())
             for (String tag : entry.tagList)
                 if (!tags.contains(tag))
                     tags.add(tag);
         Collections.sort(tags);
     }
     
+    /*
+     * private void readCitations(String path, String filename,
+     * List<BibtexEntry> entries) { List<CitationEntry> citationsEntries = new
+     * ArrayList<CitationEntry>(); try (BufferedReader br = new
+     * BufferedReader(new FileReader(new File(path + filename)))) { for (String
+     * line; (line = br.readLine()) != null;) { String[] str = line.split(",");
+     * String key = (str[0]).replace("\"", ""); String title =
+     * (str[1]).replace("\"", ""); int citations = Integer.parseInt(str[2]);
+     * long lastUpdate = Long.parseLong(str[3]);
+     * 
+     * citationsEntries.add(new CitationEntry(key, title, citations,
+     * lastUpdate)); } } catch (IOException e) { // TODO Auto-generated catch
+     * block e.printStackTrace(); } // for (BibtexEntry entry : entries)
+     * 
+     * Collections.sort(tags); }
+     */
+    
     public void printMissingPDFs() {
-        for (BibtexEntry entry : entries) {
+        for (BibtexEntry entry : entries.values()) {
             File file = entry.getPDF();
             if (!file.exists())
                 System.out.println(file.getName());
@@ -144,12 +195,12 @@ public abstract class Export {
         List<File> available = new ArrayList<File>();
         List<BibtexEntry> missing = new ArrayList<BibtexEntry>();
         try {
-        for (File file : new File(BibtexViewer.PDF_DIR).listFiles())
-            available.add(file);
+            for (File file : new File(BibtexViewer.PDF_DIR).listFiles())
+                available.add(file);
         } catch (NullPointerException e) {
-            System.out.println("No PDFs in "+BibtexViewer.PDF_DIR);
+            System.out.println("No PDFs in " + BibtexViewer.PDF_DIR);
         }
-        for (BibtexEntry entry : entries) {
+        for (BibtexEntry entry : entries.values()) {
             File file = entry.getPDF();
             if (file.exists()) {
                 if (!available.remove(file))
@@ -213,15 +264,15 @@ public abstract class Export {
     
     protected long countEntries(BibtexFilter filter) {
         long number = 0;
-        for (BibtexEntry entry : entries)
+        for (BibtexEntry entry : entries.values())
             if (filter.include(entry))
                 number++;
         return number;
     }
     
-    protected String readFromFile(File filename) {
+    protected String readFromFile(String path, File filename) {
         try {
-            InputStream in = new FileInputStream(BibtexViewer.HTML_DIR + filename);
+            InputStream in = new FileInputStream(path + filename);
             StringBuilder out = new StringBuilder();
             byte[] b = new byte[4096];
             for (int n; (n = in.read(b)) != -1;) {
@@ -230,18 +281,17 @@ public abstract class Export {
             in.close();
             return out.toString();
         } catch (FileNotFoundException e) {
-            System.out.println("Not Found "+filename);
-            return "";
+            System.out.println("Not Found " + filename);
         } catch (IOException e) {
-            System.out.println("IOException for "+filename);
-            return "";
+            System.out.println("IOException for " + filename);
         }
+        return "";
     }
     
-    protected void writeToFile(String filename, String content) {
+    protected void writeToFile(String path, String filename, String content) {
         try {
-            File file = new File(BibtexViewer.HTML_DIR + filename);
-            String oldContent = readFromFile(file);
+            File file = new File(path + filename);
+            String oldContent = readFromFile(path,new File(filename));
             if (!content.equals(oldContent)) {
                 System.out.println("Updating " + filename);
                 BufferedWriter out = new BufferedWriter(new FileWriter(file));
@@ -249,9 +299,9 @@ public abstract class Export {
                 out.close();
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Not Found "+filename);
+            System.out.println("Not Found " + filename);
         } catch (IOException e) {
-            System.out.println("IOException for "+filename);
+            System.out.println("IOException for " + filename);
         }
     }
     

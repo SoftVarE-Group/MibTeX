@@ -4,7 +4,7 @@
  * 
  * https://github.com/tthuem/MibTeX
  */
-package de.mibtex;
+package de.mibtex.citationservice;
 
 import java.io.IOException;
 import java.io.InputStream;

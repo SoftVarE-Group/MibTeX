@@ -21,8 +21,6 @@ import org.jbibtex.Key;
  */
 public class BibtexEntry {
     
-    public static String lineSeperator = System.getProperty("line.separator");
-    
     private static final String UNKNOWN = "unknown";
     
     public static final Key KEY_TT_TAGS = new Key(BibtexViewer.TAGS);
@@ -46,6 +44,9 @@ public class BibtexEntry {
     public int year = 0;
     
     public int citations = 0;
+    
+    public long lastUpdate = 0;
+    
     
     public BibtexEntry(BibTeXEntry entry) {
         this.entry = entry;
@@ -73,7 +74,6 @@ public class BibtexEntry {
     public int getCitations() {
         if (citations != 0)
             return citations;
-        citations = ScholarCitations.getCitations(title.replace(" ", "%20"));
         return citations;
     }
     
