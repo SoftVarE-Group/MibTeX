@@ -53,8 +53,6 @@ public class ScholarService extends Thread {
     
     protected List<CitationEntry> readFromFile(String filename, String delimeter) {
         List<CitationEntry> entries = new ArrayList<CitationEntry>();
-        System.out.println(CitationService.CITATION_DIR
-                +"\\"+ filename);
         try (BufferedReader br = new BufferedReader(new FileReader(new File(CitationService.CITATION_DIR
                 +"\\"+ filename)))) {
             for (String line; (line = br.readLine()) != null;) {
