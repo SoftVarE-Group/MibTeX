@@ -53,6 +53,8 @@ public class ScholarService extends Thread {
     
     protected List<CitationEntry> readFromFile(String filename, String delimeter) {
         List<CitationEntry> entries = new ArrayList<CitationEntry>();
+        System.out.println(CitationService.CITATION_DIR
+                +"\\"+ filename);
         try (BufferedReader br = new BufferedReader(new FileReader(new File(CitationService.CITATION_DIR
                 +"\\"+ filename)))) {
             for (String line; (line = br.readLine()) != null;) {
@@ -77,7 +79,7 @@ public class ScholarService extends Thread {
     
     protected void writeToFile(String filename, List<CitationEntry> entries) {
         try {
-            File file = new File(CitationService.CITATION_DIR + filename);
+            File file = new File(CitationService.CITATION_DIR +"\\"+ filename);
             List<CitationEntry> oldContent = readFromFile(filename, ";");
             if (!entries.equals(oldContent)) {
                 System.out.println("Updating " + filename);
