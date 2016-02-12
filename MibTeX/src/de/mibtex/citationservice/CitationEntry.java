@@ -1,6 +1,6 @@
 package de.mibtex.citationservice;
 
-public class CitationEntry {
+public class CitationEntry implements Comparable<CitationEntry> {
     
     private static final String UNKNOWN = "unknown";
     
@@ -65,6 +65,15 @@ public class CitationEntry {
     
     public void setLastUpdate(long last_update) {
         this.lastUpdate = last_update;
+    }
+
+    @Override
+    public int compareTo(CitationEntry arg0) {
+        if (this.getLastUpdate()<arg0.getLastUpdate()){
+            return -1;
+        }else{
+            return 1;
+        }
     }
     
 }

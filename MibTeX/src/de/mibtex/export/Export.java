@@ -19,6 +19,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -43,7 +44,7 @@ import de.mibtex.citationservice.CitationEntry;
  */
 public abstract class Export {
     
-    protected static HashMap<String, BibtexEntry> entries;
+    protected static LinkedHashMap<String, BibtexEntry> entries;
     
     protected static List<String> authors;
     
@@ -87,7 +88,7 @@ public abstract class Export {
     }
     
     private void extractEntries(BibTeXDatabase database) {
-        entries = new HashMap<String, BibtexEntry>();
+        entries = new LinkedHashMap<String, BibtexEntry>();
         for (BibTeXObject object : database.getObjects()) {
             if (object instanceof BibTeXEntry) {
                 BibtexEntry bibtexEntry = new BibtexEntry((BibTeXEntry) object);
@@ -164,23 +165,6 @@ public abstract class Export {
                     tags.add(tag);
         Collections.sort(tags);
     }
-    
-    /*
-     * private void readCitations(String path, String filename,
-     * List<BibtexEntry> entries) { List<CitationEntry> citationsEntries = new
-     * ArrayList<CitationEntry>(); try (BufferedReader br = new
-     * BufferedReader(new FileReader(new File(path + filename)))) { for (String
-     * line; (line = br.readLine()) != null;) { String[] str = line.split(",");
-     * String key = (str[0]).replace("\"", ""); String title =
-     * (str[1]).replace("\"", ""); int citations = Integer.parseInt(str[2]);
-     * long lastUpdate = Long.parseLong(str[3]);
-     * 
-     * citationsEntries.add(new CitationEntry(key, title, citations,
-     * lastUpdate)); } } catch (IOException e) { // TODO Auto-generated catch
-     * block e.printStackTrace(); } // for (BibtexEntry entry : entries)
-     * 
-     * Collections.sort(tags); }
-     */
     
     public void printMissingPDFs() {
         for (BibtexEntry entry : entries.values()) {
@@ -297,6 +281,8 @@ public abstract class Export {
                 BufferedWriter out = new BufferedWriter(new FileWriter(file));
                 out.write(content.toString());
                 out.close();
+            } else {
+                System.out.println("Old content is the same! No update required!");
             }
         } catch (FileNotFoundException e) {
             System.out.println("Not Found " + filename);

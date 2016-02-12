@@ -19,6 +19,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -53,6 +54,7 @@ public class ScholarService extends Thread {
     public ScholarService() throws Exception {
         rand = new Random(120000);
         entries = readFromFile("citations.csv", ";");
+        Collections.sort(entries);
     }
     
     protected List<CitationEntry> readFromFile(String filename, String delimeter) {

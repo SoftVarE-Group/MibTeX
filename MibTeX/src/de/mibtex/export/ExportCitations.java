@@ -1,14 +1,12 @@
 package de.mibtex.export;
 
 import de.mibtex.BibtexEntry;
+import de.mibtex.BibtexViewer;
 
 public class ExportCitations extends Export {
-    
-    private String outputPath;
 
-    public ExportCitations(String path, String file, String outputPath) throws Exception {
+    public ExportCitations(String path, String file) throws Exception {
         super(path, file);
-        this.outputPath = outputPath;
     }
 
     @Override
@@ -19,7 +17,7 @@ public class ExportCitations extends Export {
                     .append(entry.citations + ";")
                     .append((System.currentTimeMillis()-(25*60*60))+";" + System.getProperty("line.separator"));
         }
-        writeToFile(outputPath,"citations.csv",CSV.toString());    
+        writeToFile(BibtexViewer.CITATION_DIR,"citations.csv",CSV.toString());    
     }
     
 }

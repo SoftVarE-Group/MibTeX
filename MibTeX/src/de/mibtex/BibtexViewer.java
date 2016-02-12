@@ -32,18 +32,26 @@ public class BibtexViewer {
     
     public static String TAGS;
     
+    private static boolean cleanOutputDir;
+    
+    public static String CITATION_DIR; 
+    
     /**
      * Example arguments
      * 
      * BibtexViewer "C:\\Users\\tthuem\\workspace4.2.1\\tthuem-Bibtex\\"
      * "C:\\Users\\tthuem\\Dropbox\\Literatur\\" "HTML\\" "..\\Library\\"
-     * "Library\\" "tt-tags" "CSV/JSON/HTML"
+     * "Library\\" "tt-tags" "CSV/JSON/HTML" "true" "C:\\Users\\tthuem\\workspace4.2.1\\tthuem-Bibtex\\"
      * 
-     * @param args array containing path to Bibtex file path to main directory
-     *        relative path of the HTML to main directory relative path of PDF
-     *        files to the HTML folder (for linking files in HTML) relative path
-     *        of PDF files to main directory name of the tag containing your
-     *        keywords format for export (CSV/JSON/HTML)
+     * @param args array containing:
+     *          - path to Bibtex file path to main directory
+     *          - relative path of the HTML to main directory 
+     *          - relative path of PDF files to the HTML folder (for linking files in HTML) 
+     *          - relative path of PDF files to main directory 
+     *          - name of the tag containing your keywords 
+     *          - format for export (CSV/JSON/HTML) 
+     *          - boolean for output cleaning (default: false)
+     *          - path to citations file (default: Bibtex file path
      */
     public static void main(String[] args) {
         BIBTEX_DIR = args[0];
@@ -52,6 +60,21 @@ public class BibtexViewer {
         PDF_DIR_REL = args[3];
         PDF_DIR = MAIN_DIR + args[4];
         TAGS = args[5];
+        try {
+            cleanOutputDir = Boolean.getBoolean(args[7]);
+        } catch (Exception e) {
+            System.out
+            .println("Output will not be cleaned");
+            cleanOutputDir = false;
+        }
+        try {
+            CITATION_DIR = args[8];
+        } catch (Exception e) {
+            System.out
+            .println("Citation is saved in Bibtex directory");
+            CITATION_DIR = BIBTEX_DIR;
+        }
+        System.out.println(CITATION_DIR);
         String format = "HTML";
         try {
             format = args[6];
@@ -77,7 +100,7 @@ public class BibtexViewer {
                 exporter = new ExportJSON(BibtexViewer.BIBTEX_DIR,"literature.bib");
                 break;
             case "Citations":
-                exporter = new ExportCitations(BibtexViewer.BIBTEX_DIR,"literature.bib",BibtexViewer.BIBTEX_DIR);
+                exporter = new ExportCitations(BibtexViewer.BIBTEX_DIR,"literature.bib");
                 break;
             case "HTML_NEW":
                 exporter = new ExportNewHTML(BibtexViewer.BIBTEX_DIR,"literature.bib");
@@ -86,7 +109,9 @@ public class BibtexViewer {
             default:
                 exporter = new ExportHTML(BibtexViewer.BIBTEX_DIR,"literature.bib");
         }
-        exporter.cleanOutputFolder();
+        if (cleanOutputDir) {
+            exporter.cleanOutputFolder();
+        }
         // exporter.printMissingPDFs();
         // exporter.renameFiles();
         exporter.writeDocument();
