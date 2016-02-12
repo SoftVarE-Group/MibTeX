@@ -1,3 +1,9 @@
+/* MibTeX - Minimalistic tool to manage your references with BibTeX
+ * 
+ * Distributed under BSD 3-Clause License, available at Github
+ * 
+ * https://github.com/tthuem/MibTeX
+ */
 package de.mibtex.citationservice;
 
 public class CitationEntry implements Comparable<CitationEntry> {

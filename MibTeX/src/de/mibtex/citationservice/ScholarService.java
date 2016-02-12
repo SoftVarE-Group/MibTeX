@@ -5,12 +5,7 @@
  * https://github.com/tthuem/MibTeX
  */
 package de.mibtex.citationservice;
-/* MibTeX - Minimalistic tool to manage your references with BibTeX
- * 
- * Distributed under BSD 3-Clause License, available at Github
- * 
- * https://github.com/tthuem/MibTeX
- */
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -48,7 +43,6 @@ public class ScholarService extends Thread {
                 e.printStackTrace();
             }
         }
-        //writeToFile("citations.csv", entries);
     }
     
     public ScholarService() throws Exception {
@@ -59,8 +53,8 @@ public class ScholarService extends Thread {
     
     protected List<CitationEntry> readFromFile(String filename, String delimeter) {
         List<CitationEntry> entries = new ArrayList<CitationEntry>();
-        try (BufferedReader br = new BufferedReader(new FileReader(new File(CitationService.BIBTEX_DIR
-                + filename)))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(new File(CitationService.CITATION_DIR
+                +"\\"+ filename)))) {
             for (String line; (line = br.readLine()) != null;) {
                 String[] str = line.split(delimeter);
                 String key = replaceCSVSpeficics(str[0]);
@@ -71,7 +65,7 @@ public class ScholarService extends Thread {
                 entries.add(new CitationEntry(key, title, citations, lastUpdate));
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            System.out.println("IOException for " + filename);
             return entries;
         }
         return entries;
@@ -83,7 +77,7 @@ public class ScholarService extends Thread {
     
     protected void writeToFile(String filename, List<CitationEntry> entries) {
         try {
-            File file = new File(CitationService.BIBTEX_DIR + filename);
+            File file = new File(CitationService.CITATION_DIR + filename);
             List<CitationEntry> oldContent = readFromFile(filename, ";");
             if (!entries.equals(oldContent)) {
                 System.out.println("Updating " + filename);
