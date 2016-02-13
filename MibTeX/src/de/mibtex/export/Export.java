@@ -281,8 +281,8 @@ public abstract class Export {
                 BufferedWriter out = new BufferedWriter(new FileWriter(file));
                 out.write(content.toString());
                 out.close();
-            } else {
-                System.out.println("Old content is the same! No update required!");
+//            } else {
+//                System.out.println("Old content is the same! No update required!");
             }
         } catch (FileNotFoundException e) {
             System.out.println("Not Found " + filename);
