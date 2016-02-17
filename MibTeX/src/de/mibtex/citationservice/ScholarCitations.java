@@ -9,8 +9,8 @@ package de.mibtex.citationservice;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,34 +20,30 @@ import java.util.regex.Pattern;
  * @author Thomas Thuem, Christopher Sontag
  */
 public class ScholarCitations {
-    
+	
     public final static String SCHOLAR_URL = "http://scholar.google.com/scholar?q=";
     
     public final static Pattern citationsPattern = Pattern.compile("Cited by \\s*(\\d+)");
     
-    public static int getYearlyCitations(String title, int publicationYear) {
-        int citations = getCitations(title);
-        if (citations < 0 || publicationYear < 1900)
-            return citations;
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        double passedYears = currentYear - publicationYear + 1;
-        if (passedYears == 0)
-            return citations;
-        int average = (int) Math.round(citations / passedYears);
-        return average;
-    }
+//    public static int getYearlyCitations(String title, int publicationYear) {
+//        int citations = getCitations(title);
+//        if (citations < 0 || publicationYear < 1900)
+//            return citations;
+//        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+//        double passedYears = currentYear - publicationYear + 1;
+//        if (passedYears == 0)
+//            return citations;
+//        int average = (int) Math.round(citations / passedYears);
+//        return average;
+//    }
     
-    public static int getCitations(String title) {
-        try {
-            String url = SCHOLAR_URL + title;
-            String html = toString(connect(new URL(url)));
-            Matcher matcher = citationsPattern.matcher(html);
-            if (matcher.find())
-                return Integer.parseInt(matcher.group(1));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return -1;
+    public static int getCitations(String title) throws MalformedURLException, IOException {
+        String url = SCHOLAR_URL + title;
+        String html = toString(connect(new URL(url)));
+        Matcher matcher = citationsPattern.matcher(html);
+        if (matcher.find())
+            return Integer.parseInt(matcher.group(1));
+        return CitationEntry.NOT_FOUND;
     }
     
     public static InputStream connect(URL url) throws IOException {

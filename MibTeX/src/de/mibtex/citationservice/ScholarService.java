@@ -25,18 +25,21 @@ import java.util.Random;
  */
 public class ScholarService extends Thread {
     
-    private static final String CITATIONS_FILE = "citations.csv";
-    
 	private Random rand = new Random();
+
+	private File citationsFile;
     
-    @Override
+    public ScholarService(File file) {
+		citationsFile = file;
+	}
+
+	@Override
     public void run() {
         while (true) {
-            List<CitationEntry> entries = readFromFile(CITATIONS_FILE);
+            List<CitationEntry> entries = readFromFile(citationsFile);
             CitationEntry entry = nextEntry(entries);
             entry.updateCitations();
-            System.out.println(entry.getCitations() + " citations of " + entry.getKey() + " with title \"" + entry.getTitle() + "\"");
-            writeToFile(CITATIONS_FILE, entries);
+            writeToFile(citationsFile, entries);
             try {
                 sleep(rand.nextInt(120000) + 120000);
             } catch (InterruptedException e) {
@@ -47,16 +50,19 @@ public class ScholarService extends Thread {
     
     protected CitationEntry nextEntry(List<CitationEntry> entries) {
     	CitationEntry next = entries.get(0);
-    	for (CitationEntry entry : entries)
-            if (entry.getLastUpdate() < next.getLastUpdate())
+    	for (CitationEntry entry : entries) {
+            if (entry.getCitations() == CitationEntry.UNINITIALIZED)
+            	return entry;
+    		if (entry.getLastUpdate() < next.getLastUpdate())
             	next = entry;
+    	}
 		return next;
     }
     
-    protected List<CitationEntry> readFromFile(String filename) {
+    protected List<CitationEntry> readFromFile(File file) {
+    	System.out.print("Reading " + file.getName() + "... ");
         List<CitationEntry> entries = new ArrayList<CitationEntry>();
-        try (BufferedReader br = new BufferedReader(new FileReader(new File(CitationService.CITATION_DIR
-                +"\\"+ filename)))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             for (String line; (line = br.readLine()) != null;) {
                 String[] str = line.split(";");
                 String key = replaceCSVSpeficics(str[0]);
@@ -66,9 +72,9 @@ public class ScholarService extends Thread {
                 entries.add(new CitationEntry(key, title, citations, lastUpdate));
             }
         } catch (IOException e) {
-            System.out.println("IOException for " + filename);
-            return entries;
+            System.out.println("IOException for " + file.getAbsolutePath());
         }
+    	System.out.println("done.");
         return entries;
     }
     
@@ -76,10 +82,9 @@ public class ScholarService extends Thread {
         return str.replace("\"", "");
     }
     
-    protected void writeToFile(String filename, List<CitationEntry> entries) {
+    protected void writeToFile(File file, List<CitationEntry> entries) {
+    	System.out.print("Updating " + file.getName() + "... ");
         try {
-            File file = new File(CitationService.CITATION_DIR +"\\"+ filename);
-            System.out.println("Updating " + filename);
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
             for (CitationEntry entry : entries) {
                 out.append("\"" + entry.getKey() + "\";");
@@ -90,10 +95,11 @@ public class ScholarService extends Thread {
             }
             out.close();
         } catch (FileNotFoundException e) {
-            System.out.println("Not found " + filename);
+            System.out.println("Not found " + file.getAbsolutePath());
         } catch (IOException e) {
-            System.out.println("IOException for " + filename);
+            System.out.println("IOException for " + file.getAbsolutePath());
         }
+    	System.out.println("done.");
     }
     
 }

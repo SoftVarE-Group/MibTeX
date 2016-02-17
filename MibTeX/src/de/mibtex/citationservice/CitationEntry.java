@@ -6,18 +6,26 @@
  */
 package de.mibtex.citationservice;
 
+/**
+ * A class to store and update a singly entry of the citation file.
+ * 
+ * @author Christopher Sontag, Thomas Thuem
+ */
 public class CitationEntry implements Comparable<CitationEntry> {
-    
+	
     private static final String UNKNOWN = "unknown";
     
-    // Should wait at least 24h before updating citations
-    private static final long timeToWait = 24 * 60 * 60;
+	public final static int UNINITIALIZED = -1;
+    
+	public final static int NOT_FOUND = -2;
+    
+	public final static int PROBLEM_OCCURED = -3;
     
     private String key = UNKNOWN;
     
     private String title = UNKNOWN;
     
-    private int citations = 0;
+    private int citations = UNINITIALIZED;
     
     private long lastUpdate = 0;
     
@@ -53,16 +61,17 @@ public class CitationEntry implements Comparable<CitationEntry> {
         this.citations = citations;
     }
     
-    public int updateCitations() {
-        if ((System.currentTimeMillis()) > this.lastUpdate + CitationEntry.timeToWait) {
-            System.out.println("The citations of "+this.key+" are outdated! Start Update");
-            this.citations = ScholarCitations.getCitations(title.replace(" ", "%20"));
-            this.lastUpdate = System.currentTimeMillis();
-        } else {
-            System.out.println("The citations of "+this.key+" are up to date");
-        }
-       
-        return this.citations;
+    public void updateCitations() {
+        System.out.println("Updating the citations of " + key + " with title \"" + getTitle() + "\"...");
+        System.out.println("\told citations: " + citations + "   old timestamp: " + lastUpdate);
+        try {
+			this.citations = ScholarCitations.getCitations(title.replace(" ", "%20"));
+		} catch (Exception e) {
+			this.citations = PROBLEM_OCCURED;
+			e.printStackTrace();
+		}
+        this.lastUpdate = System.currentTimeMillis();
+        System.out.println("\tnew citations: " + citations + "   new timestamp: " + lastUpdate);
     }
     
     public long getLastUpdate() {
@@ -74,12 +83,8 @@ public class CitationEntry implements Comparable<CitationEntry> {
     }
 
     @Override
-    public int compareTo(CitationEntry arg0) {
-        if (this.getLastUpdate()<arg0.getLastUpdate()){
-            return -1;
-        }else{
-            return 1;
-        }
+    public int compareTo(CitationEntry entry) {
+        return getKey().compareTo(entry.getKey());
     }
     
 }
