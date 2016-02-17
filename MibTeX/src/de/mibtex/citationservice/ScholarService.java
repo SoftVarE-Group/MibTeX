@@ -18,8 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import de.mibtex.BibtexEntry;
-
 /**
  * A class that reads all BibTeX entries from a .csv file, gets the citations and put the entries back
  * in the .csv file
