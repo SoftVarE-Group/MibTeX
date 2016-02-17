@@ -25,6 +25,10 @@ import java.util.Random;
  */
 public class ScholarService extends Thread {
     
+	private static final int MIN_DELAY = 5;
+
+	private static final int EXTRA_DELAY = 5;
+
 	private Random rand = new Random();
 
 	private File citationsFile;
@@ -41,7 +45,7 @@ public class ScholarService extends Thread {
             entry.updateCitations();
             writeToFile(citationsFile, entries);
             try {
-                sleep(rand.nextInt(120000) + 120000);
+                sleep(rand.nextInt(MIN_DELAY*60000) + EXTRA_DELAY*60000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

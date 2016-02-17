@@ -6,6 +6,8 @@
  */
 package de.mibtex.citationservice;
 
+import java.text.DateFormat;
+
 /**
  * A class to store and update a singly entry of the citation file.
  * 
@@ -63,7 +65,7 @@ public class CitationEntry implements Comparable<CitationEntry> {
     
     public void updateCitations() {
         System.out.println("Updating the citations of " + key + " with title \"" + getTitle() + "\"...");
-        System.out.println("\told citations: " + citations + "   old timestamp: " + lastUpdate);
+        System.out.println("\told citations: " + citations + "   old timestamp: " + getLastUpdateString());
         try {
 			this.citations = ScholarCitations.getCitations(title.replace(" ", "%20"));
 		} catch (Exception e) {
@@ -71,10 +73,14 @@ public class CitationEntry implements Comparable<CitationEntry> {
 			e.printStackTrace();
 		}
         this.lastUpdate = System.currentTimeMillis();
-        System.out.println("\tnew citations: " + citations + "   new timestamp: " + lastUpdate);
+        System.out.println("\tnew citations: " + citations + "   new timestamp: " + getLastUpdateString());
     }
     
-    public long getLastUpdate() {
+    private String getLastUpdateString() {
+		return DateFormat.getInstance().format(lastUpdate);
+	}
+
+	public long getLastUpdate() {
         return lastUpdate;
     }
     
