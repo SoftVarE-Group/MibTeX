@@ -2779,9 +2779,11 @@
 <body>
 
 <div id="mibtex">
+<span style = "float: right;">Number of entries: <b>{{gridData.length}}</b></span>
     <form id="search">
         Search <input style="width:80%;" name="query" v-model="searchQuery">
     </form>
+    
     <mibtex-grid
             :data="gridData"
             :columns="gridColumns"

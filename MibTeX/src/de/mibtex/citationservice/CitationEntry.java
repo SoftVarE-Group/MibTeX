@@ -88,9 +88,47 @@ public class CitationEntry implements Comparable<CitationEntry> {
         this.lastUpdate = last_update;
     }
 
+    public String getCSVString() {
+        StringBuilder out = new StringBuilder();
+        out.append("\"" + getKey() + "\";");
+        out.append("\"" + getTitle() + "\";");
+        out.append(getCitations() + ";");
+        out.append(getLastUpdate() + ";");
+        out.append(System.getProperty("line.separator"));
+        return out.toString();
+    }
+    
     @Override
     public int compareTo(CitationEntry entry) {
         return getKey().compareTo(entry.getKey());
+    }
+    
+    @Override
+    public boolean equals(Object v) {
+          boolean value = false;
+          if (v instanceof CitationEntry){
+              CitationEntry entry = (CitationEntry) v;
+              value = (getKey().equals(entry.getKey()) && getTitle().equals(entry.getTitle()));
+          }
+       return value;
+    }
+
+      @Override
+      public int hashCode() {
+          return getKey().hashCode()*getTitle().hashCode();
+      }
+    
+    public static CitationEntry getFromCSV(String csv) {
+        String[] str = csv.split(";");
+        String key = replaceCSVSpeficics(str[0]);
+        String title = replaceCSVSpeficics(str[1]);
+        int citations = Integer.parseInt(str[2]);
+        long lastUpdate = Long.parseLong(str[3]);
+        return new CitationEntry(key, title, citations, lastUpdate);
+    }
+    
+    private static String replaceCSVSpeficics(String str) {
+        return str.replace("\"", "");
     }
     
 }

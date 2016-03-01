@@ -99,26 +99,22 @@ public abstract class Export {
     
     private void readCitations() {
         List<CitationEntry> citationsEntries = new ArrayList<CitationEntry>();
-        File fileHandle = new File(BibtexViewer.BIBTEX_DIR + "/citations.csv");
+        File fileHandle = new File(BibtexViewer.CITATION_DIR,"citations.csv");
         if (fileHandle.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(fileHandle))) {
                 for (String line; (line = br.readLine()) != null;) {
-                    String[] str = line.split(";");
-                    String key = (str[0]).replace("\"", "");
-                    String title = (str[1]).replace("\"", "");
-                    int citations = Integer.parseInt(str[2]);
-                    long lastUpdate = Long.parseLong(str[3]);
-                    
-                    citationsEntries.add(new CitationEntry(key, title, citations, lastUpdate));
+                    citationsEntries.add(CitationEntry.getFromCSV(line));
                 }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             for (CitationEntry citationEntry: citationsEntries) {
-                BibtexEntry bibtexEntry = entries.get(citationEntry.getKey());
-                bibtexEntry.citations = citationEntry.getCitations();
-                bibtexEntry.lastUpdate = citationEntry.getLastUpdate();
+                if (entries.containsKey(citationEntry.getKey())) {
+                    BibtexEntry bibtexEntry = entries.get(citationEntry.getKey());
+                    bibtexEntry.citations = citationEntry.getCitations();
+                    bibtexEntry.lastUpdate = citationEntry.getLastUpdate();
+                }
             }
         }
         
@@ -171,7 +167,6 @@ public abstract class Export {
             if (!file.exists())
                 System.out.println(file.getName());
         }
-        System.out.println();
     }
     
     public void renameFiles() {

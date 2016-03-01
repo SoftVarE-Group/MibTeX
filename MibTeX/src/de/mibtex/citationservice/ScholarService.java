@@ -68,12 +68,7 @@ public class ScholarService extends Thread {
         List<CitationEntry> entries = new ArrayList<CitationEntry>();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             for (String line; (line = br.readLine()) != null;) {
-                String[] str = line.split(";");
-                String key = replaceCSVSpeficics(str[0]);
-                String title = replaceCSVSpeficics(str[1]);
-                int citations = Integer.parseInt(str[2]);
-                long lastUpdate = Long.parseLong(str[3]);
-                entries.add(new CitationEntry(key, title, citations, lastUpdate));
+                entries.add(CitationEntry.getFromCSV(line));
             }
         } catch (IOException e) {
             System.out.println("IOException for " + file.getAbsolutePath());
@@ -82,20 +77,12 @@ public class ScholarService extends Thread {
         return entries;
     }
     
-    public String replaceCSVSpeficics(String str) {
-        return str.replace("\"", "");
-    }
-    
     protected void writeToFile(File file, List<CitationEntry> entries) {
     	System.out.print("Updating " + file.getName() + "... ");
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
             for (CitationEntry entry : entries) {
-                out.append("\"" + entry.getKey() + "\";");
-                out.append("\"" + entry.getTitle() + "\";");
-                out.append(entry.getCitations() + ";");
-                out.append(entry.getLastUpdate() + ";");
-                out.append(System.getProperty("line.separator"));
+                out.append(entry.getCSVString());
             }
             out.close();
         } catch (FileNotFoundException e) {
