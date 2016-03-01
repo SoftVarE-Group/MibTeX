@@ -92,6 +92,21 @@ public class BibtexEntry {
         return new File(BibtexViewer.PDF_DIR + toURL(pdf));
     }
     
+    public String getPDFPath() {
+        String pdf = getLastname(authorList.get(0));
+        if (authorList.size() == 2)
+            pdf += " and " + getLastname(authorList.get(1));
+        else if (authorList.size() > 2)
+            pdf += " et al.";
+        if (!venue.startsWith("("))
+            pdf += " " + venue;
+        if (year > 0)
+            pdf += " " + year;
+        pdf += " " + title;
+        pdf += ".pdf";
+        return BibtexViewer.PDF_DIR.replace("\\", "/") + toURL(pdf);
+    }
+    
     private String getLastname(String name) {
         return name.substring(name.lastIndexOf(" ") + 1);
     }

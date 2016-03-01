@@ -36,7 +36,8 @@ public class ExportNewHTML extends Export{
             .append(getJSONAttribute("venues", entry.venue)+",")
             .append(getJSONAttribute("year", entry.year)+",")
             .append(getJSONAttribute("citations", entry.citations)+",")
-            .append(getJSONAttribute("tags", entry.tagList))
+            .append(getJSONAttribute("tags", entry.tagList)+",")
+            .append(getJSONAttribute("pdf", entry.getPDFPath()))
             .append("},");
         }
         JSON.append("]");
@@ -50,7 +51,10 @@ public class ExportNewHTML extends Export{
     }
 
     private String getJSONAttribute(String key, String str) {
-        return "\""+key+"\":[{\"name\":\""+BibtexEntry.toURL(str)+"\"}]";
+        if (!key.equals("pdf")){
+            str = BibtexEntry.toURL(str);
+        }
+        return "\""+key+"\":[{\"name\":\""+str+"\"}]";
     }
     
     private String getJSONAttribute(String key, List<String> list) {
