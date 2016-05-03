@@ -27,7 +27,7 @@ public class ScholarService extends Thread {
     
 	private static final int MIN_DELAY = 60*20;
 
-	private static final int EXTRA_DELAY = 0;
+	private static final int EXTRA_DELAY = 1;
 
 	private Random rand = new Random();
 
