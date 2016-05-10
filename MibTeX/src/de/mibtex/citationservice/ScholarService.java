@@ -43,7 +43,8 @@ public class ScholarService extends Thread {
             List<CitationEntry> entries = readFromFile(citationsFile);
             CitationEntry entry = nextEntry(entries);
             entry.updateCitations();
-            writeToFile(citationsFile, entries);
+            if (entry.getCitations() != CitationEntry.PROBLEM_OCCURED)
+            	writeToFile(citationsFile, entries);
             try {
                 sleep(MIN_DELAY*1000 + rand.nextInt(EXTRA_DELAY*1000));
             } catch (InterruptedException e) {
