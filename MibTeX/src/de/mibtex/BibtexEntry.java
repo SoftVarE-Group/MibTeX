@@ -72,8 +72,8 @@ public class BibtexEntry {
     }
     
     public int getCitations() {
-        if (citations != 0)
-            return citations;
+        if (citations < 0)
+            return 0;
         return citations;
     }
     

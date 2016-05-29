@@ -100,9 +100,7 @@ public class ExportNewHTML2 extends Export{
     }
     
     private String generateCitationLink(BibtexEntry entry) {
-        if (entry.citations >=0)
-            return "<a href=\"https://scholar.google.de/scholar?q="+entry.title+"\" target=\"_blank\">"+entry.citations+"</a>";
-        return "<a href=\"https://scholar.google.de/scholar?q="+entry.title+"\" target=\"_blank\">0</a>";
+        return "<a href=\"https://scholar.google.de/scholar?q="+entry.title+"\" target=\"_blank\">"+entry.getCitations()+"</a>";
     }
 
     private String generateYearLink(BibtexEntry entry) {
