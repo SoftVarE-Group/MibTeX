@@ -91,7 +91,11 @@ public abstract class Export {
         for (BibTeXObject object : database.getObjects()) {
             if (object instanceof BibTeXEntry) {
                 BibtexEntry bibtexEntry = new BibtexEntry((BibTeXEntry) object);
-                entries.put(bibtexEntry.key,bibtexEntry);
+                if (!entries.containsKey(bibtexEntry.key)) {
+                    entries.put(bibtexEntry.key,bibtexEntry);
+                } else {
+                    System.out.println("Found duplicate key: "+bibtexEntry.key);
+                }
             }
         }
         readCitations();
