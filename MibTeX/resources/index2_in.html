@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MibTex</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <style type="text/css">
+        table {
+            border: 1px solid #ddd;
+        }
+
+        thead {
+            background-color: darkslategrey;
+            color: white;
+        }
+
+        .table {
+            width: 100%;
+        }
+
+        /*.table thead th {
+            border-bottom: 1px solid black;
+        }
+        .table tbody tr td {
+            border-left: 1px solid black;
+            padding: 5px;
+        }
+        .table tbody tr td:last-child {
+            border-right: 1px solid black;
+        }*/
+        .table th, .table td {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table td {
+            text-align: center;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        input {
+            width: 95%;
+            margin: 10px;
+        }
+
+        thead tr th a {
+            color: white;
+        }
+
+        /*
+        https://css-tricks.com/responsive-data-tables/
+        */
+        @media only screen and (max-width: 760px),
+        (max-device-width: 1024px) {
+
+            /* Force table to not be like tables anymore */
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            tr {
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+            }
+
+            .table td {
+                border: none;
+                border-bottom: 1px solid #eee;
+                position: relative;
+                padding-left: 25%;
+                min-height: 25px;
+            }
+
+            .table td:before {
+                position: absolute;
+                top: 6px;
+                font-weight: bold;
+                left: 6px;
+                width: 20%;
+                padding-right: 10px;
+                white-space: nowrap;
+                border: 1px solid #ccc;
+            }
+
+            /*
+            Label the data
+            */
+            .table td:nth-of-type(1):before {
+                content: "Title";
+            }
+
+            .table td:nth-of-type(2):before {
+                content: "Authors";
+            }
+
+            .table td:nth-of-type(3):before {
+                content: "Venues";
+            }
+
+            .table td:nth-of-type(4):before {
+                content: "Tags";
+            }
+
+            .table td:nth-of-type(5):before {
+                content: "Citations";
+            }
+
+            .table td:nth-of-type(6):before {
+                content: "Year";
+            }
+        }
+    </style>
+    <script>
+        String.prototype.contains = function (it) {
+            return (this.toLowerCase().indexOf(it.toLowerCase()) != -1 || it == "");
+        };
+
+        String.prototype.equals = function (it) {
+            return (this.toLowerCase() === it.toLowerCase() || it === "");
+        };
+
+        function Filter() {
+            // Reads inputs
+            var searchTitle = "" + document.getElementById("searchTitle").value;
+            var searchAuthor = "" + document.getElementById("searchAuthor").value;
+            var searchVenue = "" + document.getElementById("searchVenue").value;
+            var searchTag = "" + document.getElementById("searchTag").value;
+            var searchCitation = "" + document.getElementById("searchCitation").value;
+            var searchYear = document.getElementById("searchYear").value;
+            var table = document.getElementById("literature");
+            var isOr = document.getElementById("searchOr").checked;
+
+            // Reset all when no filter is applied
+            if (searchTitle === "" && searchAuthor === "" && searchVenue === "" && searchTag === "" && searchCitation == "" && searchYear == "") {
+                for (var i = 1, row; row = table.rows[i]; i++) {
+                    document.getElementById(row.id).style.display = '';
+                }
+                document.getElementById("countFilter").innerHTML = "" + table.rows.length;
+            } else {
+                // Filter data
+                var count = 0;
+                for (var i = 1, row; row = table.rows[i]; i++) {
+
+                    var title = row.cells[0].getElementsByTagName('a')[0].innerHTML;
+                    var authors = row.cells[1].innerHTML;
+                    var venues = row.cells[2].innerHTML;
+                    var tags = row.cells[3].innerHTML;
+                    var citation = row.cells[4].getElementsByTagName('a')[0].innerHTML;
+                    var year = row.cells[5].getElementsByTagName('a')[0].innerHTML;
+
+                    if (isOr) {
+                        /*console.log("");
+                         console.log(title.contains(searchTitle));
+                         console.log(matchArrayOR(split(searchAuthor), split(replaceA(authors))));
+                         console.log(matchArrayOR(split(searchVenue), split(replaceA(venues))));
+                         console.log(matchArrayOR(split(searchTag), split(replaceA(tags))));
+                         console.log(!citation.equals(searchCitation));
+                         console.log(matchArrayOR(split(searchYear), split(replaceA(year))));
+                         */
+                        // Checks condition for specific row
+                        if (matchArrayOR(split(searchAuthor), split(replaceA(authors))) || matchArrayOR(split(searchVenue), split(replaceA(venues)))
+                                || matchArrayOR(split(searchTag), split(replaceA(tags))) || !citation.equals(searchCitation) || matchArrayOR(split(searchYear), split(replaceA(year)))) {
+                            document.getElementById(row.id).style.display = '';
+                            count++;
+                        } else {
+                            document.getElementById(row.id).style.display = 'none';
+                        }
+                    }
+                    else {
+                        // Checks condition for specific row
+                        if (!isOr && title.contains(searchTitle) && matchArrayAND(split(searchAuthor), split(replaceA(authors))) && matchArrayAND(split(searchVenue), split(replaceA(venues)))
+                                && matchArrayAND(split(searchTag), split(replaceA(tags))) && citation.equals(searchCitation) && matchArrayAND(split(searchYear), split(replaceA(year)))) {
+                            document.getElementById(row.id).style.display = '';
+                            count++;
+                        } else {
+                            document.getElementById(row.id).style.display = 'none';
+                        }
+                    }
+                }
+                // Sets filter count
+                document.getElementById("countFilter").innerHTML = "" + count;
+            }
+        }
+
+        function replaceA(str) {
+            return str.replace(/<a href=\".*?\">/g, " ").replace(/<\/a>/g, " ").replace(/(\n|\t|,{0}\s)/g, " ").replace(/\s\s+/g, ' ').replace(/ ,/g, ",");
+        }
+
+        function replaceUmlauts(str) {
+            return str.replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/Ä/g, "Ae").replace(/Ö/g, "Oe").replace(/Ü/g, "Ue").replace(/ß/g, "ss");
+        }
+
+        function split(str) {
+            str = str.replace(/,(\s)/g, ",").trim();
+            if (str.contains(",")) {
+                return str.split(",");
+            } else {
+                return new Array(str);
+            }
+        }
+
+        function matchArrayAND(array1, array2) {
+            for (var i = 0, el1; el1 = array1[i]; i++) {
+                var isEl = false;
+                for (var j = 0, el2; el2 = array2[j]; j++) {
+                    if (el2.contains(el1)) {
+                        isEl = true;
+                    }
+                }
+                if (!isEl) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function matchArrayOR(array1, array2) {
+            for (var i = 0, el1; el1 = array1[i]; i++) {
+                for (var j = 0, el2; el2 = array2[j]; j++) {
+                    if (el2.contains(el1)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        var lastSortCol;
+        var lastSortAsc = false;
+        function SortTable(col) {
+            var asc;
+            if (lastSortCol == col) {
+                asc = !lastSortAsc;
+            } else {
+                asc = true;
+            }
+            lastSortCol = col;
+            lastSortAsc = asc;
+
+            var table = document.getElementById("literature");
+            var rows = table.rows;
+            var rlen = rows.length - 1;
+            var arr = new Array();
+            var cells;
+
+            for (var i = 0; i < rlen; i++) {
+                cells = rows[i + 1].cells;
+                arr[i] = new Array();
+                for (var j = 0; j < 6; j++) {
+                    arr[i][j] = cells[j].innerHTML;
+                }
+            }
+
+            arr.sort(function (a, b) {
+                var first = replaceA(a[col]);
+                var second = replaceA(b[col]);
+                return first.localeCompare(second);
+            });
+            if (asc) {
+                for (var rowidx = 0; rowidx < rlen; rowidx++) {
+                    for (var colidx = 0; colidx < 6; colidx++) {
+                        table.rows[rowidx + 1].cells[colidx].innerHTML = arr[rowidx][colidx];
+                    }
+                }
+            } else {
+                for (var rowidx = 0; rowidx < rlen; rowidx++) {
+                    for (var colidx = 0; colidx < 6; colidx++) {
+                        table.rows[rlen - rowidx].cells[colidx].innerHTML = arr[rowidx][colidx];
+                    }
+                }
+            }
+        }
+
+        function OnLoad() {
+            var table = document.getElementById("literature");
+            var count = table.rows.length;
+            // Sets the overall count and the start filter count
+            document.getElementById("countOverall").innerHTML = "" + count;
+            document.getElementById("countFilter").innerHTML = "" + count;
+        }
+
+        function SetAuthor(author) {
+            document.getElementById("searchAuthor").value = "" + author;
+        }
+
+        function SetVenue(venue) {
+            document.getElementById("searchVenue").value = "" + venue;
+        }
+
+        function SetTag(tag) {
+            document.getElementById("searchTag").value = "" + tag;
+        }
+
+        function SetYear(year) {
+            document.getElementById("searchYear").value = "" + year;
+        }
+    </script>
+</head>
+<body onload="OnLoad();">
+
+<div style="margin-bottom: 20px;">
+    <table style="width: 100%; text-align:center;">
+        <thead>
+        <tr>
+            <td>Title</td>
+            <td>Authors</td>
+            <td>Venues</td>
+            <td>Tags</td>
+            <td>Citations</td>
+            <td>Year</td>
+            <td>OR</td>
+            <td>Actual Count</td>
+            <td>.bib</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><input type="search" id="searchTitle" onchange="Filter()" autofocus placeholder="Title"></td>
+            <td><input type="search" id="searchAuthor" onchange="Filter()" placeholder="Author"></td>
+            <td><input type="search" id="searchVenue" onchange="Filter()" list="venueList" placeholder="Venue">
+                <datalist id="venueList">
+                    INSERT_VENUE_OPTIONS
+                </datalist>
+            </td>
+            <td><input type="search" id="searchTag" onchange="Filter()" list="tagList" placeholder="Tag">
+                <datalist id="tagList">
+                    INSERT_TAG_OPTIONS
+                </datalist>
+            </td>
+            <td><input type="search" id="searchCitation" onchange="Filter()" placeholder="Citations"></td>
+            <td><input type="search" id="searchYear" onchange="Filter()" list="yearList" placeholder="Year">
+                <datalist id="yearList">
+                    INSERT_YEAR_OPTIONS
+                </datalist>
+            </td>
+            <td><input type="checkbox" id="searchOr" onchange="Filter()" placeholder="OR">OR</td>
+            <td><b><span id="countFilter"></span>/<span id="countOverall"></span></b></td>
+            <td><a href="INSERT_BIB_PATH">FILE</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<table id="literature" class="table">
+    <thead>
+    <tr>
+        <th style="width: 25%"><a href="" onclick="SortTable(0);event.preventDefault();Filter();">Title</a></th>
+        <th style="width: 25%"><a href="" onclick="SortTable(1);event.preventDefault();Filter();">Authors</a></th>
+        <th style="width: 10%"><a href="" onclick="SortTable(2);event.preventDefault();Filter();">Venues</a></th>
+        <th style="width: 20%"><a href="" onclick="SortTable(3);event.preventDefault();Filter();">Tags</a></th>
+        <th style="width: 10%"><a href="" onclick="SortTable(4);event.preventDefault();Filter();">Citations</a></th>
+        <th style="width: 10%"><a href="" onclick="SortTable(5);event.preventDefault();Filter();">Year</a></th>
+    </tr>
+    </thead>
+    <tbody>
+    DATA_INSERT_HERE
+    </tbody>
+</table>
+</body>
+</html>

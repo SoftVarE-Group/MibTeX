@@ -12,6 +12,7 @@ import de.mibtex.export.ExportCitations;
 import de.mibtex.export.ExportHTML;
 import de.mibtex.export.ExportJSON;
 import de.mibtex.export.ExportNewHTML;
+import de.mibtex.export.ExportNewHTML2;
 
 /**
  * A class to export a given BibTeX file to another format
@@ -115,7 +116,7 @@ public class BibtexViewer {
                 exporter = new ExportCitations(BibtexViewer.BIBTEX_DIR,"literature.bib");
                 break;
             case "HTML_NEW":
-                exporter = new ExportNewHTML(BibtexViewer.BIBTEX_DIR,"literature.bib");
+                exporter = new ExportNewHTML2(BibtexViewer.BIBTEX_DIR,"literature.bib");
                 break;
             case "HTML":
             default:
