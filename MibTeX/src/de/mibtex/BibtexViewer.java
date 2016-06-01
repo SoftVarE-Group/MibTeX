@@ -11,7 +11,6 @@ import de.mibtex.export.ExportCSV;
 import de.mibtex.export.ExportCitations;
 import de.mibtex.export.ExportHTML;
 import de.mibtex.export.ExportJSON;
-import de.mibtex.export.ExportNewHTML;
 import de.mibtex.export.ExportNewHTML2;
 
 /**
