@@ -267,6 +267,8 @@
             arr.sort(function (a, b) {
                 var first = replaceA(a[col]);
                 var second = replaceA(b[col]);
+                if (col >= 4)
+                	return parseInt(first) <= parseInt(second);
                 return first.localeCompare(second);
             });
             if (asc) {
