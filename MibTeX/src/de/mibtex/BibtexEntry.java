@@ -75,12 +75,12 @@ public class BibtexEntry {
 		return citations;
 	}
 
-	public int getCitationsPerYear() {
+	public String getCitationsPerYear() {
 		int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 		double totalYears = currentYear - year;
 		if (citations <= 0 || year <= 0 || totalYears < 2)
-			return citations;
-		return (int) (citations / totalYears + 0.5);
+			return citations + "";
+		return (int) (citations / totalYears + 0.5) + " (" + citations + ")";
 	}
 
 	public File getPDFPath() {
