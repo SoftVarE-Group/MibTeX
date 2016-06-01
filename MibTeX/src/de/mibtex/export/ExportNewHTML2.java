@@ -106,7 +106,7 @@ public class ExportNewHTML2 extends Export {
 
 	private String generateCitationLink(BibtexEntry entry) {
 		return "<a href=\"https://scholar.google.de/scholar?q=" + entry.title
-				+ "\" target=\"_blank\">" + entry.getCitations() + "</a>";
+				+ "\" target=\"_blank\">" + entry.getCitationsPerYear() + "</a>";
 	}
 
 	private String generateYearLink(BibtexEntry entry) {

@@ -8,6 +8,7 @@ package de.mibtex;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -72,6 +73,14 @@ public class BibtexEntry {
 
 	public int getCitations() {
 		return citations;
+	}
+
+	public int getCitationsPerYear() {
+		int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+		double totalYears = currentYear - year;
+		if (citations <= 0 || year <= 0 || totalYears < 2)
+			return citations;
+		return (int) (citations / totalYears + 0.5);
 	}
 
 	public File getPDFPath() {
