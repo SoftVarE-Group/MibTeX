@@ -37,7 +37,7 @@ public class ExportNewHTML extends Export{
             .append(getJSONAttribute("year", entry.year)+",")
             .append(getJSONAttribute("citations", entry.getCitations())+",")
             .append(getJSONAttribute("tags", entry.tagList)+",")
-            .append(getJSONAttribute("pdf", entry.getPDFPath()))
+					.append(getJSONAttribute("pdf", entry.getRelativePDFPath()))
             .append("},");
         }
         JSON.append("]");

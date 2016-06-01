@@ -6,7 +6,6 @@
  */
 package de.mibtex.export;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -206,10 +205,8 @@ public class ExportHTML extends Export {
 	}
 
 	private String getHTMLTitle(BibtexEntry entry) {
-		File pdf = entry.getPDF();
-		String htmlTitle = "<a href=\"" + BibtexViewer.PDF_DIR_REL
-				+ pdf.getName() + "\">";
-		if (pdf.exists())
+		String htmlTitle = "<a href=\"" + entry.getRelativePDFPath() + "\">";
+		if (entry.getPDFPath().exists())
 			htmlTitle += entry.title + "</a>";
 		else
 			htmlTitle = entry.title + " " + htmlTitle + "n</a>";
@@ -229,8 +226,9 @@ public class ExportHTML extends Export {
 	}
 
 	private String getHTMLCitations(BibtexEntry entry) {
-		return "<a href=\"http://scholar.google.de/scholar?q="
-				+ entry.title + "\" target=\"scholar_window\">" + entry.getCitations() + "</a>";
+		return "<a href=\"http://scholar.google.de/scholar?q=" + entry.title
+				+ "\" target=\"scholar_window\">" + entry.getCitations()
+				+ "</a>";
 	}
 
 	private String getHTMLYear(BibtexEntry entry) {
