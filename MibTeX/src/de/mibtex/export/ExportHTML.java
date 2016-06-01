@@ -204,12 +204,12 @@ public class ExportHTML extends Export {
 		return s.substring(0, s.length() - 2);
 	}
 
-	private String getHTMLTitle(BibtexEntry entry) {
+	public static String getHTMLTitle(BibtexEntry entry) {
 		String htmlTitle = "<a href=\"" + entry.getRelativePDFPath() + "\">";
 		if (entry.getPDFPath().exists())
 			htmlTitle += entry.title + "</a>";
 		else
-			htmlTitle = entry.title + " " + htmlTitle + "n</a>";
+			htmlTitle = entry.title + " " + htmlTitle + "pdf</a>";
 		return htmlTitle;
 	}
 

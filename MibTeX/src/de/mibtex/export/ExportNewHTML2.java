@@ -72,9 +72,8 @@ public class ExportNewHTML2 extends Export {
 		return input.replace(replace, HTML.toString());
 	}
 
-	private String generateTitleLink(BibtexEntry entry) {
-		return "<a href=\"" + entry.getRelativePDFPath() + "\">" + entry.title
-				+ "</a>";
+	private static String generateTitleLink(BibtexEntry entry) {
+		return ExportHTML.getHTMLTitle(entry);
 	}
 
 	private String generateAuthorLinks(BibtexEntry entry) {
