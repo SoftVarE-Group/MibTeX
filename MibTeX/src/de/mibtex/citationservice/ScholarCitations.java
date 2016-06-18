@@ -21,9 +21,9 @@ import java.util.regex.Pattern;
  */
 public class ScholarCitations {
 	
-    public final static String SCHOLAR_URL = "http://scholar.google.com/scholar?q=";
+    private final static String SCHOLAR_URL = "http://scholar.google.com/scholar?q=";
     
-    public final static Pattern citationsPattern = Pattern.compile("Cited by \\s*(\\d+)");
+    private static Pattern citationsPattern; // = Pattern.compile("Cited by \\s*(\\d+)");
     
 //    public static int getYearlyCitations(String title, int publicationYear) {
 //        int citations = getCitations(title);
@@ -40,13 +40,15 @@ public class ScholarCitations {
     public static int getCitations(String title) throws MalformedURLException, IOException {
         String url = SCHOLAR_URL + title;
         String html = toString(connect(new URL(url)));
+        citationsPattern = Pattern.compile(".*"+title+".*Cited by (\\d?).*<\\/div><\\/div>.*");
         Matcher matcher = citationsPattern.matcher(html);
+        System.out.println(html);
         if (matcher.find())
             return Integer.parseInt(matcher.group(1));
         return CitationEntry.NOT_FOUND;
     }
     
-    public static InputStream connect(URL url) throws IOException {
+    private static InputStream connect(URL url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         String myCookie = "GSP=ID=bc97fd2103a97010:IN=88119b4bc736c413+eda666da4771d016:CF=4";
         connection.setRequestProperty("Cookie", myCookie);
@@ -55,7 +57,7 @@ public class ScholarCitations {
         return connection.getInputStream();
     }
     
-    public static String toString(InputStream in) throws IOException {
+    private static String toString(InputStream in) throws IOException {
         StringBuffer out = new StringBuffer();
         byte[] b = new byte[4096];
         for (int n; (n = in.read(b)) != -1;) {
