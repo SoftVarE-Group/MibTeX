@@ -79,7 +79,7 @@ public class ExportNewHTML2 extends Export {
 	private String generateAuthorLinks(BibtexEntry entry) {
 		StringBuilder HTML = new StringBuilder();
 		for (String author : entry.authorList) {
-			HTML.append("<a href=\"\" onclick=\"SetAuthor('" + author.trim()
+			HTML.append("<a href=\"\" onclick=\"setTag('searchAuthor','" + author.trim()
 					+ "');event.preventDefault();Filter();\">" + author
 					+ "</a>, ");
 		}
@@ -89,7 +89,7 @@ public class ExportNewHTML2 extends Export {
 	}
 
 	private String generateVenueLink(BibtexEntry entry) {
-		return "<a href=\"\" onclick=\"SetVenue('" + entry.venue.trim()
+		return "<a href=\"\" onclick=\"setTag('searchVenue','" + entry.venue.trim()
 				+ "');event.preventDefault();Filter();\">" + entry.venue
 				+ "</a>";
 	}
@@ -97,10 +97,11 @@ public class ExportNewHTML2 extends Export {
 	private String generateTagLinks(BibtexEntry entry) {
 		StringBuilder HTML = new StringBuilder();
 		for (String tag : entry.tagList) {
-			HTML.append("<a href=\"\" onclick=\"SetTag('" + tag.trim()
+			HTML.append("<a href=\"\" onclick=\"setTag('searchTag','" + tag.trim()
 					+ "');event.preventDefault();Filter();\">" + tag + "</a>, ");
 		}
 		HTML.deleteCharAt(HTML.length() - 1);
+                HTML.deleteCharAt(HTML.length() - 2);
 		return HTML.toString();
 	}
 
