@@ -1,415 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>MibTex</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <style type="text/css">
-        body {
+    <head>
+        <meta charset="UTF-8">
+        <title>MibTex</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <style type="text/css">
+            body {
             font-family: Verdana;
             color: red;
-        }
-
-        a {
+            }
+            a {
             text-decoration: none;
             color: black;
-        }
-
-        table {
+            }
+            table {
             border-collapse: collapse;
-        }
-
-        td, th {
+            }
+            td, th {
             border: thin solid lightgray;
             padding: 3px;
             text-align: center;
-        }
-
-        table {
+            }
+            table {
             border: 1px solid #ddd;
-        }
-
-        thead {
+            }
+            thead {
             background-color: darkslategrey;
             color: white;
-        }
-
-        .table {
+            }
+            .table {
             clear:both;
-        }
-
-        /*.table thead th {
+            }
+            /*.table thead th {
             border-bottom: 1px solid black;
-        }
-        .table tbody tr td {
+            }
+            .table tbody tr td {
             border-left: 1px solid black;
             padding: 5px;
-        }
-        .table tbody tr td:last-child {
-            border-right: 1px solid black;
-        }*/
-        .table th, .table td {
-            border-bottom: 1px solid #ddd;
-        }
-
-        .table td {
-            text-align: center;
-        }
-
-        .table tbody tr:hover {
-            background-color: #f5f5f5;
-        }
-
-        thead tr th a {
-            color: white;
-        }
-
-        .input {
-            width:95%;
-        }
-
-        /*
-        https://css-tricks.com/responsive-data-tables/
-        */
-        @media only screen and (max-width: 760px),
-        (max-device-width: 1024px) {
-
-            body {
-                font-size: 0.85em;
             }
-
+            .table tbody tr td:last-child {
+            border-right: 1px solid black;
+            }*/
+            .table th, .table td {
+            border-bottom: 1px solid #ddd;
+            }
+            .table td {
+            text-align: center;
+            }
+            .table tbody tr:hover {
+            background-color: #f5f5f5;
+            }
+            thead tr th a {
+            color: white;
+            }
+            .mobile {
+            display: none;
+            }
+            .mobiletable {
+            text-align:center;
+            width: auto;
+            float: right;
+            font-size:0.75em;
+            }
+            .input {
+            width:95%;
+            }
+            /*
+            https://css-tricks.com/responsive-data-tables/
+            */
+            @media only screen and (max-width: 760px),
+            (max-device-width: 1024px) {
+            body {
+            font-size: 0.85em;
+            }
             /* Force table to not be like tables anymore */
             table, thead, tbody, th, td, tr {
-                display: block;
+            display: block;
             }
-
             thead tr {
-                position: absolute;
-                top: -9999px;
-                left: -9999px;
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
             }
-
             tr {
-                border: 1px solid #ccc;
-                margin-bottom: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
             }
-
             .table td {
-                border: none;
-                border-bottom: 1px solid #eee;
-                position: relative;
-                padding-left: 25%;
-                min-height: 25px;
+            border: none;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            padding-left: 25%;
+            min-height: 25px;
             }
-
             .table td:before {
-                position: absolute;
-                top: 6px;
-                font-weight: bold;
-                left: 6px;
-                width: 20%;
-                padding-right: 10px;
-                white-space: nowrap;
+            position: absolute;
+            top: 6px;
+            font-weight: bold;
+            left: 6px;
+            width: 20%;
+            padding-right: 10px;
+            white-space: nowrap;
             }
-
             /*
             Label the data
             */
             .table td:nth-of-type(1):before {
-                content: "Title";
+            content: "Title";
             }
-
             .table td:nth-of-type(2):before {
-                content: "Authors";
+            content: "Authors";
             }
-
             .table td:nth-of-type(3):before {
-                content: "Venues";
+            content: "Venues";
             }
-
             .table td:nth-of-type(4):before {
-                content: "Tags";
+            content: "Tags";
             }
-
             .table td:nth-of-type(5):before {
-                content: "Citations";
+            content: "Citations";
             }
-
             .table td:nth-of-type(6):before {
-                content: "Year";
+            content: "Year";
             }
-
+            .mobile {
+            display: block;
+            }
+            .mobiletable {
+            text-align:center;
+            width: 100%;
+            float: none;
+            font-size:0.75em;
+            }
             input {
-                width: 95%;
-                margin: 10px;
+            width: 95%;
             }
-
-        }
-    </style>
-    <script>
-        String.prototype.contains = function (it) {
-            return (this.toLowerCase().indexOf(it.toLowerCase()) != -1 || it == "");
-        };
-
-        String.prototype.equals = function (it) {
-            return (this.toLowerCase() === it.toLowerCase());
-        };
-
-        function Filter() {
-            // Reads inputs
-            var searchTitle = "" + document.getElementById("searchTitle").value;
-            var searchAuthors = "" + document.getElementById("searchAuthor").value;
-            var searchVenues = "" + document.getElementById("searchVenue").value;
-            var searchTags = "" + document.getElementById("searchTag").value;
-            var searchCitation = "" + document.getElementById("searchCitation").value;
-            var searchYear = "" + document.getElementById("searchYear").value;
-
-            var table = document.getElementById("literature");
-            var rows = table.getElementsByTagName("tbody")[0].rows;
-
-            // Filter data
-            var count = 0;
-            for (var i = 0, row; row = rows[i]; i++) {
-
-                var title = deleteLinks(row.cells[0].innerHTML);
-                var authors = row.cells[1].innerHTML;
-                var venues = row.cells[2].innerHTML;
-                var tags = row.cells[3].innerHTML;
-                var citations = row.cells[4].getElementsByTagName('a')[0].innerHTML;
-                var years = row.cells[5].getElementsByTagName('a')[0].innerHTML;
-
-                var checkTitle = checkLogicalSearch(title, searchTitle);
-                var checkAuthors = checkLogicalSearch(authors, searchAuthors);
-                var checkVenues = checkLogicalSearch(venues, searchVenues);
-                var checkTags = checkLogicalSearch(tags, searchTags);
-                var checkCitations = checkLogicalSearch(citations, searchCitation);
-                var checkYears = checkLogicalSearch(years, searchYear);
-
-                if (checkTitle && checkAuthors && checkVenues && checkTags && checkCitations && checkYears) {
-                    document.getElementById(row.id).style.display = '';
-                    count++;
+            }
+        </style>
+        <script>
+            String.prototype.contains = function (it) {
+                return (this.toLowerCase().indexOf(it.toLowerCase()) != -1 || it == "");
+            };
+            
+            String.prototype.equals = function (it) {
+                return (this.toLowerCase() === it.toLowerCase());
+            };
+            
+            function Filter() {
+                // Reads inputs
+                var searchTitle = "" + document.getElementById("searchTitle").value;
+                var searchAuthors = "" + document.getElementById("searchAuthor").value;
+                var searchVenues = "" + document.getElementById("searchVenue").value;
+                var searchTags = "" + document.getElementById("searchTag").value;
+                var searchCitation = "" + document.getElementById("searchCitation").value;
+                var searchYear = "" + document.getElementById("searchYear").value;
+            
+                var table = document.getElementById("literature");
+                var rows = table.getElementsByTagName("tbody")[0].rows;
+            
+                // Filter data
+                var count = 0;
+                for (var i = 0, row; row = rows[i]; i++) {
+            
+                    var title = deleteLinks(row.cells[0].innerHTML);
+                    var authors = row.cells[1].innerHTML;
+                    var venues = row.cells[2].innerHTML;
+                    var tags = row.cells[3].innerHTML;
+                    var citations = row.cells[4].getElementsByTagName('a')[0].innerHTML;
+                    var years = row.cells[5].getElementsByTagName('a')[0].innerHTML;
+            
+                    var checkTitle = checkLogicalSearch(title, searchTitle);
+                    var checkAuthors = checkLogicalSearch(authors, searchAuthors);
+                    var checkVenues = checkLogicalSearch(venues, searchVenues);
+                    var checkTags = checkLogicalSearch(tags, searchTags);
+                    var checkCitations = checkLogicalSearch(citations, searchCitation);
+                    var checkYears = checkLogicalSearch(years, searchYear);
+            
+                    if (checkTitle && checkAuthors && checkVenues && checkTags && checkCitations && checkYears) {
+                        document.getElementById(row.id).style.display = '';
+                        count++;
+                    } else {
+                        document.getElementById(row.id).style.display = 'none';
+                    }
+                }
+                // Sets filter count
+                document.getElementById("countFilter").innerHTML = "" + count;
+            
+            }
+            
+            function checkLogicalSearch(str, searchStr) {
+                if (isInt(searchStr) || !searchStr.equals("")) {
+                    checkVector = createSearchVector(searchStr);
+                    var checkGlobal = true;
+                    for (var i = 0, row; row = checkVector[i]; i++) {
+                        var checkLocal = false;
+                        for (var j = 0, col; col = checkVector[i][j]; j++) {
+                            if (!isInt(searchStr)) {
+                                if (str.contains(col)) {
+                                    checkLocal = true;
+                                }
+                            } else {
+                                if (Number(str) == col) {
+                                    checkLocal = true;
+                                }
+                            }
+                        }
+                        if (!checkLocal) {
+                            checkGlobal = false;
+                        }
+                    }
+                    return checkGlobal;
                 } else {
-                    document.getElementById(row.id).style.display = 'none';
+                    return true;
                 }
             }
-            // Sets filter count
-            document.getElementById("countFilter").innerHTML = "" + count;
-
-        }
-
-        function checkLogicalSearch(str, searchStr) {
-            if (isInt(searchStr) || !searchStr.equals("")) {
-                checkVector = createSearchVector(searchStr);
-                var checkGlobal = true;
-                for (var i = 0, row; row = checkVector[i]; i++) {
-                    var checkLocal = false;
-                    for (var j = 0, col; col = checkVector[i][j]; j++) {
-                        if (!isInt(searchStr)) {
-                            if (str.contains(col)) {
-                                checkLocal = true;
-                            }
-                        } else {
-                            if (Number(str) == col) {
-                                checkLocal = true;
+            
+            function createSearchVector(str) {
+                var sAs = new Array();
+                if (str.contains('&') || str.contains('|')) {
+                    sAsAnd = str.split('&');
+                    for (var i = 0, sAa; sAa = sAsAnd[i]; i++) {
+                        sAsOr = sAa.split('|');
+                        sAs[i] = new Array();
+                        for (var j = 0, sAo; sAo = sAsOr[j]; j++) {
+                            if (isInt(sAo)) {
+                                sAs[i][j] = Number(sAo);
+                            } else {
+                                sAs[i][j] = sAo.trim();
                             }
                         }
                     }
-                    if (!checkLocal) {
-                        checkGlobal = false;
+                } else {
+                    sAs[0] = new Array();
+                    if (isInt(str)) {
+                        sAs[0][0] = Number(str);
+                    } else {
+                        sAs[0][0] = str.trim();
                     }
                 }
-                return checkGlobal;
-            } else {
-                return true;
+                return sAs;
             }
-        }
-
-        function createSearchVector(str) {
-            var sAs = new Array();
-            if (str.contains('&') || str.contains('|')) {
-                sAsAnd = str.split('&');
-                for (var i = 0, sAa; sAa = sAsAnd[i]; i++) {
-                    sAsOr = sAa.split('|');
-                    sAs[i] = new Array();
-                    for (var j = 0, sAo; sAo = sAsOr[j]; j++) {
-                        if (isInt(sAo)) {
-                            sAs[i][j] = Number(sAo);
-                        } else {
-                            sAs[i][j] = sAo.trim();
+            
+            function deleteLinks(str) {
+                return str.replace(/<a href=\".*?\" .*?>.*?<\/a>/g, " ").replace(/(\n|\t|,{0}\s)/g, " ").replace(/\s\s+/g, ' ').replace(/ ,/g, ",").trim();
+            }
+            
+            var lastSortCol;
+            var lastSortAsc = false;
+            function SortTable(col) {
+                var asc;
+                if (lastSortCol == col) {
+                    asc = !lastSortAsc;
+                } else {
+                    asc = true;
+                }
+                lastSortCol = col;
+                lastSortAsc = asc;
+            
+                var table = document.getElementById("literature");
+                var rows = table.rows;
+                var rlen = rows.length - 1;
+                var arr = new Array();
+                var cells;
+            
+                for (var i = 0; i < rlen; i++) {
+                    cells = rows[i + 1].cells;
+                    arr[i] = new Array();
+                    for (var j = 0; j < 6; j++) {
+                        arr[i][j] = cells[j].innerHTML;
+                    }
+                }
+            
+                arr.sort(function (a, b) {
+                    var first = a[col].replace(/<a href=\".*?\" .*?>/g, '').replace(/<\/a>/g, '');
+                    var second = b[col].replace(/<a href=\".*?\" .*?>/g, '').replace(/<\/a>/g, '');
+                    ;
+                    console.log(first + "--" + second);
+                    if (isInt(a[col]))
+                        return Number(first) <= Number(second);
+                    return first.localeCompare(second);
+                });
+                if (asc) {
+                    for (var rowidx = 0; rowidx < rlen; rowidx++) {
+                        for (var colidx = 0; colidx < 6; colidx++) {
+                            table.rows[rowidx + 1].cells[colidx].innerHTML = arr[rowidx][colidx];
+                        }
+                    }
+                } else {
+                    for (var rowidx = 0; rowidx < rlen; rowidx++) {
+                        for (var colidx = 0; colidx < 6; colidx++) {
+                            table.rows[rlen - rowidx].cells[colidx].innerHTML = arr[rowidx][colidx];
                         }
                     }
                 }
-            } else {
-                sAs[0] = new Array();
-                if (isInt(str)) {
-                    sAs[0][0] = Number(str);
-                } else {
-                    sAs[0][0] = str.trim();
-                }
             }
-            return sAs;
-        }
-
-        function deleteLinks(str) {
-            return str.replace(/<a href=\".*?\" .*?>.*?<\/a>/g, " ").replace(/(\n|\t|,{0}\s)/g, " ").replace(/\s\s+/g, ' ').replace(/ ,/g, ",").trim();
-        }
-
-        var lastSortCol;
-        var lastSortAsc = false;
-        function SortTable(col) {
-            var asc;
-            if (lastSortCol == col) {
-                asc = !lastSortAsc;
-            } else {
-                asc = true;
+            
+            function OnLoad() {
+                var table = document.getElementById("literature");
+                var count = table.getElementsByTagName("tbody")[0].rows.length;
+                // Sets the overall count and the start filter count
+                document.getElementById("countOverall").innerHTML = "" + count;
+                document.getElementById("countFilter").innerHTML = "" + count;
             }
-            lastSortCol = col;
-            lastSortAsc = asc;
-
-            var table = document.getElementById("literature");
-            var rows = table.rows;
-            var rlen = rows.length - 1;
-            var arr = new Array();
-            var cells;
-
-            for (var i = 0; i < rlen; i++) {
-                cells = rows[i + 1].cells;
-                arr[i] = new Array();
-                for (var j = 0; j < 6; j++) {
-                    arr[i][j] = cells[j].innerHTML;
-                }
+            
+            function setTag(tag, str) {
+                document.getElementById(tag).value = "" + str;
             }
-
-            arr.sort(function (a, b) {
-                var first = a[col].replace(/<a href=\".*?\" .*?>/g, '').replace(/<\/a>/g, '');
-                var second = b[col].replace(/<a href=\".*?\" .*?>/g, '').replace(/<\/a>/g, '');
-                ;
-                console.log(first + "--" + second);
-                if (isInt(a[col]))
-                    return Number(first) <= Number(second);
-                return first.localeCompare(second);
-            });
-            if (asc) {
-                for (var rowidx = 0; rowidx < rlen; rowidx++) {
-                    for (var colidx = 0; colidx < 6; colidx++) {
-                        table.rows[rowidx + 1].cells[colidx].innerHTML = arr[rowidx][colidx];
-                    }
-                }
-            } else {
-                for (var rowidx = 0; rowidx < rlen; rowidx++) {
-                    for (var colidx = 0; colidx < 6; colidx++) {
-                        table.rows[rlen - rowidx].cells[colidx].innerHTML = arr[rowidx][colidx];
-                    }
-                }
+            
+            function isInt(n) {
+                return Number(n) === n && n % 1 === 0;
             }
-        }
-
-        function OnLoad() {
-            var table = document.getElementById("literature");
-            var count = table.getElementsByTagName("tbody")[0].rows.length;
-            // Sets the overall count and the start filter count
-            document.getElementById("countOverall").innerHTML = "" + count;
-            document.getElementById("countFilter").innerHTML = "" + count;
-        }
-
-        function setTag(tag, str) {
-            document.getElementById(tag).value = "" + str;
-        }
-
-        function isInt(n) {
-            return Number(n) === n && n % 1 === 0;
-        }
-    </script>
-</head>
-<body onload="OnLoad();">
-
-<div style="margin-bottom: 10px;">
-    <table style="text-align:center;width: auto;float: right;font-size:0.75em">
-        <!--  <thead>
-       <tr>
-        <td>Title</td>
-           <td>Authors</td>
-           <td>Venues</td>
-           <td>Tags</td>
-           <td>Citations</td>
-           <td>Year</td>
-            <td>Actual Count</td>
-            <td>.bib</td>
-        </tr>
-        </thead>-->
-        <tbody>
-        <tr>
-        <!--    <td><input type="search" id="searchTitle" onchange="Filter()" autofocus placeholder="Title"></td>
-            <td><input type="search" id="searchAuthor" onchange="Filter()" placeholder="Author"></td>
-            <td><input type="search" id="searchVenue" onchange="Filter()" list="venueList" placeholder="Venue">
-                <datalist id="venueList">
-                    INSERT_VENUE_OPTIONS
-                </datalist>
-            </td>
-            <td><input type="search" id="searchTag" onchange="Filter()" list="tagList" placeholder="Tag">
-                <datalist id="tagList">
-                    INSERT_TAG_OPTIONS
-                </datalist>
-            </td>
-            <td><input type="search" id="searchCitation" onchange="Filter()" placeholder="Citations"></td>
-            <td><input type="search" id="searchYear" onchange="Filter()" list="yearList" placeholder="Year">
-                <datalist id="yearList">
-                    INSERT_YEAR_OPTIONS
-                </datalist>
-            </td>-->
-            <td><b><span id="countFilter"></span>/<span id="countOverall"></span></b></td>
-            <td><a href="INSERT_BIB_PATH" type='text/plain'>FILE</a></td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-<table id="literature" class="table">
-    <thead>
-    <tr>
-        <th style="width: 25%">
-            <a href="" onclick="event.preventDefault();SortTable(0);Filter();">Title</a>
-            <br>
-            <input type="search" id="searchTitle" class="input" onchange="Filter()" autofocus placeholder="Title">
-        </th>
-        <th style="width: 25%">
-            <a href="" onclick="event.preventDefault();SortTable(1);Filter();">Authors</a>
-            <br>
-            <input type="search" id="searchAuthor" class="input" onchange="Filter()" placeholder="Author">
-        </th>
-        <th style="width: 10%">
-            <a href="" onclick="event.preventDefault();SortTable(2);Filter();">Venues</a>
-            <br>
-            <input type="search" id="searchVenue" class="input" onchange="Filter()" list="venueList" placeholder="Venue">
-            <datalist id="venueList">
-                INSERT_VENUE_OPTIONS
-            </datalist>
-        </th>
-        <th style="width: 20%">
-            <a href="" onclick="event.preventDefault();SortTable(3);Filter();">Tags</a>
-            <br>
-            <input type="search" id="searchTag" class="input" onchange="Filter()" list="tagList" placeholder="Tag">
-            <datalist id="tagList">
-                INSERT_TAG_OPTIONS
-            </datalist>
-        </th>
-        <th style="width: 10%">
-            <a href="" onclick="event.preventDefault();SortTable(4);Filter();">Citations</a>
-            <br>
-            <input type="search" id="searchCitation" class="input" onchange="Filter()" placeholder="Citations">
-        </th>
-        <th style="width: 10%">
-            <a href="" onclick="event.preventDefault();SortTable(5);Filter();">Year</a>
-            <br>
-            <input type="search" id="searchYear" class="input" onchange="Filter()" list="yearList" placeholder="Year">
-            <datalist id="yearList">
-                INSERT_YEAR_OPTIONS
-            </datalist>
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    DATA_INSERT_HERE
-    </tbody>
-</table>
-</body>
+        </script>
+    </head>
+    <body onload="OnLoad();">
+        <div style="margin-bottom: 10px;">
+            <table class="mobiletable">
+                <thead class="mobile">
+                    <tr>
+                        <td>Title</td>
+                        <td>Authors</td>
+                        <td>Venues</td>
+                        <td>Tags</td>
+                        <td>Citations</td>
+                        <td>Year</td>
+                        <td>Actual Count</td>
+                        <td>.bib</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="mobile"><input type="search" id="searchTitle" onchange="Filter()" autofocus placeholder="Title"></td>
+                        <td class="mobile"><input type="search" id="searchAuthor" onchange="Filter()" placeholder="Author"></td>
+                        <td class="mobile">
+                            <input type="search" id="searchVenue" onchange="Filter()" list="venueList" placeholder="Venue">
+                            <datalist id="venueList">
+                                INSERT_VENUE_OPTIONS
+                            </datalist>
+                        </td>
+                        <td class="mobile">
+                            <input type="search" id="searchTag" onchange="Filter()" list="tagList" placeholder="Tag">
+                            <datalist id="tagList">
+                                INSERT_TAG_OPTIONS
+                            </datalist>
+                        </td>
+                        <td class="mobile"><input type="search" id="searchCitation" onchange="Filter()" placeholder="Citations"></td>
+                        <td class="mobile">
+                            <input type="search" id="searchYear" onchange="Filter()" list="yearList" placeholder="Year">
+                            <datalist id="yearList">
+                                INSERT_YEAR_OPTIONS
+                            </datalist>
+                        </td>
+                        <td><b><span id="countFilter"></span>/<span id="countOverall"></span></b></td>
+                        <!--<td><a href="INSERT_BIB_PATH" type='application/x-bibtex'>FILE</a></td>-->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <table id="literature" class="table">
+            <thead>
+                <tr>
+                    <th style="width: 25%">
+                        <a href="" onclick="event.preventDefault();SortTable(0);Filter();">Title</a>
+                        <br>
+                        <input type="search" id="searchTitle" class="input" onchange="Filter()" autofocus placeholder="Title">
+                    </th>
+                    <th style="width: 25%">
+                        <a href="" onclick="event.preventDefault();SortTable(1);Filter();">Authors</a>
+                        <br>
+                        <input type="search" id="searchAuthor" class="input" onchange="Filter()" placeholder="Author">
+                    </th>
+                    <th style="width: 10%">
+                        <a href="" onclick="event.preventDefault();SortTable(2);Filter();">Venues</a>
+                        <br>
+                        <input type="search" id="searchVenue" class="input" onchange="Filter()" list="venueList" placeholder="Venue">
+                        <datalist id="venueList">
+                            INSERT_VENUE_OPTIONS
+                        </datalist>
+                    </th>
+                    <th style="width: 20%">
+                        <a href="" onclick="event.preventDefault();SortTable(3);Filter();">Tags</a>
+                        <br>
+                        <input type="search" id="searchTag" class="input" onchange="Filter()" list="tagList" placeholder="Tag">
+                        <datalist id="tagList">
+                            INSERT_TAG_OPTIONS
+                        </datalist>
+                    </th>
+                    <th style="width: 10%">
+                        <a href="" onclick="event.preventDefault();SortTable(4);Filter();">Citations</a>
+                        <br>
+                        <input type="search" id="searchCitation" class="input" onchange="Filter()" placeholder="Citations">
+                    </th>
+                    <th style="width: 10%">
+                        <a href="" onclick="event.preventDefault();SortTable(5);Filter();">Year</a>
+                        <br>
+                        <input type="search" id="searchYear" class="input" onchange="Filter()" list="yearList" placeholder="Year">
+                        <datalist id="yearList">
+                            INSERT_YEAR_OPTIONS
+                        </datalist>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                DATA_INSERT_HERE
+            </tbody>
+        </table>
+    </body>
 </html>
