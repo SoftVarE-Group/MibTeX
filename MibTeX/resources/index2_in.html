@@ -21,10 +21,10 @@
             padding: 3px;
             text-align: center;
             }
-            table {
+            table:not(:first-child) {
             border: 1px solid #ddd;
             }
-            thead {
+            .tablehead {
             background-color: darkslategrey;
             color: white;
             }
@@ -46,6 +46,9 @@
             }
             .table td {
             text-align: center;
+            }
+            .table tbody tr:first-child:hover {
+            background-color:darkslategrey;
             }
             .table tbody tr:hover {
             background-color: #f5f5f5;
@@ -161,7 +164,7 @@
             
                 // Filter data
                 var count = 0;
-                for (var i = 0, row; row = rows[i]; i++) {
+                for (var i = 1, row; row = rows[i]; i++) {
             
                     var title = deleteLinks(row.cells[0].innerHTML);
                     var authors = row.cells[1].innerHTML;
@@ -264,7 +267,7 @@
                 var arr = new Array();
                 var cells;
             
-                for (var i = 0; i < rlen; i++) {
+                for (var i = 1; i < rlen; i++) {
                     cells = rows[i + 1].cells;
                     arr[i] = new Array();
                     for (var j = 0; j < 6; j++) {
@@ -275,20 +278,18 @@
                 arr.sort(function (a, b) {
                     var first = a[col].replace(/<a href=\".*?\" .*?>/g, '').replace(/<\/a>/g, '');
                     var second = b[col].replace(/<a href=\".*?\" .*?>/g, '').replace(/<\/a>/g, '');
-                    ;
-                    console.log(first + "--" + second);
                     if (isInt(a[col]))
                         return Number(first) <= Number(second);
                     return first.localeCompare(second);
                 });
                 if (asc) {
-                    for (var rowidx = 0; rowidx < rlen; rowidx++) {
+                    for (var rowidx = 1; rowidx < rlen; rowidx++) {
                         for (var colidx = 0; colidx < 6; colidx++) {
                             table.rows[rowidx + 1].cells[colidx].innerHTML = arr[rowidx][colidx];
                         }
                     }
                 } else {
-                    for (var rowidx = 0; rowidx < rlen; rowidx++) {
+                    for (var rowidx = 1; rowidx < rlen; rowidx++) {
                         for (var colidx = 0; colidx < 6; colidx++) {
                             table.rows[rlen - rowidx].cells[colidx].innerHTML = arr[rowidx][colidx];
                         }
@@ -298,7 +299,7 @@
             
             function OnLoad() {
                 var table = document.getElementById("literature");
-                var count = table.getElementsByTagName("tbody")[0].rows.length;
+                var count = table.getElementsByTagName("tbody")[0].rows.length-1;
                 // Sets the overall count and the start filter count
                 document.getElementById("countOverall").innerHTML = "" + count;
                 document.getElementById("countFilter").innerHTML = "" + count;
@@ -316,7 +317,7 @@
     <body onload="OnLoad();">
         <div style="margin-bottom: 10px;">
             <table class="mobiletable">
-                <thead class="mobile">
+                <!--<thead class="mobile tablehead">
                     <tr>
                         <td>Title</td>
                         <td>Authors</td>
@@ -330,7 +331,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="mobile"><input type="search" id="searchTitle" onchange="Filter()" autofocus placeholder="Title"></td>
+                        <!--<td class="mobile"><input type="search" id="searchTitle" onchange="Filter()" autofocus placeholder="Title"></td>
                         <td class="mobile"><input type="search" id="searchAuthor" onchange="Filter()" placeholder="Author"></td>
                         <td class="mobile">
                             <input type="search" id="searchVenue" onchange="Filter()" list="venueList" placeholder="Venue">
@@ -350,58 +351,57 @@
                             <datalist id="yearList">
                                 INSERT_YEAR_OPTIONS
                             </datalist>
-                        </td>
+                        </td>-->
                         <td><b><span id="countFilter"></span>/<span id="countOverall"></span></b></td>
-                        <!--<td><a href="INSERT_BIB_PATH" type='application/x-bibtex'>FILE</a></td>-->
+                        <!--<td><a href="INSERT_BIB_PATH" type='application/x-bibtex'>FILE</a></td>
                     </tr>
-                </tbody>
+                </tbody>-->
             </table>
         </div>
         <table id="literature" class="table">
-            <thead>
+            <thead class="tablehead">
                 <tr>
                     <th style="width: 25%">
                         <a href="" onclick="event.preventDefault();SortTable(0);Filter();">Title</a>
-                        <br>
-                        <input type="search" id="searchTitle" class="input" onchange="Filter()" autofocus placeholder="Title">
                     </th>
                     <th style="width: 25%">
                         <a href="" onclick="event.preventDefault();SortTable(1);Filter();">Authors</a>
-                        <br>
-                        <input type="search" id="searchAuthor" class="input" onchange="Filter()" placeholder="Author">
                     </th>
                     <th style="width: 10%">
                         <a href="" onclick="event.preventDefault();SortTable(2);Filter();">Venues</a>
-                        <br>
-                        <input type="search" id="searchVenue" class="input" onchange="Filter()" list="venueList" placeholder="Venue">
-                        <datalist id="venueList">
-                            INSERT_VENUE_OPTIONS
-                        </datalist>
                     </th>
                     <th style="width: 20%">
                         <a href="" onclick="event.preventDefault();SortTable(3);Filter();">Tags</a>
-                        <br>
-                        <input type="search" id="searchTag" class="input" onchange="Filter()" list="tagList" placeholder="Tag">
-                        <datalist id="tagList">
-                            INSERT_TAG_OPTIONS
-                        </datalist>
                     </th>
                     <th style="width: 10%">
                         <a href="" onclick="event.preventDefault();SortTable(4);Filter();">Citations</a>
-                        <br>
-                        <input type="search" id="searchCitation" class="input" onchange="Filter()" placeholder="Citations">
                     </th>
                     <th style="width: 10%">
                         <a href="" onclick="event.preventDefault();SortTable(5);Filter();">Year</a>
-                        <br>
-                        <input type="search" id="searchYear" class="input" onchange="Filter()" list="yearList" placeholder="Year">
-                        <datalist id="yearList">
-                            INSERT_YEAR_OPTIONS
-                        </datalist>
                     </th>
                 </tr>
             </thead>
             <tbody>
+                <tr class="tablehead">
+                    <td><input type="search" id="searchTitle" class="input" onchange="Filter()" autofocus placeholder="Title"></td>
+                    <td><input type="search" id="searchAuthor" class="input" onchange="Filter()" placeholder="Author"></td>
+                    <td><input type="search" id="searchVenue" class="input" onchange="Filter()" list="venueList" placeholder="Venue">
+                        <datalist id="venueList">
+                            INSERT_VENUE_OPTIONS
+                        </datalist>
+                    </td>
+                    <td><input type="search" id="searchTag" class="input" onchange="Filter()" list="tagList" placeholder="Tag">
+                        <datalist id="tagList">
+                            INSERT_TAG_OPTIONS
+                        </datalist>
+                    </td>
+                    <td><input type="search" id="searchCitation" class="input" onchange="Filter()" placeholder="Citations"></td>
+                    <td><input type="search" id="searchYear" class="input" onchange="Filter()" list="yearList" placeholder="Year">
+                        <datalist id="yearList">
+                            INSERT_YEAR_OPTIONS
+                        </datalist>
+                    </td>
+                </tr>
                 DATA_INSERT_HERE
             </tbody>
         </table>
