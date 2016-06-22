@@ -138,6 +138,7 @@
             }
         </style>
         <script>
+            
             String.prototype.contains = function (it) {
                 return (this.toLowerCase().indexOf(it.toLowerCase()) != -1 || it == "");
             };
@@ -166,8 +167,8 @@
                     var authors = row.cells[1].innerHTML;
                     var venues = row.cells[2].innerHTML;
                     var tags = row.cells[3].innerHTML;
-                    var citations = row.cells[4].getElementsByTagName('a')[0].innerHTML;
-                    var years = row.cells[5].getElementsByTagName('a')[0].innerHTML;
+                    var citations = row.cells[4].getElementsByTagName('a')[0].innerHTML.replace(/\(.*\)/g, "").trim();
+                    var years = row.cells[5].getElementsByTagName('a')[0].innerHTML.trim();
             
                     var checkTitle = checkLogicalSearch(title, searchTitle);
                     var checkAuthors = checkLogicalSearch(authors, searchAuthors);
@@ -308,7 +309,7 @@
             }
             
             function isInt(n) {
-                return Number(n) === n && n % 1 === 0;
+                return (Number(n) === n && n % 1 === 0) || (!isNaN(parseFloat(n)) && isFinite(n));
             }
         </script>
     </head>
