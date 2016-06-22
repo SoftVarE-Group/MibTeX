@@ -263,37 +263,38 @@
             
             	var table = document.getElementById("literature");
                 var rows = table.getElementsByTagName("tbody")[0].rows;
-                var rlen = rows.length - 1;
+                var rlen = rows.length;
                 var arr = new Array();
                 var cells;
             
                 for (var i = 1; i < rlen; i++) {
                     cells = rows[i].cells;
-                    arr[i] = new Array();
+                    arr[i-1] = new Array();
                     for (var j = 0; j < 6; j++) {
-                        arr[i][j] = cells[j].innerHTML;
+                        arr[i-1][j] = cells[j].innerHTML;
                     }
                 }
             
                 arr.sort(function (a, b) {
-                    var first = a[col].replace(/<a href=\".*?\" .*?>/g, '').replace(/<\/a>/g, '');
-                    var second = b[col].replace(/<a href=\".*?\" .*?>/g, '').replace(/<\/a>/g, '');
-                    if (isInt(first.replace(/ \(.*\)/g, "").trim()))
+                    var first = a[col].replace(/<a.*?>/g, '').replace(/<\/a>/g, '');
+                    var second = b[col].replace(/<a.*?>/g, '').replace(/<\/a>/g, '');
+                    if (isInt(first.replace(/ \(.*\)/g, "").trim())) {
                     	first = first.replace(/ \(.*\)/g, "").trim();
                     	second = second.replace(/ \(.*\)/g, "").trim();
                         return Number(first) <= Number(second)?-1:1;
+                    }
                     return first.localeCompare(second);
                 });
                 if (asc) {
-                    for (var rowidx = 1; rowidx < rlen; rowidx++) {
+                    for (var rowidx = 2; rowidx <= rlen; rowidx++) {
                         for (var colidx = 0; colidx < 6; colidx++) {
-                            table.rows[rowidx+1].cells[colidx].innerHTML = arr[rowidx-1][colidx];
+                            table.rows[rowidx].cells[colidx].innerHTML = arr[rowidx-2][colidx];
                         }
                     }
                 } else {
-                    for (var rowidx = 1; rowidx < rlen; rowidx++) {
+                    for (var rowidx = 0; rowidx <= rlen-2; rowidx++) {
                         for (var colidx = 0; colidx < 6; colidx++) {
-                            table.rows[rlen - rowidx+1].cells[colidx].innerHTML = arr[rowidx-1][colidx];
+                            table.rows[rlen - rowidx].cells[colidx].innerHTML = arr[rowidx][colidx];
                         }
                     }
                 }
