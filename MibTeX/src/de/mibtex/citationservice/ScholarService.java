@@ -25,7 +25,7 @@ import java.util.Random;
  */
 public class ScholarService extends Thread {
     
-	private static final int MIN_DELAY = 60*20;
+	private static final int MIN_DELAY = 60*18;
 
 	private static final int EXTRA_DELAY = 1;
 

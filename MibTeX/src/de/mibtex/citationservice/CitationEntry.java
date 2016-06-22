@@ -14,14 +14,14 @@ import java.text.DateFormat;
  * @author Christopher Sontag, Thomas Thuem
  */
 public class CitationEntry implements Comparable<CitationEntry> {
-	
+    
     private static final String UNKNOWN = "unknown";
     
-	public final static int UNINITIALIZED = -1;
+    public final static int UNINITIALIZED = -1;
     
-	public final static int NOT_FOUND = -2;
+    public final static int NOT_FOUND = -2;
     
-	public final static int PROBLEM_OCCURED = -3;
+    public final static int PROBLEM_OCCURED = -3;
     
     private String key = UNKNOWN;
     
@@ -67,27 +67,32 @@ public class CitationEntry implements Comparable<CitationEntry> {
         System.out.println("Updating the citations of " + key + " with title \"" + getTitle() + "\"...");
         System.out.println("\told citations: " + citations + "   old timestamp: " + getLastUpdateString());
         try {
-			this.citations = ScholarCitations.getCitations(title.replace(" ", "%20"));
-		} catch (Exception e) {
-			this.citations = PROBLEM_OCCURED;
-			e.printStackTrace();
-		}
+            int citationsTemp = ScholarCitations.getCitations(title);
+            if (this.citations > 0 && citationsTemp < 0) {
+                System.out.println("\t" + this.key
+                        + ": Has an old citation count, but now an error occurres");
+            }
+            this.citations = citationsTemp;
+        } catch (Exception e) {
+            this.citations = PROBLEM_OCCURED;
+            e.printStackTrace();
+        }
         this.lastUpdate = System.currentTimeMillis();
         System.out.println("\tnew citations: " + citations + "   new timestamp: " + getLastUpdateString());
     }
     
     private String getLastUpdateString() {
-		return DateFormat.getInstance().format(lastUpdate);
-	}
-
-	public long getLastUpdate() {
+        return DateFormat.getInstance().format(lastUpdate);
+    }
+    
+    public long getLastUpdate() {
         return lastUpdate;
     }
     
     public void setLastUpdate(long last_update) {
         this.lastUpdate = last_update;
     }
-
+    
     public String getCSVString() {
         StringBuilder out = new StringBuilder();
         out.append("\"" + getKey() + "\";");
@@ -105,18 +110,18 @@ public class CitationEntry implements Comparable<CitationEntry> {
     
     @Override
     public boolean equals(Object v) {
-          boolean value = false;
-          if (v instanceof CitationEntry){
-              CitationEntry entry = (CitationEntry) v;
-              value = (getKey().equals(entry.getKey()) && getTitle().equals(entry.getTitle()));
-          }
-       return value;
+        boolean value = false;
+        if (v instanceof CitationEntry) {
+            CitationEntry entry = (CitationEntry) v;
+            value = (getKey().equals(entry.getKey()) && getTitle().equals(entry.getTitle()));
+        }
+        return value;
     }
-
-      @Override
-      public int hashCode() {
-          return getKey().hashCode()*getTitle().hashCode();
-      }
+    
+    @Override
+    public int hashCode() {
+        return getKey().hashCode() * getTitle().hashCode();
+    }
     
     public static CitationEntry getFromCSV(String csv) {
         String[] str = csv.split(";");
