@@ -261,14 +261,14 @@
                 lastSortCol = col;
                 lastSortAsc = asc;
             
-                var table = document.getElementById("literature");
-                var rows = table.rows;
+            	var table = document.getElementById("literature");
+                var rows = table.getElementsByTagName("tbody")[0].rows;
                 var rlen = rows.length - 1;
                 var arr = new Array();
                 var cells;
             
                 for (var i = 1; i < rlen; i++) {
-                    cells = rows[i + 1].cells;
+                    cells = rows[i].cells;
                     arr[i] = new Array();
                     for (var j = 0; j < 6; j++) {
                         arr[i][j] = cells[j].innerHTML;
@@ -278,20 +278,22 @@
                 arr.sort(function (a, b) {
                     var first = a[col].replace(/<a href=\".*?\" .*?>/g, '').replace(/<\/a>/g, '');
                     var second = b[col].replace(/<a href=\".*?\" .*?>/g, '').replace(/<\/a>/g, '');
-                    if (isInt(a[col]))
-                        return Number(first) <= Number(second);
+                    if (isInt(first.replace(/ \(.*\)/g, "").trim()))
+                    	first = first.replace(/ \(.*\)/g, "").trim();
+                    	second = second.replace(/ \(.*\)/g, "").trim();
+                        return Number(first) <= Number(second)?-1:1;
                     return first.localeCompare(second);
                 });
                 if (asc) {
                     for (var rowidx = 1; rowidx < rlen; rowidx++) {
                         for (var colidx = 0; colidx < 6; colidx++) {
-                            table.rows[rowidx + 1].cells[colidx].innerHTML = arr[rowidx][colidx];
+                            table.rows[rowidx+1].cells[colidx].innerHTML = arr[rowidx-1][colidx];
                         }
                     }
                 } else {
                     for (var rowidx = 1; rowidx < rlen; rowidx++) {
                         for (var colidx = 0; colidx < 6; colidx++) {
-                            table.rows[rlen - rowidx].cells[colidx].innerHTML = arr[rowidx][colidx];
+                            table.rows[rlen - rowidx+1].cells[colidx].innerHTML = arr[rowidx-1][colidx];
                         }
                     }
                 }
