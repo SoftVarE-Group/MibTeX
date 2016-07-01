@@ -34,7 +34,7 @@ public class ExportJSON extends Export{
             .append(getJSONAttribute("title", entry.title)+",")
             .append(getJSONAttribute("venues", entry.venue)+",")
             .append(getJSONAttribute("year", entry.year)+",")
-            .append(getJSONAttribute("citations", entry.citations)+",")
+            .append(getJSONAttribute("citations", entry.getCitations())+",")
             .append(getJSONAttribute("tags", entry.tagList))
             .append("},"+System.getProperty("line.separator"));
         }

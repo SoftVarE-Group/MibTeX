@@ -11,7 +11,7 @@ import de.mibtex.export.ExportCSV;
 import de.mibtex.export.ExportCitations;
 import de.mibtex.export.ExportHTML;
 import de.mibtex.export.ExportJSON;
-import de.mibtex.export.ExportNewHTML;
+import de.mibtex.export.ExportNewHTML2;
 
 /**
  * A class to export a given BibTeX file to another format
@@ -34,6 +34,8 @@ public class BibtexViewer {
     
     private static boolean cleanOutputDir;
     
+    private static boolean updateCitations;
+    
     public static String CITATION_DIR; 
     
     /**
@@ -51,7 +53,8 @@ public class BibtexViewer {
      *          - name of the tag containing your keywords 
      *          - format for export (CSV/JSON/HTML) 
      *          - boolean for output cleaning (default: false)
-     *          - path to citations file (default: Bibtex file path
+     *          - boolean for update citations file (default:true)
+     *          - path to citations file (default: Bibtex file path)
      */
     public static void main(String[] args) {
         BIBTEX_DIR = args[0];
@@ -68,13 +71,19 @@ public class BibtexViewer {
             cleanOutputDir = false;
         }
         try {
-            CITATION_DIR = args[8];
+            updateCitations = Boolean.getBoolean(args[8]);
+        } catch (Exception e) {
+            System.out
+            .println("Citations are going to be updated");
+            updateCitations = true;
+        }
+        try {
+            CITATION_DIR = args[9];
         } catch (Exception e) {
             System.out
             .println("Citation is saved in Bibtex directory");
             CITATION_DIR = BIBTEX_DIR;
         }
-        System.out.println(CITATION_DIR);
         String format = "HTML";
         try {
             format = args[6];
@@ -83,6 +92,9 @@ public class BibtexViewer {
                     .println("Exportformat Parameter not recognized. Setting Exportformat to HTML");
         }
         try {
+            if (updateCitations && format != "Citations") {
+                new BibtexViewer("Citations");
+            }
             if (format != null)
                 new BibtexViewer(format);
         } catch (Exception e) {
@@ -103,7 +115,7 @@ public class BibtexViewer {
                 exporter = new ExportCitations(BibtexViewer.BIBTEX_DIR,"literature.bib");
                 break;
             case "HTML_NEW":
-                exporter = new ExportNewHTML(BibtexViewer.BIBTEX_DIR,"literature.bib");
+                exporter = new ExportNewHTML2(BibtexViewer.BIBTEX_DIR,"literature.bib");
                 break;
             case "HTML":
             default:

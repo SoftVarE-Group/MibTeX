@@ -14,7 +14,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -22,78 +21,77 @@ import java.util.Random;
  * A class that reads all BibTeX entries from a .csv file, gets the citations and put the entries back
  * in the .csv file
  * 
- * @author Christopher Sontag
+ * @author Christopher Sontag, Thomas Thuem
  */
 public class ScholarService extends Thread {
     
-    private List<CitationEntry> entries;
-    private Random rand;
+	private static final int MIN_DELAY = 60*18;
+
+	private static final int EXTRA_DELAY = 1;
+
+	private Random rand = new Random();
+
+	private File citationsFile;
     
-    @Override
+    public ScholarService(File file) {
+		citationsFile = file;
+	}
+
+	@Override
     public void run() {
-        for (CitationEntry entry : entries) {
+        while (true) {
+            List<CitationEntry> entries = readFromFile(citationsFile);
+            CitationEntry entry = nextEntry(entries);
             entry.updateCitations();
-            System.out.println(entry.getKey() + " is cited " + entry.getCitations());
-            writeToFile("citations.csv", entries);
+            if (entry.getCitations() != CitationEntry.PROBLEM_OCCURED)
+            	writeToFile(citationsFile, entries);
             try {
-                sleep(rand.nextInt(120000) + 120000);
+                sleep(MIN_DELAY*1000 + rand.nextInt(EXTRA_DELAY*1000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
     
-    public ScholarService() throws Exception {
-        rand = new Random(120000);
-        entries = readFromFile("citations.csv", ";");
-        Collections.sort(entries);
+    protected CitationEntry nextEntry(List<CitationEntry> entries) {
+    	CitationEntry next = entries.get(0);
+    	for (CitationEntry entry : entries) {
+            if (entry.getCitations() == CitationEntry.UNINITIALIZED)
+            	return entry;
+    		if (entry.getLastUpdate() < next.getLastUpdate())
+            	next = entry;
+    	}
+		return next;
     }
     
-    protected List<CitationEntry> readFromFile(String filename, String delimeter) {
+    protected List<CitationEntry> readFromFile(File file) {
+    	System.out.print("Reading " + file.getName() + "... ");
         List<CitationEntry> entries = new ArrayList<CitationEntry>();
-        try (BufferedReader br = new BufferedReader(new FileReader(new File(CitationService.CITATION_DIR
-                +"\\"+ filename)))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             for (String line; (line = br.readLine()) != null;) {
-                String[] str = line.split(delimeter);
-                String key = replaceCSVSpeficics(str[0]);
-                String title = replaceCSVSpeficics(str[1]);
-                int citations = Integer.parseInt(str[2]);
-                long lastUpdate = Long.parseLong(str[3]);
-                
-                entries.add(new CitationEntry(key, title, citations, lastUpdate));
+                entries.add(CitationEntry.getFromCSV(line));
             }
         } catch (IOException e) {
-            System.out.println("IOException for " + filename);
-            return entries;
+            System.out.println("IOException for " + file.getAbsolutePath());
         }
+    	System.out.println("done.");
         return entries;
     }
     
-    public String replaceCSVSpeficics(String str) {
-        return str.replace("\"", "");
-    }
-    
-    protected void writeToFile(String filename, List<CitationEntry> entries) {
+    protected void writeToFile(File file, List<CitationEntry> entries) {
+    	System.out.print("Updating " + file.getName() + "... ");
         try {
-            File file = new File(CitationService.CITATION_DIR +"\\"+ filename);
-            List<CitationEntry> oldContent = readFromFile(filename, ";");
-            if (!entries.equals(oldContent)) {
-                System.out.println("Updating " + filename);
-                BufferedWriter out = new BufferedWriter(new FileWriter(file));
-                StringBuilder CSV = new StringBuilder();
-                for (CitationEntry entry : entries) {
-                    CSV.append("\"" + entry.getKey() + "\";").append("\"" + entry.getTitle() + "\";")
-                            .append(entry.getCitations() + ";").append(entry.getLastUpdate() + ";")
-                            .append(System.getProperty("line.separator"));
-                }
-                out.write(CSV.toString());
-                out.close();
+            BufferedWriter out = new BufferedWriter(new FileWriter(file));
+            for (CitationEntry entry : entries) {
+                out.append(entry.getCSVString());
             }
+            out.close();
         } catch (FileNotFoundException e) {
-            System.out.println("Not Found " + filename);
+            System.out.println("Not found " + file.getAbsolutePath());
         } catch (IOException e) {
-            System.out.println("IOException for " + filename);
+            System.out.println("IOException for " + file.getAbsolutePath());
         }
+    	System.out.println("done.");
     }
     
 }

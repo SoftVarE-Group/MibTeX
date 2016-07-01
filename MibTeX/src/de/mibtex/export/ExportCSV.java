@@ -27,7 +27,7 @@ public class ExportCSV extends Export {
         StringBuilder CSV = new StringBuilder();
         for (BibtexEntry entry : entries.values()){
             CSV.append("\"" + entry.key + "\";").append("\"" + entry.author + "\";").append("\"" + entry.title + "\";")
-                    .append("\"" + entry.venue + "\";").append(entry.year + ";").append(entry.citations + ";")
+                    .append("\"" + entry.venue + "\";").append(entry.year + ";").append(entry.getCitations() + ";")
                     .append("\"" + entry.tags + "\"" + System.getProperty("line.separator"));
         }
         writeToFile(BibtexViewer.HTML_DIR,"literature.csv",CSV.toString());

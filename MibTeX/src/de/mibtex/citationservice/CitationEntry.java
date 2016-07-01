@@ -6,18 +6,28 @@
  */
 package de.mibtex.citationservice;
 
+import java.text.DateFormat;
+
+/**
+ * A class to store and update a singly entry of the citation file.
+ * 
+ * @author Christopher Sontag, Thomas Thuem
+ */
 public class CitationEntry implements Comparable<CitationEntry> {
     
     private static final String UNKNOWN = "unknown";
     
-    // Should wait at least 24h before updating citations
-    private static final long timeToWait = 24 * 60 * 60;
+    public final static int UNINITIALIZED = -1;
+    
+    public final static int NOT_FOUND = -2;
+    
+    public final static int PROBLEM_OCCURED = -3;
     
     private String key = UNKNOWN;
     
     private String title = UNKNOWN;
     
-    private int citations = 0;
+    private int citations = UNINITIALIZED;
     
     private long lastUpdate = 0;
     
@@ -53,16 +63,26 @@ public class CitationEntry implements Comparable<CitationEntry> {
         this.citations = citations;
     }
     
-    public int updateCitations() {
-        if ((System.currentTimeMillis()) > this.lastUpdate + CitationEntry.timeToWait) {
-            System.out.println("The citations of "+this.key+" are outdated! Start Update");
-            this.citations = ScholarCitations.getCitations(title.replace(" ", "%20"));
-            this.lastUpdate = System.currentTimeMillis();
-        } else {
-            System.out.println("The citations of "+this.key+" are up to date");
+    public void updateCitations() {
+        System.out.println("Updating the citations of " + key + " with title \"" + getTitle() + "\"...");
+        System.out.println("\told citations: " + citations + "   old timestamp: " + getLastUpdateString());
+        try {
+            int citationsTemp = ScholarCitations.getCitations(title);
+            if (this.citations > 0 && citationsTemp < 0) {
+                System.out.println("\t" + this.key
+                        + ": Has an old citation count, but now an error occurres");
+            }
+            this.citations = citationsTemp;
+        } catch (Exception e) {
+            this.citations = PROBLEM_OCCURED;
+            e.printStackTrace();
         }
-       
-        return this.citations;
+        this.lastUpdate = System.currentTimeMillis();
+        System.out.println("\tnew citations: " + citations + "   new timestamp: " + getLastUpdateString());
+    }
+    
+    private String getLastUpdateString() {
+        return DateFormat.getInstance().format(lastUpdate);
     }
     
     public long getLastUpdate() {
@@ -72,14 +92,48 @@ public class CitationEntry implements Comparable<CitationEntry> {
     public void setLastUpdate(long last_update) {
         this.lastUpdate = last_update;
     }
-
+    
+    public String getCSVString() {
+        StringBuilder out = new StringBuilder();
+        out.append("\"" + getKey() + "\";");
+        out.append("\"" + getTitle() + "\";");
+        out.append(getCitations() + ";");
+        out.append(getLastUpdate() + ";");
+        out.append(System.getProperty("line.separator"));
+        return out.toString();
+    }
+    
     @Override
-    public int compareTo(CitationEntry arg0) {
-        if (this.getLastUpdate()<arg0.getLastUpdate()){
-            return -1;
-        }else{
-            return 1;
+    public int compareTo(CitationEntry entry) {
+        return getKey().compareTo(entry.getKey());
+    }
+    
+    @Override
+    public boolean equals(Object v) {
+        boolean value = false;
+        if (v instanceof CitationEntry) {
+            CitationEntry entry = (CitationEntry) v;
+            value = (getKey().equals(entry.getKey()) && getTitle().equals(entry.getTitle()));
         }
+        return value;
+    }
+    
+    @Override
+    public int hashCode() {
+        return getKey().hashCode() * getTitle().hashCode();
+    }
+    
+    public static CitationEntry getFromCSV(String csv) {
+        String[] str = csv.split(";");
+        String key = replaceCSVSpeficics(str[0]);
+        String title = replaceCSVSpeficics(str[1]);
+        int citations = Integer.parseInt(str[2]);
+        long lastUpdate = Long.parseLong(str[3]);
+        return new CitationEntry(key, title, citations, lastUpdate);
+    }
+    
+    private static String replaceCSVSpeficics(String str) {
+        return str.replace("\"", "");
     }
     
 }

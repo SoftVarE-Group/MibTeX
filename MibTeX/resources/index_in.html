@@ -2755,8 +2755,20 @@
         | orderBy sortKey sortOrders[sortKey]">
                 <td v-for="key in columns">
                     <span v-for="obj in entry[key]">
+						<span v-if="key=='title'">
+							<a href="{{entry['pdf'][0]['name']}}">{{obj.name}}</a>
+						</span>
+						<span v-if="key=='authors'">
+							<a v-if="!isLast(entry[key],$index)" href="https://www.google.de/#q={{obj.name}}" target="_blank">{{obj.name}},</a>
+                        	<a v-else href="https://www.google.de/#q={{obj.name}}" target="_blank">{{obj.name}}</a>
+						</span>
+						<span v-if="key=='citations'">
+							<a href="https://scholar.google.de/scholar?q={{entry['title'][0]['name']}}" target="_blank">{{obj.name}}</a>	
+						</span>
+						<span v-if="key!='title' && key!='authors' && key!='citations'">
                         <a v-if="!isLast(entry[key],$index)" @click.stop="search(obj.name)">{{obj.name}},</a>
                         <a v-else @click.stop="search(obj.name)">{{obj.name}}</a>
+                        </span>
                     </span>
                 </td>
             </tr>
@@ -2767,9 +2779,11 @@
 <body>
 
 <div id="mibtex">
+<span style = "float: right;">Number of entries: <b>{{gridData.length}}</b></span>
     <form id="search">
         Search <input style="width:80%;" name="query" v-model="searchQuery">
     </form>
+    
     <mibtex-grid
             :data="gridData"
             :columns="gridColumns"
