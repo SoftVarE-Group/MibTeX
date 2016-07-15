@@ -9,6 +9,7 @@ package de.mibtex;
 import de.mibtex.export.Export;
 import de.mibtex.export.ExportCSV;
 import de.mibtex.export.ExportCitations;
+import de.mibtex.export.ExportClassification;
 import de.mibtex.export.ExportHTML;
 import de.mibtex.export.ExportJSON;
 import de.mibtex.export.ExportNewHTML2;
@@ -43,7 +44,7 @@ public class BibtexViewer {
      * 
      * BibtexViewer "C:\\Users\\tthuem\\workspace4.2.1\\tthuem-Bibtex\\"
      * "C:\\Users\\tthuem\\Dropbox\\Literatur\\" "HTML\\" "..\\Library\\"
-     * "Library\\" "tt-tags" "CSV/JSON/HTML" "true" "C:\\Users\\tthuem\\workspace4.2.1\\tthuem-Bibtex\\"
+     * "Library\\" "tt-tags" "CSV/JSON/HTML/Classification" "true" "C:\\Users\\tthuem\\workspace4.2.1\\tthuem-Bibtex\\"
      * 
      * @param args array containing:
      *          - path to Bibtex file path to main directory
@@ -51,7 +52,7 @@ public class BibtexViewer {
      *          - relative path of PDF files to the HTML folder (for linking files in HTML) 
      *          - relative path of PDF files to main directory 
      *          - name of the tag containing your keywords 
-     *          - format for export (CSV/JSON/HTML) 
+     *          - format for export (CSV/JSON/HTML/Classification) 
      *          - boolean for output cleaning (default: false)
      *          - boolean for update citations file (default:true)
      *          - path to citations file (default: Bibtex file path)
@@ -113,6 +114,9 @@ public class BibtexViewer {
                 break;
             case "Citations":
                 exporter = new ExportCitations(BibtexViewer.BIBTEX_DIR,"literature.bib");
+                break;
+            case "Classification":
+                exporter = new ExportClassification(BibtexViewer.BIBTEX_DIR,"literature.bib");
                 break;
             case "HTML_NEW":
                 exporter = new ExportNewHTML2(BibtexViewer.BIBTEX_DIR,"literature.bib");
