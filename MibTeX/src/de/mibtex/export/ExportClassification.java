@@ -29,7 +29,7 @@ public class ExportClassification extends Export {
 		super(path, file);
 	}
 
-	public final static String SEP = ";";
+	public final static String SEP = ",";
 
 	public final static String ESC = "\"";
 
@@ -39,12 +39,14 @@ public class ExportClassification extends Export {
 		System.out.print("Updating " + file.getName() + "... ");
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(file));
-			out.append("Key" + SEP + "Editor" + SEP + "Authors" + SEP + "Venue"
+			out.append("Key" + SEP + "Editor" + SEP);
+			out.append("Authors" + SEP + "Venue"
 					+ SEP + "Year" + SEP + "Title" + SEP + "Analysis Method"
 					+ SEP + "Analysis Strategy" + SEP
 					+ "Implementation Strategy" + SEP
-					+ "Specification Strategy" + SEP + "SE Layer" + SEP
-					+ "Further Keywords" + SEP + System.lineSeparator());
+					+ "Specification Strategy" + SEP + "SE Layer" + SEP);
+			out.append("Further Keywords" + SEP + SEP);
+			out.append(System.lineSeparator());
 			for (BibtexEntry entry : entries.values()) {
 				if (!entry.tagList.isEmpty()
 						&& !entry.tagList.get(0).equalsIgnoreCase("(none)"))
@@ -78,7 +80,7 @@ public class ExportClassification extends Export {
 			b.append(tags.remove(0));
 		for (String tag : tags)
 			b.append(", " + tag);
-		b.append(ESC + SEP);
+		b.append(ESC + SEP + SEP);
 		b.append(System.lineSeparator());
 		return b.toString();
 	}
@@ -88,7 +90,7 @@ public class ExportClassification extends Export {
 					"fault-tree analysis", "feature-model analysis",
 					"variant-preserving migration", "model checking", "runtime analysis",
 					"static analysis", "syntax checking", "product synthesis",
-					"testing", "theorem proving", "type checking",
+					"testing", "test-case generation", "theorem proving", "type checking", "symbolic analysis", "SMT solving", "SAT solving", "BDD solving",
 					"analysis method undefined" },
 			{ "family-based analysis", "family-product-based analysis",
 					"feature-based analysis", "feature-family-based analysis",
