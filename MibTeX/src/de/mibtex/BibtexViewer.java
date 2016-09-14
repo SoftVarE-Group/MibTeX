@@ -6,12 +6,7 @@
  */
 package de.mibtex;
 
-import de.mibtex.export.Export;
-import de.mibtex.export.ExportCSV;
-import de.mibtex.export.ExportCitations;
-import de.mibtex.export.ExportHTML;
-import de.mibtex.export.ExportJSON;
-import de.mibtex.export.ExportNewHTML2;
+import de.mibtex.export.*;
 import org.ini4j.Ini;
 
 import java.io.File;
@@ -145,7 +140,7 @@ public class BibtexViewer {
                 exporter = new ExportCitations(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
             case "HTML_NEW":
-                exporter = new ExportNewHTML2(BibtexViewer.BIBTEX_DIR, "literature.bib");
+                exporter = new ExportNewHTML(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
             case "HTML":
             default:
