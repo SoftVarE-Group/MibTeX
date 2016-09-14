@@ -51,7 +51,7 @@ public class ExportNewHTML2 extends Export {
 		input = insertOptionsStr(input, "INSERT_TAG_OPTIONS", tags);
 		input = insertOptionsInt(input, "INSERT_YEAR_OPTIONS", years);
 
-		writeToFile(BibtexViewer.HTML_DIR, "index2.html", input);
+		writeToFile(BibtexViewer.OUTPUT_DIR, "index2.html", input);
 	}
 
 	private String insertOptionsStr(String input, String replace,

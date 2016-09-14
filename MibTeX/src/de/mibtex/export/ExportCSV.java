@@ -30,7 +30,7 @@ public class ExportCSV extends Export {
                     .append("\"" + entry.venue + "\";").append(entry.year + ";").append(entry.getCitations() + ";")
                     .append("\"" + entry.tags + "\"" + System.getProperty("line.separator"));
         }
-        writeToFile(BibtexViewer.HTML_DIR,"literature.csv",CSV.toString());
+        writeToFile(BibtexViewer.OUTPUT_DIR,"literature.csv",CSV.toString());
     }
     
 }

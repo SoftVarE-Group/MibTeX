@@ -43,7 +43,7 @@ public class ExportNewHTML extends Export{
         JSON.append("]");
         String input = readFromFile("resources/",new File("index_in.html"));
         input = input.replace("JSON_DATA_INSERT_HERE", JSON.toString());
-        writeToFile(BibtexViewer.HTML_DIR,"index.html",input);
+        writeToFile(BibtexViewer.OUTPUT_DIR,"index.html",input);
     }
 
     private String getJSONAttribute(String key, int str) {
