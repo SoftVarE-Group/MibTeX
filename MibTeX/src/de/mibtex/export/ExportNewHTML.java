@@ -33,8 +33,8 @@ public class ExportNewHTML extends Export {
 		Set<Integer> years = new HashSet<>();
 		for (BibtexEntry entry : entries.values()) {
 			HTML.append("<tr id=\"").append(entry.key + "\">")
-					.append("<td>" + generateTitleLink(entry) + "</td>")
 					.append("<td>" + generateAuthorLinks(entry) + "</td>")
+					.append("<td>" + generateTitleLink(entry) + "</td>")
 					.append("<td>" + generateVenueLink(entry) + "</td>")
 					.append("<td>" + generateTagLinks(entry) + "</td>")
 					.append("<td>" + generateCitationLink(entry) + "</td>")
@@ -51,7 +51,7 @@ public class ExportNewHTML extends Export {
 		input = insertOptionsStr(input, "INSERT_TAG_OPTIONS", tags);
 		input = insertOptionsInt(input, "INSERT_YEAR_OPTIONS", years);
 
-		writeToFile(BibtexViewer.OUTPUT_DIR, "index2.html", input);
+		writeToFile(BibtexViewer.OUTPUT_DIR, "index.html", input);
 	}
 
 	private String insertOptionsStr(String input, String replace,

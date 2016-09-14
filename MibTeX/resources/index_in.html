@@ -166,8 +166,8 @@
                 var count = 0;
                 for (var i = 1, row; row = rows[i]; i++) {
             
-                    var title = deleteLinks(row.cells[0].innerHTML);
-                    var authors = row.cells[1].innerHTML;
+                    var title = deleteLinks(row.cells[1].innerHTML);
+                    var authors = row.cells[0].innerHTML;
                     var venues = row.cells[2].innerHTML;
                     var tags = row.cells[3].innerHTML;
                     var citations = row.cells[4].getElementsByTagName('a')[0].innerHTML.replace(/\(.*\)/g, "").trim();
@@ -371,10 +371,10 @@
             <thead class="tablehead">
                 <tr>
                     <th style="width: 25%">
-                        <a href="" onclick="event.preventDefault();SortTable(0);Filter();">Title</a>
+                        <a href="" onclick="event.preventDefault();SortTable(1);Filter();">Authors</a>
                     </th>
                     <th style="width: 25%">
-                        <a href="" onclick="event.preventDefault();SortTable(1);Filter();">Authors</a>
+                        <a href="" onclick="event.preventDefault();SortTable(0);Filter();">Title</a>
                     </th>
                     <th style="width: 10%">
                         <a href="" onclick="event.preventDefault();SortTable(2);Filter();">Venues</a>
@@ -392,8 +392,8 @@
             </thead>
             <tbody>
                 <tr class="tablehead">
-                    <td><input type="search" id="searchTitle" class="input" onchange="Filter()" autofocus placeholder="Title"></td>
                     <td><input type="search" id="searchAuthor" class="input" onchange="Filter()" placeholder="Author"></td>
+                    <td><input type="search" id="searchTitle" class="input" onchange="Filter()" autofocus placeholder="Title"></td>
                     <td><input type="search" id="searchVenue" class="input" onchange="Filter()" list="venueList" placeholder="Venue">
                         <datalist id="venueList">
                             INSERT_VENUE_OPTIONS
