@@ -96,6 +96,8 @@ public class ExportNewHTML extends Export {
 
 	private String generateTagLinks(BibtexEntry entry) {
 		StringBuilder HTML = new StringBuilder();
+        HTML.append("<a href=\"\" style=\"color:red;\" onclick=\"setTag('searchTag','" + entry.key
+                + "');event.preventDefault();Filter();\">" + entry.key + "</a>, ");
 		for (String tag : entry.tagList) {
 			HTML.append("<a href=\"\" onclick=\"setTag('searchTag','" + tag.trim()
 					+ "');event.preventDefault();Filter();\">" + tag + "</a>, ");
