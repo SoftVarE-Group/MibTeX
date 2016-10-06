@@ -58,8 +58,14 @@ public class BibtexViewer {
      *             - path to citations file (default: Bibtex file path)
      */
     public static void main(String[] args) {
-        if (args.length == 1) {
-            File iniFile = new File(args[0]);
+        if (args.length <= 1) {
+            String configurationFile;
+            if (args.length == 0)
+                configurationFile = "options.ini";
+            else {
+                configurationFile = args[0];
+            }
+            File iniFile = new File(configurationFile);
             if (iniFile.exists()) {
                 Ini ini = null;
                 try {
