@@ -19,17 +19,17 @@ import java.io.IOException;
  */
 public class BibtexViewer {
 
-    public static String BIBTEX_DIR;
+    public static String BIBTEX_DIR = "";
 
-    public static String MAIN_DIR;
+    public static String MAIN_DIR = "";
 
-    public static String OUTPUT_DIR;
+    public static String OUTPUT_DIR = "";
 
-    public static String PDF_DIR_REL;
+    public static String PDF_DIR_REL = "";
 
-    public static String PDF_DIR;
+    public static String PDF_DIR = "";
 
-    public static String TAGS;
+    public static String TAGS = "";
 
     private static boolean cleanOutputDir;
 
@@ -41,11 +41,11 @@ public class BibtexViewer {
 
     /**
      * Example arguments
-     *
+     * <p>
      * BibtexViewer "C:\\Users\\tthuem\\workspace4.2.1\\tthuem-Bibtex\\"
      * "C:\\Users\\tthuem\\Dropbox\\Literatur\\" "HTML\\" "..\\Library\\"
      * "Library\\" "tt-tags" "CSV/JSON/HTML/Classification" "true" "C:\\Users\\tthuem\\workspace4.2.1\\tthuem-Bibtex\\"
-     * 
+     *
      * @param args array containing:
      *             - path to Bibtex file path to main directory
      *             - relative path of the HTML to main directory
@@ -58,29 +58,33 @@ public class BibtexViewer {
      *             - path to citations file (default: Bibtex file path)
      */
     public static void main(String[] args) {
-        File iniFile = new File("options.ini");
-        if (iniFile.exists()) {
-            Ini ini = null;
-            try {
-                ini = new Ini(iniFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            BIBTEX_DIR = ini.get("options", "bibtex-dir");
-            MAIN_DIR = ini.get("options", "main-dir");
-            OUTPUT_DIR = MAIN_DIR + ini.get("options", "out-dir-rel");
-            PDF_DIR = MAIN_DIR + ini.get("options", "pdf-dir");
-            PDF_DIR_REL = ini.get("options", "pdf-dir-rel");
-            TAGS = ini.get("options", "tags");
-            cleanOutputDir = ini.get("options", "clean", Boolean.class);
-            updateCitations = ini.get("options", "citationService", Boolean.class);
-            String citationDir = ini.get("options", "citation-dir");
-            if (citationDir.isEmpty()) {
-                CITATION_DIR = BIBTEX_DIR;
+        if (args.length == 1) {
+            File iniFile = new File(args[0]);
+            if (iniFile.exists()) {
+                Ini ini = null;
+                try {
+                    ini = new Ini(iniFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                BIBTEX_DIR = ini.get("options", "bibtex-dir");
+                MAIN_DIR = ini.get("options", "main-dir");
+                OUTPUT_DIR = MAIN_DIR + ini.get("options", "out-dir-rel");
+                PDF_DIR = MAIN_DIR + ini.get("options", "pdf-dir");
+                PDF_DIR_REL = ini.get("options", "pdf-dir-rel");
+                TAGS = ini.get("options", "tags");
+                cleanOutputDir = ini.get("options", "clean", Boolean.class);
+                updateCitations = ini.get("options", "citationService", Boolean.class);
+                String citationDir = ini.get("options", "citation-dir");
+                if (citationDir.isEmpty()) {
+                    CITATION_DIR = BIBTEX_DIR;
+                } else {
+                    CITATION_DIR = citationDir;
+                }
+                format = ini.get("options", "out-format");
             } else {
-                CITATION_DIR = citationDir;
+                System.out.println("Options file not found under: " + iniFile.getName());
             }
-            format = ini.get("options", "out-format");
         } else {
             BIBTEX_DIR = args[0];
             MAIN_DIR = args[1];
@@ -137,10 +141,10 @@ public class BibtexViewer {
                 exporter = new ExportJSON(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
             case "Citations":
-                exporter = new ExportCitations(BibtexViewer.BIBTEX_DIR,"literature.bib");
+                exporter = new ExportCitations(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
             case "Classification":
-                exporter = new ExportClassification(BibtexViewer.BIBTEX_DIR,"literature.bib");
+                exporter = new ExportClassification(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
             case "HTML_NEW":
                 exporter = new ExportNewHTML(BibtexViewer.BIBTEX_DIR, "literature.bib");
