@@ -8,6 +8,7 @@ package de.mibtex;
 
 import de.mibtex.export.*;
 import org.ini4j.Ini;
+import org.ini4j.Wini;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,26 +69,39 @@ public class BibtexViewer {
             File iniFile = new File(configurationFile);
             if (iniFile.exists()) {
                 Ini ini = null;
-                try {
-                    ini = new Ini(iniFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                BIBTEX_DIR = ini.get("options", "bibtex-dir");
-                MAIN_DIR = ini.get("options", "main-dir");
-                OUTPUT_DIR = MAIN_DIR + ini.get("options", "out-dir-rel");
-                PDF_DIR = MAIN_DIR + ini.get("options", "pdf-dir");
-                PDF_DIR_REL = ini.get("options", "pdf-dir-rel");
-                TAGS = ini.get("options", "tags");
-                cleanOutputDir = ini.get("options", "clean", Boolean.class);
-                updateCitations = ini.get("options", "citationService", Boolean.class);
-                String citationDir = ini.get("options", "citation-dir");
-                if (citationDir.isEmpty()) {
-                    CITATION_DIR = BIBTEX_DIR;
+                if (System.getProperty("os.name").contains("Windows")) {
+                    try {
+                        ini = new Wini(iniFile);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } else {
-                    CITATION_DIR = citationDir;
+                    try {
+                        ini = new Ini(iniFile);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-                format = ini.get("options", "out-format");
+                if (ini != null) {
+                    BIBTEX_DIR = ini.get("options", "bibtex-dir");
+                    MAIN_DIR = ini.get("options", "main-dir");
+                    OUTPUT_DIR = MAIN_DIR + ini.get("options", "out-dir-rel");
+                    PDF_DIR = MAIN_DIR + ini.get("options", "pdf-dir");
+                    PDF_DIR_REL = ini.get("options", "pdf-dir-rel");
+                    TAGS = ini.get("options", "tags");
+                    cleanOutputDir = ini.get("options", "clean", Boolean.class);
+                    updateCitations = ini.get("options", "citationService", Boolean.class);
+                    String citationDir = ini.get("options", "citation-dir");
+                    if (citationDir.isEmpty()) {
+                        CITATION_DIR = BIBTEX_DIR;
+                    } else {
+                        CITATION_DIR = citationDir;
+                    }
+                    format = ini.get("options", "out-format");
+                } else {
+                    System.out.println("Ini file reader is null!");
+                    System.exit(0);
+                }
             } else {
                 System.out.println("Options file not found under: " + iniFile.getName());
             }

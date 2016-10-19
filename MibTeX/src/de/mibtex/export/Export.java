@@ -288,11 +288,12 @@ public abstract class Export {
     protected void writeToFile(String path, String filename, String content) {
         try {
             File file = new File(path + filename);
+            file.getParentFile().mkdirs();
             String oldContent = readFromFile(path, new File(filename));
             if (!content.equals(oldContent)) {
                 System.out.println("Updating " + filename);
                 BufferedWriter out = new BufferedWriter(new FileWriter(file));
-                out.write(content.toString());
+                out.write(content);
                 out.close();
                 // } else {
                 // System.out.println("Old content is the same! No update required!");
