@@ -92,7 +92,7 @@ public class BibtexViewer {
                     cleanOutputDir = ini.get("options", "clean", Boolean.class);
                     updateCitations = ini.get("options", "citationService", Boolean.class);
                     String citationDir = ini.get("options", "citation-dir");
-                    if (citationDir.isEmpty()) {
+                    if (citationDir == null || citationDir.isEmpty()) {
                         CITATION_DIR = BIBTEX_DIR;
                     } else {
                         CITATION_DIR = citationDir;
@@ -141,7 +141,7 @@ public class BibtexViewer {
             }
         }
         try {
-            if (updateCitations && !format.equals("Citations")) {
+            if (updateCitations && !"Citations".equals(format)) {
                 new BibtexViewer("Citations");
             }
             if (format != null)
