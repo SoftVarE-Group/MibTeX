@@ -27,6 +27,8 @@ public class ScholarCitations {
     private static Pattern entryPattern = Pattern.compile("<div class=\"gs_r\">(.*?)Fewer<\\/a><\\/div><\\/div><\\/div>");
     private static Pattern citationsPattern = Pattern
             .compile(".*?<h3 class=\"gs_rt\">(.*?)<\\/h3>.*?Cited by (\\d*).*?Fewer<\\/a><\\/div><\\/div><\\/div>");
+    private static Pattern titlePattern = Pattern
+            .compile(".*?<h3 class=\"gs_rt\">(.*?)<\\/h3>");
     private static float levenshteinParameter = 10; // This factor describes how much a title is allowed to change (Standard: 10%)
 
     public static int getCitations(String title) throws IOException {
@@ -60,6 +62,11 @@ public class ScholarCitations {
                             bestElementDistance = elementDistance;
                         }
                     }
+                }
+            } else {
+                Matcher titleMatcher = titlePattern.matcher(entryMatcher.group());
+                if (titleMatcher.find()) {
+                    return 0;
                 }
             }
         }
