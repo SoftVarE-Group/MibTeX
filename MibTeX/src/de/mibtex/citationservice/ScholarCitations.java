@@ -37,7 +37,7 @@ public class ScholarCitations {
         Matcher entryMatcher = entryPattern.matcher(html.replace("\n", ""));
 
         // Find minimal Distance between titles found and the original title
-        int bestElementCitations = 0;
+        int bestElementCitations = -1;
         int bestElementDistance = 99999;
 
         while (entryMatcher.find()) {
@@ -66,11 +66,21 @@ public class ScholarCitations {
             } else {
                 Matcher titleMatcher = titlePattern.matcher(entryMatcher.group());
                 if (titleMatcher.find()) {
-                    return 0;
+                    String titleOutline = titleMatcher.group(1);
+                    String titleFound = titleOutline.replaceAll("<.*?>", "").replaceAll("\\[.*\\]", "")
+                            .replaceAll("%20", " ").replaceAll("&#39;", "'").trim();
+
+                    int elementDistance = Levenshtein.getDistance(titleFound.toLowerCase(), title.toLowerCase());
+
+                    if (elementDistance < (title.length() / 100.0f * levenshteinParameter) && elementDistance < bestElementDistance) {
+                        bestElementCitations = 0;
+                        bestElementDistance = elementDistance;
+                    }
                 }
             }
         }
-        if (bestElementCitations > 0)
+
+        if (bestElementCitations >= 0)
             return bestElementCitations;
         return CitationEntry.NOT_FOUND;
     }
