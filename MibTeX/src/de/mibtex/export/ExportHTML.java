@@ -138,7 +138,7 @@ public class ExportHTML extends Export {
 			content.append(".htm\">" + o + "</a><br/>\r\n");
 		}
 		writeFooter(content);
-		writeToFile(BibtexViewer.HTML_DIR, filename, content.toString());
+		writeToFile(BibtexViewer.OUTPUT_DIR, filename, content.toString());
 	}
 
 	void writeToHTML(String filename, BibtexFilter filter) {
@@ -146,7 +146,7 @@ public class ExportHTML extends Export {
 		writeHeader(content, "Literature");
 		writeBibtex(content, filter);
 		writeFooter(content);
-		writeToFile(BibtexViewer.HTML_DIR, filename, content.toString());
+		writeToFile(BibtexViewer.OUTPUT_DIR, filename, content.toString());
 	}
 
 	private void writeHeader(StringBuilder builder, String title) {

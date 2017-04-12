@@ -39,7 +39,7 @@ public class ExportJSON extends Export{
             .append("},"+System.getProperty("line.separator"));
         }
         JSON.append("]");
-        writeToFile(BibtexViewer.HTML_DIR,"literature.json",JSON.toString());
+        writeToFile(BibtexViewer.OUTPUT_DIR,"literature.json",JSON.toString());
     }
 
     private String getJSONAttribute(String key, int str) {
