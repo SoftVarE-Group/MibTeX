@@ -7,7 +7,9 @@
 package de.mibtex.export;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import de.mibtex.BibtexEntry;
@@ -42,7 +44,7 @@ public class ExportNewHTML extends Export {
                     .append("</tr>");
             venues.add(entry.venue);
             years.add(entry.year);
-            tags.addAll(entry.tagList);
+            tags.addAll(generateTagList(entry));
         }
         input = input.replace("DATA_INSERT_HERE", HTML.toString());
         input = input.replace("INSERT_BIB_PATH", BibtexViewer.BIBTEX_DIR
@@ -97,13 +99,32 @@ public class ExportNewHTML extends Export {
         StringBuilder HTML = new StringBuilder();
         HTML.append("<a href=\"\" style=\"color:red;\" onclick=\"setTag('searchTag','").append(entry.key)
             .append("');event.preventDefault();Filter();\">").append(entry.key).append("</a>, ");
-        for (String tag : entry.tagList) {
-            HTML.append("<a href=\"\" onclick=\"setTag('searchTag','").append(tag.trim())
-                .append("');event.preventDefault();Filter();\">").append(tag).append("</a>, ");
+        int i = 0;
+        for (List<String> tags : entry.tagList) {
+            String prefix = BibtexViewer.TAGS.get(i).replace("tags", "");
+            for (int j = 0; j < tags.size(); j++)
+                HTML.append("<a href=\"\" onclick=\"setTag('searchTag','").append(i!=0?prefix:"").append(tags.get(j).trim())
+                    .append("');event.preventDefault();Filter();\">").append(i!=0?prefix:"").append(tags.get(j)).append("</a>").append((j == tags.size()-1)?"":", ");
+            HTML.append(", ");
+            i += 1;
         }
-        HTML.deleteCharAt(HTML.length() - 1);
-        HTML.deleteCharAt(HTML.length() - 2);
+        HTML.delete(HTML.lastIndexOf(","), HTML.length());
         return HTML.toString();
+    }
+
+    private List<String> generateTagList(BibtexEntry entry) {
+        List<String> tags = new ArrayList<>();
+        tags.add(entry.key);
+        int i = 0;
+        for (List<String> tagList : entry.tagList) {
+            String prefix = BibtexViewer.TAGS.get(i).replace("tags", "");
+            for (String tag : tagList) {
+                String combinedTag = (i!=0?prefix:"") + tag;
+                tags.add(combinedTag);
+            }
+            i += 1;
+        }
+        return tags;
     }
 
     private String generateCitationLink(BibtexEntry entry) {

@@ -12,6 +12,9 @@ import org.ini4j.Wini;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class to export a given BibTeX file to another format
@@ -30,7 +33,7 @@ public class BibtexViewer {
 
     public static String PDF_DIR = "";
 
-    public static String TAGS = "";
+    public static List<String> TAGS = new ArrayList();
 
     private static boolean cleanOutputDir;
 
@@ -52,7 +55,7 @@ public class BibtexViewer {
      *             - relative path of the HTML to main directory
      *             - relative path of PDF files to the HTML folder (for linking files in HTML)
      *             - relative path of PDF files to main directory
-     *             - name of the tag containing your keywords
+     *             - list of the tag containing your keywords (format: "tag1,tag2,tag3")
      *             - format for export (CSV/JSON/HTML)
      *             - boolean for output cleaning (default: false)
      *             - boolean for update citations file (default:true)
@@ -88,7 +91,8 @@ public class BibtexViewer {
                     OUTPUT_DIR = MAIN_DIR + ini.get("options", "out-dir-rel");
                     PDF_DIR = MAIN_DIR + ini.get("options", "pdf-dir");
                     PDF_DIR_REL = ini.get("options", "pdf-dir-rel");
-                    TAGS = ini.get("options", "tags");
+                    String[] tagArray = ini.get("options", "tags").split(",");
+                    for (String tag : tagArray) TAGS.add(tag);
                     cleanOutputDir = ini.get("options", "clean", Boolean.class);
                     updateCitations = ini.get("options", "citationService", Boolean.class);
                     String citationDir = ini.get("options", "citation-dir");
@@ -111,7 +115,9 @@ public class BibtexViewer {
             OUTPUT_DIR = MAIN_DIR + args[2];
             PDF_DIR_REL = args[3];
             PDF_DIR = MAIN_DIR + args[4];
-            TAGS = args[5];
+            String[] tagArray = args[5].split(",");
+            for (String tag : tagArray) TAGS.add(tag);
+
             try {
                 cleanOutputDir = Boolean.getBoolean(args[7]);
             } catch (Exception e) {

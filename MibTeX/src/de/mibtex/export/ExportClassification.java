@@ -48,8 +48,7 @@ public class ExportClassification extends Export {
 			out.append("Further Keywords" + SEP + SEP);
 			out.append(System.lineSeparator());
 			for (BibtexEntry entry : entries.values()) {
-				if (!entry.tagList.isEmpty()
-						&& !entry.tagList.get(0).equalsIgnoreCase("(none)"))
+				if (!entry.tagList.isEmpty())
 					out.append(toClassification(entry));
 			}
 			out.close();
@@ -69,10 +68,11 @@ public class ExportClassification extends Export {
 		b.append(entry.year + SEP);
 		b.append(ESC + entry.title + ESC + SEP);
 		List<String> tags = new ArrayList<String>();
-		for (String tag : entry.tagList)
-			if (!tag.startsWith("classified by")
-					&& !tag.startsWith("subsumed by"))
-				tags.add(tag);
+		for (List<String> tagList: entry.tagList)
+			for (String tag : tagList)
+				if (!tag.startsWith("classified by")
+						&& !tag.startsWith("subsumed by"))
+					tags.add(tag);
 		for (int i = 0; i < 5; i++)
 			b.append(ESC + getTags(tags, i) + ESC + SEP);
 		b.append(ESC);

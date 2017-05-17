@@ -24,7 +24,8 @@ public class BibtexEntry {
 
 	private static final String UNKNOWN = "unknown";
 
-	public static final Key KEY_TT_TAGS = new Key(BibtexViewer.TAGS);
+	public List<Key> KEY_LIST = new ArrayList<>();
+	//public static final Key KEY_TT_TAGS = new Key(BibtexViewer.TAGS);
 
 	public BibTeXEntry entry = null;
 
@@ -38,9 +39,9 @@ public class BibtexEntry {
 
 	public String venue = UNKNOWN;
 
-	public String tags = UNKNOWN;
+	public List<String> tags = new ArrayList<>();
 
-	public List<String> tagList = new ArrayList<String>();
+	public List<List<String>> tagList = new ArrayList<>();
 
 	public int year = 0;
 
@@ -49,6 +50,9 @@ public class BibtexEntry {
 	public long lastUpdate = 0;
 
 	public BibtexEntry(BibTeXEntry entry) {
+		for (String tagKey : BibtexViewer.TAGS) {
+			KEY_LIST.add(new Key(tagKey));
+		}
 		this.entry = entry;
 		parseKey();
 		parseAuthor();
@@ -59,7 +63,7 @@ public class BibtexEntry {
 	}
 
 	public BibtexEntry(String key, String author, String title, String venue,
-			String tags, int year, int citations) {
+			List<String> tags, int year, int citations) {
 		this.key = key;
 		this.author = author;
 		this.title = title;
@@ -194,17 +198,22 @@ public class BibtexEntry {
 
 	void parseTags() {
 		try {
-			if (tags.equals(UNKNOWN)) {
-				tags = entry.getField(KEY_TT_TAGS).toUserString();
+			if (tags.isEmpty()) {
+				for (Key key : KEY_LIST) {
+					List<String> tagsForKey = new ArrayList();
+					String tag = entry.getField(key).toUserString();
+					tag = replaceUmlauts(tag);
+					tags.add(tag);
+					StringTokenizer tokenizer = new StringTokenizer(tag, ",");
+					while (tokenizer.hasMoreTokens())
+						tagsForKey.add(tokenizer.nextToken().trim());
+					tagList.add(tagsForKey);
+				}
+					//tags = entry.getField(KEY_TT_TAGS).toUserString();
 			}
-			tags = replaceUmlauts(tags);
-			StringTokenizer tokenizer = new StringTokenizer(tags, ",");
-			while (tokenizer.hasMoreTokens())
-				tagList.add(tokenizer.nextToken().trim());
+
 		} catch (Exception e) {
 		}
-		if (tagList.isEmpty())
-			tagList.add("(none)");
 	}
 
 	public static String replaceUmlauts(String s) {
@@ -214,7 +223,7 @@ public class BibtexEntry {
 		s = s.replace("\\\"u", "&uuml;");
 		s = s.replace("\\\"A", "&Auml;");
 		s = s.replace("\\\"O", "&Ouml;");
-		s = s.replace("\\O", "Ø");
+		s = s.replace("\\O", "ï¿½");
 		s = s.replace("\\\"U", "&Uuml;");
 		s = s.replace("\\ss", "&szlig;");
 		s = s.replace("\\&\\#536;", "S");
@@ -246,7 +255,7 @@ public class BibtexEntry {
 		s = s.replace("&uuml;", "ue");
 		s = s.replace("&Auml;", "Ae");
 		s = s.replace("&Ouml;", "Oe");
-		s = s.replace("Ø", "O");
+		s = s.replace("ï¿½", "O");
 		s = s.replace("&Uuml;", "Ue");
 		s = s.replace("&szlig;", "ss");
 		s = s.replace("&amp;", "and");

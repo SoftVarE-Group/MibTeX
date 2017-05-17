@@ -35,7 +35,7 @@ public class ExportJSON extends Export{
             .append(getJSONAttribute("venues", entry.venue)+",")
             .append(getJSONAttribute("year", entry.year)+",")
             .append(getJSONAttribute("citations", entry.getCitations())+",")
-            .append(getJSONAttribute("tags", entry.tagList))
+            .append(getJSONAttributeFromList("tags", entry.tagList))
             .append("},"+System.getProperty("line.separator"));
         }
         JSON.append("]");
@@ -57,6 +57,15 @@ public class ExportJSON extends Export{
             if (i < (list.size()-1)) {
                 str += ",";
             }
+        }
+        str += "]";
+        return "\""+key+"\":"+str;
+    }
+
+    private String getJSONAttributeFromList(String key, List<List<String>> list) {
+        String str = "[";
+        for (List l : list) {
+            str += getJSONAttribute(key, l);
         }
         str += "]";
         return "\""+key+"\":"+str;

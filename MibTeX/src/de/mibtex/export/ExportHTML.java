@@ -219,7 +219,8 @@ public class ExportHTML extends Export {
 
 	private String getHTMLTags(BibtexEntry entry) {
 		String s = entry.key + ", ";
-		for (String tag : entry.tagList)
+		for (List<String> tags : entry.tagList)
+			for (String tag : tags)
 			s += "<a href=\"" + BibtexEntry.toURL(tag) + ".htm\">" + tag
 					+ "</a>, ";
 		return s.substring(0, s.length() - 2);
