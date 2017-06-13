@@ -110,6 +110,7 @@ public class ExportClassification extends Export {
 					"family-based implementation",
 					"feature-based implementation",
 					"feature-product-based implementation",
+					"product-family-based implementation",
 					"composition-based implementation",
 					"annotation-based implementation" },
 			{ "domain-independent specification", "family-wide specification",
