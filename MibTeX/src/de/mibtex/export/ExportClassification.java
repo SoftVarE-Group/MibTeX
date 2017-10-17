@@ -120,7 +120,7 @@ public class ExportClassification extends Export {
 					"family-based specification", "specification independent",
 					"specification undefined" },
 			{ "requirements", "design", "source code", "program", "theory",
-					"source code / program" } };
+					"source code / program", "model" } };
 
 	private String getTags(List<String> tags, int i) {
 		String result = "";
