@@ -172,6 +172,9 @@ public class BibtexViewer {
             case "Classification":
                 exporter = new ExportClassification(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
+            case "Sampling":
+                exporter = new ExportSampling(BibtexViewer.BIBTEX_DIR, "literature.bib");
+                break;
             case "HTML_NEW":
                 exporter = new ExportNewHTML(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
