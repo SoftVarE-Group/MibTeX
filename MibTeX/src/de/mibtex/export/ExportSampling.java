@@ -89,7 +89,7 @@ public class ExportSampling extends Export {
 		return "";
 	}
 
-	public final static String[][] TAGS = { { "greedy", "evolutionary", "non-evolutionary", "manual" },
+	public final static String[][] TAGS = { { "greedy", "evolutionary", "non-evolutionary", "manual selection" },
 			{ "feature model", "domain knowledge", "code artifacts", "test artifacts" },
 			{ "feature-wise coverage", "pair-wise coverage", "t-wise coverage", "statement coverage", "block coverage",
 					"no coverage" },
