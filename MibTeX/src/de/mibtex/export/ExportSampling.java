@@ -37,11 +37,11 @@ public class ExportSampling extends Export {
 			BufferedWriter out = new BufferedWriter(new FileWriter(file));
 			out.append("Authors" + SEP + "Venue" + SEP + "Year" + SEP + "Title" + SEP + "Algorithm" + SEP
 					+ "Algorithm Category" + SEP + "Input Data" + SEP + "Coverage" + SEP + "Evaluation" + SEP
-					+ "Further Tags");
+					+ "Application" + SEP + "Further Tags");
 			out.append(System.lineSeparator());
 			for (BibtexEntry entry : entries.values()) {
 				for (List<String> tags : entry.tagList) {
-					out.append(getEntry(entry,tags));
+					out.append(getEntry(entry, tags));
 				}
 			}
 			out.close();
@@ -89,12 +89,13 @@ public class ExportSampling extends Export {
 		return "";
 	}
 
-	public final static String[][] TAGS = { { "greedy", "evolutionary", "non-evalutionary", "manual" },
+	public final static String[][] TAGS = { { "greedy", "evolutionary", "non-evolutionary", "manual" },
 			{ "feature model", "domain knowledge", "code artifacts", "test artifacts" },
 			{ "feature-wise coverage", "pair-wise coverage", "t-wise coverage", "statement coverage", "block coverage",
 					"no coverage" },
 			{ "sampling efficiency", "testing efficiency", "effectiveness", "no tool", "unavailable tool",
-					"available tool", "open-source tool", "evaluation", "no evaluation" } };
+					"available tool", "open-source tool", "evaluation", "no evaluation" },
+			{ "testing", "type checking", "data-flow analysis" } };
 
 	private String getTags(List<String> tags, int i) {
 		String result = "";
