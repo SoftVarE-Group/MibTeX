@@ -223,7 +223,6 @@ public class BibtexEntry {
 		s = s.replace("\\\"u", "&uuml;");
 		s = s.replace("\\\"A", "&Auml;");
 		s = s.replace("\\\"O", "&Ouml;");
-		s = s.replace("\\O", "�");
 		s = s.replace("\\\"U", "&Uuml;");
 		s = s.replace("\\ss", "&szlig;");
 		s = s.replace("\\&\\#536;", "S");
@@ -241,6 +240,7 @@ public class BibtexEntry {
 		s = s.replace("\\,", " ");
 		s = s.replace("\\~", "");
 		s = s.replace("\\\"", "");
+		s = s.replace("\\", "");
 		s = s.replace("---", "&#8211;");
 		s = s.replace("--", "&#8211;");
 		s = s.replace("{", "");

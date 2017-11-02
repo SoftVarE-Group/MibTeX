@@ -40,9 +40,8 @@ public class ExportClassification extends Export {
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(file));
 			out.append("Key" + SEP + "Editor" + SEP);
-			out.append("Authors" + SEP + "Venue"
-					+ SEP + "Year" + SEP + "Title" + SEP + "Analysis Method"
-					+ SEP + "Analysis Strategy" + SEP
+			out.append("Authors" + SEP + "Venue" + SEP + "Year" + SEP + "Title"
+					+ SEP + "Analysis Method" + SEP + "Analysis Strategy" + SEP
 					+ "Implementation Strategy" + SEP
 					+ "Specification Strategy" + SEP + "SE Layer" + SEP);
 			out.append("Further Keywords" + SEP + SEP);
@@ -68,7 +67,7 @@ public class ExportClassification extends Export {
 		b.append(entry.year + SEP);
 		b.append(ESC + entry.title + ESC + SEP);
 		List<String> tags = new ArrayList<String>();
-		for (List<String> tagList: entry.tagList)
+		for (List<String> tagList : entry.tagList)
 			for (String tag : tagList)
 				if (!tag.startsWith("classified by")
 						&& !tag.startsWith("subsumed by"))
@@ -88,10 +87,12 @@ public class ExportClassification extends Export {
 	public final static String[][] TAGS = {
 			{ "data-flow analysis", "family-specific analysis",
 					"fault-tree analysis", "feature-model analysis",
-					"variant-preserving migration", "model checking", "runtime analysis",
-					"static analysis", "syntax checking", "product synthesis",
-					"testing", "test-case generation", "theorem proving", "type checking", "symbolic analysis", "SMT solving", "SAT solving", "BDD solving",
-					"analysis method undefined" },
+					"model checking", "performance analysis", "refactoring",
+					"runtime analysis", "static analysis", "symbolic analysis",
+					"syntax checking", "synthesis", "test-case generation",
+					"testing", "theorem proving", "type checking",
+					"variant-preserving migration",
+					"analysis method undefined", "analysis method independent" },
 			{ "family-based analysis", "family-product-based analysis",
 					"feature-based analysis", "feature-family-based analysis",
 					"feature-product-based analysis",
@@ -109,6 +110,7 @@ public class ExportClassification extends Export {
 					"family-based implementation",
 					"feature-based implementation",
 					"feature-product-based implementation",
+					"product-family-based implementation",
 					"composition-based implementation",
 					"annotation-based implementation" },
 			{ "domain-independent specification", "family-wide specification",
@@ -118,7 +120,7 @@ public class ExportClassification extends Export {
 					"family-based specification", "specification independent",
 					"specification undefined" },
 			{ "requirements", "design", "source code", "program", "theory",
-					"source code / program" } };
+					"source code / program", "model" } };
 
 	private String getTags(List<String> tags, int i) {
 		String result = "";
