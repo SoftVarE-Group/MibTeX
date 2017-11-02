@@ -1,20 +1,19 @@
 /* MibTeX - Minimalistic tool to manage your references with BibTeX
- * 
+ *
  * Distributed under BSD 3-Clause License, available at Github
- * 
+ *
  * https://github.com/tthuem/MibTeX
  */
 package de.mibtex.citationservice;
 
+import de.mibtex.Levenshtein;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import de.mibtex.Levenshtein;
 
 /**
  * A class to read the number of citations from Google Scholar.
@@ -24,11 +23,12 @@ import de.mibtex.Levenshtein;
 public class ScholarCitations {
 
     private final static String SCHOLAR_URL = "http://scholar.google.com/scholar?q=";
-    private static Pattern entryPattern = Pattern.compile("<div class=\"gs_r\">(.*?)Fewer<\\/a><\\/div><\\/div><\\/div>");
+    private static Pattern entryPattern = Pattern.compile("<div class=\"gs_r gs_or gs_scl\" data-cid=\".*?\" data-did=\".*?\" data-lid=\".*?\" data-rp=\".*?\">(.*?)<\\/svg><\\/a><\\/div><\\/div><\\/div>");
     private static Pattern citationsPattern = Pattern
-            .compile(".*?<h3 class=\"gs_rt\">(.*?)<\\/h3>.*?Cited by (\\d*).*?Fewer<\\/a><\\/div><\\/div><\\/div>");
+            .compile("<h3 class=\"gs_rt\">.*?<a *?href=\".*?\" data-clk=\".*?\">(.*?)<\\/a><\\/h3>.*?<a href=\".*?\">Cited by (\\d*)<\\/a>.*?<a href=\".*?\">Related articles<\\/a>");
     private static Pattern titlePattern = Pattern
-            .compile(".*?<h3 class=\"gs_rt\">(.*?)<\\/h3>");
+            .compile("<h3 class=\"gs_rt\">.*?<a href=\".*?\" data-clk=\".*?\">(.*?)<\\/a><\\/h3>");
+
     private static float levenshteinParameter = 10; // This factor describes how much a title is allowed to change (Standard: 10%)
 
     public static int getCitations(String title) throws IOException {

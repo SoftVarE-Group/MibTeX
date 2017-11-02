@@ -46,7 +46,11 @@ public class CitationService {
                 }
             }
 		} else {
-			CITATION_DIR = args[0];
+			try {
+				CITATION_DIR = args[0];
+			} catch (IndexOutOfBoundsException e) {
+
+			}
 		}
 		try {
             File file = new File(CITATION_DIR, "citations.csv");
