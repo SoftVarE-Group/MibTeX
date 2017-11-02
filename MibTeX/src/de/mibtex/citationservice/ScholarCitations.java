@@ -50,7 +50,7 @@ public class ScholarCitations {
                 String titleFound = titleOutline.replaceAll("<.*?>", "").replaceAll("\\[.*\\]", "")
                         .replaceAll("%20", " ").replaceAll("&#39;", "'").trim();
 
-                int elementDistance = Levenshtein.getDistance(titleFound.toLowerCase(), title.toLowerCase());
+                int elementDistance = Levenshtein.getDistance(titleFound.toLowerCase().replaceAll("\\W",""), title.toLowerCase().replaceAll("\\W",""));
 
                 if (elementDistance < (title.length() / 100.0f * levenshteinParameter)) {
                     if (elementDistance < bestElementDistance) {
@@ -70,7 +70,7 @@ public class ScholarCitations {
                     String titleFound = titleOutline.replaceAll("<.*?>", "").replaceAll("\\[.*\\]", "")
                             .replaceAll("%20", " ").replaceAll("&#39;", "'").trim();
 
-                    int elementDistance = Levenshtein.getDistance(titleFound.toLowerCase(), title.toLowerCase());
+                    int elementDistance = Levenshtein.getDistance(titleFound.toLowerCase().replaceAll("\\W",""), title.toLowerCase().replaceAll("\\W",""));
 
                     if (elementDistance < (title.length() / 100.0f * levenshteinParameter) && elementDistance < bestElementDistance) {
                         bestElementCitations = 0;
