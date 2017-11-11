@@ -27,7 +27,7 @@ public class ScholarCitations {
     private static Pattern citationsPattern = Pattern
             .compile("<h3 class=\"gs_rt\">.*?<a *?href=\".*?\" data-clk=\".*?\">(.*?)<\\/a><\\/h3>.*?<a href=\".*?\">Cited by (\\d*)<\\/a>.*?<a href=\".*?\">Related articles<\\/a>");
     private static Pattern titlePattern = Pattern
-            .compile("<h3 class=\"gs_rt\">.*?<a href=\".*?\" data-clk=\".*?\">(.*?)<\\/a><\\/h3>");
+            .compile("<h3 class=\"gs_rt\">.*?<a *?href=\".*?\" data-clk=\".*?\">(.*?)<\\/a><\\/h3>");
 
     private static float levenshteinParameter = 10; // This factor describes how much a title is allowed to change (Standard: 10%)
 
