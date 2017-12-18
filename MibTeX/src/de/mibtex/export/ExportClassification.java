@@ -40,10 +40,9 @@ public class ExportClassification extends Export {
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(file));
 			out.append("Key" + SEP + "Editor" + SEP);
-			out.append("Authors" + SEP + "Venue" + SEP + "Year" + SEP + "Title"
-					+ SEP + "Analysis Method" + SEP + "Analysis Strategy" + SEP
-					+ "Implementation Strategy" + SEP
-					+ "Specification Strategy" + SEP + "SE Layer" + SEP);
+			out.append("Authors" + SEP + "Venue" + SEP + "Year" + SEP + "Title" + SEP + "Analysis Method" + SEP
+					+ "Analysis Strategy" + SEP + "Implementation Strategy" + SEP + "Specification Strategy" + SEP
+					+ "SE Layer" + SEP);
 			out.append("Further Keywords" + SEP + SEP);
 			out.append(System.lineSeparator());
 			for (BibtexEntry entry : entries.values()) {
@@ -69,8 +68,7 @@ public class ExportClassification extends Export {
 		List<String> tags = new ArrayList<String>();
 		for (List<String> tagList : entry.tagList)
 			for (String tag : tagList)
-				if (!tag.startsWith("classified by")
-						&& !tag.startsWith("subsumed by"))
+				if (!tag.startsWith("classified by") && !tag.startsWith("subsumed by"))
 					tags.add(tag);
 		for (int i = 0; i < 5; i++)
 			b.append(ESC + getTags(tags, i) + ESC + SEP);
@@ -85,42 +83,25 @@ public class ExportClassification extends Export {
 	}
 
 	public final static String[][] TAGS = {
-			{ "data-flow analysis", "family-specific analysis",
-					"fault-tree analysis", "feature-model analysis",
-					"model checking", "performance analysis", "refactoring",
-					"runtime analysis", "static analysis", "symbolic analysis",
-					"syntax checking", "synthesis", "test-case generation",
-					"testing", "theorem proving", "type checking",
-					"variant-preserving migration",
-					"analysis method undefined", "analysis method independent" },
-			{ "family-based analysis", "family-product-based analysis",
-					"feature-based analysis", "feature-family-based analysis",
-					"feature-product-based analysis",
-					"product-family-based analysis",
-					"regression-based analysis", "sample-based analysis",
-					"unoptimized product-based analysis",
-					"analysis strategy undefined",
-					"optimized product-based analysis",
-					"product-based analysis" },
-			{ "clone-and-own", "build system", "preprocessor",
-					"runtime variability", "components", "services",
-					"plug-ins", "feature modules", "aspects", "delta modules",
-					"implementation independent", "implementation undefined",
-					"product-based implementation",
-					"family-based implementation",
-					"feature-based implementation",
-					"feature-product-based implementation",
-					"product-family-based implementation",
-					"composition-based implementation",
+			{ "data-flow analysis", "family-specific analysis", "fault-tree analysis", "feature-model analysis",
+					"information retrieval", "model checking", "performance analysis", "refactoring",
+					"runtime analysis", "static analysis", "symbolic analysis", "syntax checking", "synthesis",
+					"test-case generation", "testing", "theorem proving", "type checking",
+					"variant-preserving migration", "analysis method undefined", "analysis method independent" },
+			{ "family-based analysis", "family-product-based analysis", "feature-based analysis",
+					"feature-family-based analysis", "feature-product-based analysis", "product-family-based analysis",
+					"regression-based analysis", "sample-based analysis", "unoptimized product-based analysis",
+					"analysis strategy undefined", "optimized product-based analysis", "product-based analysis" },
+			{ "clone-and-own", "build system", "preprocessor", "runtime variability", "components", "services",
+					"plug-ins", "feature modules", "aspects", "delta modules", "implementation independent",
+					"implementation undefined", "product-based implementation", "family-based implementation",
+					"feature-based implementation", "feature-product-based implementation",
+					"product-family-based implementation", "composition-based implementation",
 					"annotation-based implementation" },
-			{ "domain-independent specification", "family-wide specification",
-					"product-based specification",
-					"feature-based specification",
-					"feature-product-based specification",
-					"family-based specification", "specification independent",
-					"specification undefined" },
-			{ "requirements", "design", "source code", "program", "theory",
-					"source code / program", "model" } };
+			{ "domain-independent specification", "family-wide specification", "product-based specification",
+					"feature-based specification", "feature-product-based specification", "family-based specification",
+					"specification independent", "specification undefined" },
+			{ "requirements", "design", "source code", "program", "theory", "source code / program", "model" } };
 
 	private String getTags(List<String> tags, int i) {
 		String result = "";
