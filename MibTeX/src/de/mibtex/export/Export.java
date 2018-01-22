@@ -157,9 +157,12 @@ public abstract class Export {
 
     private void readVenues() {
         venues = new ArrayList<String>();
-        for (BibtexEntry entry : entries.values())
+        for (BibtexEntry entry : entries.values()) {
+        	if ("GPCE13".equals(entry.venue))
+        		entry.venue = "GPCE";
             if (!venues.contains(entry.venue))
                 venues.add(entry.venue);
+        }
         Collections.sort(venues);
     }
 
