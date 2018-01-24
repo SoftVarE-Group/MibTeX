@@ -91,11 +91,12 @@ public class ExportSampling extends Export {
 
 	public final static String[][] TAGS = { { "greedy", "evolutionary", "non-evolutionary", "manual selection" },
 			{ "feature model", "domain knowledge", "code artifacts", "test artifacts" },
-			{ "feature-wise coverage", "pair-wise coverage", "3-wise coverage", "4-wise coverage", "5-wise coverage", "6-wise coverage", "t-wise coverage", "statement coverage", "block coverage",
+			{ "feature-wise coverage", "pair-wise coverage", "3-wise coverage", "4-wise coverage", "5-wise coverage",
+					"6-wise coverage", "t-wise coverage", "statement coverage", "block coverage",
 					"no coverage guarantee" },
 			{ "sampling efficiency", "testing efficiency", "effectiveness", "no tool", "tool unavailable",
 					"available tool", "open-source tool", "evaluation", "no evaluation" },
-			{ "testing", "type checking", "data-flow analysis" } };
+			{ "testing", "type checking", "data-flow analysis", "non-functional properties" } };
 
 	private String getTags(List<String> tags, int i) {
 		String result = "";
