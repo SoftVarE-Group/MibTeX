@@ -86,7 +86,7 @@ public class ExportClassification extends Export {
 			{ "data-flow analysis", "family-specific analysis", "fault-tree analysis", "feature-model analysis",
 					"information retrieval", "model checking", "performance analysis", "refactoring",
 					"runtime analysis", "static analysis", "symbolic analysis", "syntax checking", "synthesis",
-					"test-case generation", "testing", "theorem proving", "type checking",
+					"test-case generation", "test-case selection", "testing", "theorem proving", "type checking",
 					"variant-preserving migration", "analysis method undefined", "analysis method independent" },
 			{ "family-based analysis", "family-product-based analysis", "feature-based analysis",
 					"feature-family-based analysis", "feature-product-based analysis", "product-family-based analysis",
