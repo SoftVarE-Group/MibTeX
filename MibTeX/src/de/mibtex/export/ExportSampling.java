@@ -54,13 +54,16 @@ public class ExportSampling extends Export {
 	}
 
 	private String getEntry(BibtexEntry entry, List<String> tags) {
+		if (!isEntryInScope(tags)) {
+			return "";
+		}
 		StringBuilder b = new StringBuilder();
 		b.append(ESC + entry.author + ESC + SEP);
 		b.append(entry.venue + SEP);
 		b.append(entry.year + SEP);
 		b.append(ESC + entry.title + ESC + SEP);
 		b.append(ESC + getName(tags) + ESC + SEP);
-		tags = readTags(tags);
+		tags = filterTags(tags);
 		for (int i = 0; i < TAGS.length; i++)
 			b.append(ESC + getTags(tags, i) + ESC + SEP);
 		b.append(ESC);
@@ -73,23 +76,33 @@ public class ExportSampling extends Export {
 		return b.toString();
 	}
 
-	private List<String> readTags(List<String> allTags) {
+	private boolean isEntryInScope(List<String> tags) {
+		for (String tag : tags) {
+			if ("SPLC18".equals(tag)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private String getName(List<String> tags) {
+		for (String tag : tags) {
+			if (tag.startsWith(NAME_PREFIX)) {
+				return tag.substring(NAME_PREFIX.length());
+			}
+		}
+		return "";
+	}
+
+	private List<String> filterTags(List<String> allTags) {
 		List<String> tags = new ArrayList<String>();
 		for (String tag : allTags)
-			if (!tag.startsWith("classified by") && !tag.startsWith("subsumed by") && !tag.startsWith(NAME_PREFIX))
+			if (!"SPLC18".equals(tag) && !tag.startsWith("classified by") && !tag.startsWith("subsumed by") && !tag.startsWith(NAME_PREFIX))
 				tags.add(tag);
 		return tags;
 	}
 
-	private String getName(List<String> tags) {
-		for (String tag : tags)
-			if (tag.startsWith(NAME_PREFIX)) {
-				return tag.substring(NAME_PREFIX.length());
-			}
-		return "";
-	}
-
-	public final static String[][] TAGS = { { "greedy", "evolutionary", "non-evolutionary", "manual selection" },
+	public final static String[][] TAGS = { { "greedy", "evolutionary", "manual selection" },
 			{ "feature model", "domain knowledge", "code artifacts", "test artifacts", "product set" },
 			{ "feature-wise coverage", "pair-wise coverage", "3-wise coverage", "4-wise coverage", "5-wise coverage",
 					"6-wise coverage", "t-wise coverage", "statement coverage", "block coverage", "requirements coverage", 
