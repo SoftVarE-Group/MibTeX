@@ -23,12 +23,12 @@ import java.util.regex.Pattern;
 public class ScholarCitations {
 
     private final static String SCHOLAR_URL = "http://scholar.google.com/scholar?q=";
-    private static Pattern entryPattern = Pattern.compile("<div class=\"gs_r gs_or gs_scl\" data-cid=\".*?\" data-did=\".*?\" data-lid=\".*?\" data-rp=\".*?\">(.*?)<\\/svg><\\/a><\\/div><\\/div><\\/div>");
-    private static Pattern citationsPattern = Pattern
-            .compile("<h3 class=\"gs_rt\">.*?<a *?href=\".*?\" data-clk=\".*?\">(.*?)<\\/a><\\/h3>.*?<a href=\".*?\">Cited by (\\d*)<\\/a>.*?<a href=\".*?\">Related articles<\\/a>");
-    private static Pattern titlePattern = Pattern
-            .compile("<h3 class=\"gs_rt\">.*?<a *?href=\".*?\" data-clk=\".*?\">(.*?)<\\/a><\\/h3>");
+    private static Pattern entryPattern = Pattern.compile("<div class=\\\"gs_r gs_or gs_scl\\\".*?>(.*?)<\\/svg><\\/a><\\/div><\\/div><\\/div>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
 
+    private static Pattern citationsPattern = Pattern
+            .compile("<h3 class=\\\"gs_rt\\\" ontouchstart=\\\"gs_evt_dsp\\(event\\)\\\"><a.*?>(.*?)<\\/a><\\/h3>.*?>Cited by (\\d*)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
+    private static Pattern titlePattern = Pattern
+            .compile("<h3 class=\\\"gs_rt\\\" ontouchstart=\\\"gs_evt_dsp\\(event\\)\\\"><a.*?>(.*?)<\\/a><\\/h3>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
     private static float levenshteinParameter = 10; // This factor describes how much a title is allowed to change (Standard: 10%)
 
     public static int getCitations(String title) throws IOException {
