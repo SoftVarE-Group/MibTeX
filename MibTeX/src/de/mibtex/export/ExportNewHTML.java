@@ -100,7 +100,7 @@ public class ExportNewHTML extends Export {
         HTML.append("<a href=\"\" style=\"color:red;\" onclick=\"setTag('searchTag','").append(entry.key)
             .append("');event.preventDefault();Filter();\">").append(entry.key).append("</a>, ");
         int i = 0;
-        for (List<String> tags : entry.tagList) {
+        for (List<String> tags : entry.tagList.values()) {
             String prefix = BibtexViewer.TAGS.get(i).replace("tags", "");
             for (int j = 0; j < tags.size(); j++)
                 HTML.append("<a href=\"\" onclick=\"setTag('searchTag','").append(i!=0?prefix:"").append(tags.get(j).trim())
@@ -116,7 +116,7 @@ public class ExportNewHTML extends Export {
         List<String> tags = new ArrayList<>();
         tags.add(entry.key);
         int i = 0;
-        for (List<String> tagList : entry.tagList) {
+        for (List<String> tagList : entry.tagList.values()) {
             String prefix = BibtexViewer.TAGS.get(i).replace("tags", "");
             for (String tag : tagList) {
                 String combinedTag = (i!=0?prefix:"") + tag;

@@ -9,11 +9,13 @@ package de.mibtex;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import org.jbibtex.BibTeXEntry;
 import org.jbibtex.Key;
+import org.jbibtex.Value;
 
 /**
  * A class storing a single BibTeX entry with several options for manipulation.
@@ -25,7 +27,7 @@ public class BibtexEntry {
 	private static final String UNKNOWN = "unknown";
 
 	public List<Key> KEY_LIST = new ArrayList<>();
-	//public static final Key KEY_TT_TAGS = new Key(BibtexViewer.TAGS);
+	// public static final Key KEY_TT_TAGS = new Key(BibtexViewer.TAGS);
 
 	public BibTeXEntry entry = null;
 
@@ -41,7 +43,7 @@ public class BibtexEntry {
 
 	public List<String> tags = new ArrayList<>();
 
-	public List<List<String>> tagList = new ArrayList<>();
+	public HashMap<String, List<String>> tagList = new HashMap<>();
 
 	public int year = 0;
 
@@ -62,8 +64,8 @@ public class BibtexEntry {
 		parseTags();
 	}
 
-	public BibtexEntry(String key, String author, String title, String venue,
-			List<String> tags, int year, int citations) {
+	public BibtexEntry(String key, String author, String title, String venue, List<String> tags, int year,
+			int citations) {
 		this.key = key;
 		this.author = author;
 		this.title = title;
@@ -124,11 +126,9 @@ public class BibtexEntry {
 		try {
 			if (author.equals(UNKNOWN)) {
 				try {
-					author = entry.getField(BibTeXEntry.KEY_AUTHOR)
-							.toUserString();
+					author = entry.getField(BibTeXEntry.KEY_AUTHOR).toUserString();
 				} catch (Exception e) {
-					author = entry.getField(BibTeXEntry.KEY_EDITOR)
-							.toUserString();
+					author = entry.getField(BibTeXEntry.KEY_EDITOR).toUserString();
 				}
 			}
 			author = replaceUmlauts(author);
@@ -141,10 +141,8 @@ public class BibtexEntry {
 				int after = author.indexOf("; ", comma);
 				if (after < 0)
 					after = author.length();
-				author = author.substring(0, before)
-						+ author.substring(comma + 1, after) + " "
-						+ author.substring(before, comma)
-						+ author.substring(after);
+				author = author.substring(0, before) + author.substring(comma + 1, after) + " "
+						+ author.substring(before, comma) + author.substring(after);
 			}
 			author = author.replace("; ", ", ");
 			StringTokenizer tokenizer = new StringTokenizer(author, ",");
@@ -174,8 +172,7 @@ public class BibtexEntry {
 			if (venue.equalsIgnoreCase("(incollection)"))
 				return;
 			try {
-				venue = entry.getField(BibTeXEntry.KEY_BOOKTITLE)
-						.toUserString();
+				venue = entry.getField(BibTeXEntry.KEY_BOOKTITLE).toUserString();
 			} catch (Exception e) {
 			}
 			try {
@@ -188,8 +185,7 @@ public class BibtexEntry {
 	void parseYear() {
 		if (year == 0) {
 			try {
-				String yearString = entry.getField(BibTeXEntry.KEY_YEAR)
-						.toUserString();
+				String yearString = entry.getField(BibTeXEntry.KEY_YEAR).toUserString();
 				year = Integer.parseInt(yearString);
 			} catch (Exception e) {
 			}
@@ -201,18 +197,23 @@ public class BibtexEntry {
 			if (tags.isEmpty()) {
 				for (Key key : KEY_LIST) {
 					List<String> tagsForKey = new ArrayList();
-					String tag = entry.getField(key).toUserString();
-					tag = replaceUmlauts(tag);
-					tags.add(tag);
-					StringTokenizer tokenizer = new StringTokenizer(tag, ",");
-					while (tokenizer.hasMoreTokens())
-						tagsForKey.add(tokenizer.nextToken().trim());
-					tagList.add(tagsForKey);
+					Value value = entry.getField(key);
+					if (value != null) {
+						String tag = value.toUserString();
+						tag = replaceUmlauts(tag);
+						tags.add(tag);
+						StringTokenizer tokenizer = new StringTokenizer(tag, ",");
+						while (tokenizer.hasMoreTokens())
+							tagsForKey.add(tokenizer.nextToken().trim());
+
+						tagList.put(key.getValue(), tagsForKey);
+					}
 				}
-					//tags = entry.getField(KEY_TT_TAGS).toUserString();
+				// tags = entry.getField(KEY_TT_TAGS).toUserString();
 			}
 
 		} catch (Exception e) {
+			System.out.println("Parsing tag list failed for unknown reason");
 		}
 	}
 
@@ -270,10 +271,9 @@ public class BibtexEntry {
 
 	@Override
 	public String toString() {
-		return "BibtexEntry [entry=" + entry + ", key=" + key + ", author="
-				+ author + ", authorList=" + authorList + ", title=" + title
-				+ ", venue=" + venue + ", tags=" + tags + ", tagList="
-				+ tagList + ", year=" + year + ", citations=" + citations + "]";
+		return "BibtexEntry [entry=" + entry + ", key=" + key + ", author=" + author + ", authorList=" + authorList
+				+ ", title=" + title + ", venue=" + venue + ", tags=" + tags + ", tagList=" + tagList + ", year=" + year
+				+ ", citations=" + citations + "]";
 	}
 
 }

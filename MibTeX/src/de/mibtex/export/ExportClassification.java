@@ -66,7 +66,7 @@ public class ExportClassification extends Export {
 		b.append(entry.year + SEP);
 		b.append(ESC + entry.title + ESC + SEP);
 		List<String> tags = new ArrayList<String>();
-		for (List<String> tagList : entry.tagList)
+		for (List<String> tagList : entry.tagList.values())
 			for (String tag : tagList)
 				if (!tag.startsWith("classified by") && !tag.startsWith("subsumed by"))
 					tags.add(tag);

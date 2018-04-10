@@ -110,7 +110,7 @@ public class ExportHTML extends Export {
 
 				@Override
 				public boolean include(BibtexEntry entry) {
-					return entry.tagList.contains(tag);
+					return entry.tagList.values().contains(tag);
 				}
 			});
 		}
@@ -219,7 +219,7 @@ public class ExportHTML extends Export {
 
 	private String getHTMLTags(BibtexEntry entry) {
 		String s = entry.key + ", ";
-		for (List<String> tags : entry.tagList)
+		for (List<String> tags : entry.tagList.values())
 			for (String tag : tags)
 			s += "<a href=\"" + BibtexEntry.toURL(tag) + ".htm\">" + tag
 					+ "</a>, ";

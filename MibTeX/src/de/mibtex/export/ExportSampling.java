@@ -40,7 +40,7 @@ public class ExportSampling extends Export {
 					+ "Application" + SEP + "Further Tags");
 			out.append(System.lineSeparator());
 			for (BibtexEntry entry : entries.values()) {
-				for (List<String> tags : entry.tagList) {
+				for (List<String> tags : entry.tagList.values()) {
 					out.append(getEntry(entry, tags));
 				}
 			}

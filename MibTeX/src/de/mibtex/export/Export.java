@@ -169,7 +169,7 @@ public abstract class Export {
     private void readTags() {
         tags = new ArrayList<>();
         for (BibtexEntry entry : entries.values())
-            for (List<String> tagList : entry.tagList) {
+            for (List<String> tagList : entry.tagList.values()) {
                 for (String tag : tagList)
                     if (!tags.contains(tag)) {
                         tags.add(tag);

@@ -6,6 +6,7 @@
  */
 package de.mibtex.export;
 
+import java.util.Collection;
 import java.util.List;
 
 import de.mibtex.BibtexEntry;
@@ -35,7 +36,7 @@ public class ExportJSON extends Export{
             .append(getJSONAttribute("venues", entry.venue)+",")
             .append(getJSONAttribute("year", entry.year)+",")
             .append(getJSONAttribute("citations", entry.getCitations())+",")
-            .append(getJSONAttributeFromList("tags", entry.tagList))
+            .append(getJSONAttributeFromList("tags", entry.tagList.values()))
             .append("},"+System.getProperty("line.separator"));
         }
         JSON.append("]");
@@ -62,9 +63,9 @@ public class ExportJSON extends Export{
         return "\""+key+"\":"+str;
     }
 
-    private String getJSONAttributeFromList(String key, List<List<String>> list) {
+    private String getJSONAttributeFromList(String key, Collection<List<String>> collection) {
         String str = "[";
-        for (List l : list) {
+        for (List l : collection) {
             str += getJSONAttribute(key, l);
         }
         str += "]";
