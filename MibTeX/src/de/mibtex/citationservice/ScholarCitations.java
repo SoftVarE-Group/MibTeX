@@ -82,6 +82,10 @@ public class ScholarCitations {
 
         if (bestElementCitations >= 0)
             return bestElementCitations;
+        if (title.indexOf(":") >= 0) {
+        	int citations = getCitations(title.substring(0, title.indexOf(":")));
+        	return citations;
+        }
         return CitationEntry.NOT_FOUND;
     }
 

@@ -39,7 +39,7 @@ public class ExportCitations extends Export {
 				BibtexViewer.CITATION_DIR, "citations.csv"));
 		for (BibtexEntry entry : entries.values()) {
 			CitationEntry newEntry = new CitationEntry(entry.key,
-					BibtexEntry.toURL(entry.title), -1, 0);
+					encodeTitle(entry.title), -1, 0);
 			if (citations.contains(newEntry)) {
 				newCitations.add(citations.get(citations.indexOf(newEntry)));
 			} else {
@@ -80,4 +80,23 @@ public class ExportCitations extends Export {
 		System.out.println("done.");
 	}
 
+	public static String encodeTitle(String s) {
+		s = s.replace("&auml;", "ae");
+		s = s.replace("&ouml;", "oe");
+		s = s.replace("&uuml;", "ue");
+		s = s.replace("&Auml;", "Ae");
+		s = s.replace("&Ouml;", "Oe");
+		s = s.replace("�", "O");
+		s = s.replace("&Uuml;", "Ue");
+		s = s.replace("&szlig;", "ss");
+		s = s.replace("&amp;", "and");
+		s = s.replace("&#8211;", "-");
+		s = s.replace("?", "");
+		s = s.replace("\\", "");
+		s = s.replace("/", "");
+		s = s.replace("#", "");
+		
+		return s;
+	}
+	
 }
