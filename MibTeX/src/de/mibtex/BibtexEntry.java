@@ -9,7 +9,7 @@ package de.mibtex;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -43,7 +43,7 @@ public class BibtexEntry {
 
 	public List<String> tags = new ArrayList<>();
 
-	public HashMap<String, List<String>> tagList = new HashMap<>();
+	public LinkedHashMap<String, List<String>> tagList = new LinkedHashMap<>();
 
 	public int year = 0;
 
