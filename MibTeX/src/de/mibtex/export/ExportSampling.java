@@ -82,7 +82,7 @@ public class ExportSampling extends Export {
 				return true;
 			}
 		}
-		return false;
+		return true; //ignore SPLC18 tag for now
 	}
 
 	private String getName(List<String> tags) {
