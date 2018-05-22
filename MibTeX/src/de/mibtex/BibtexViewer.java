@@ -32,7 +32,7 @@ public class BibtexViewer {
 
     public static String PDF_DIR = "";
 
-    public static List<String> TAGS = new ArrayList();
+    public static List<String> TAGS = new ArrayList<String>();
 
     private static boolean cleanOutputDir;
 
@@ -173,6 +173,9 @@ public class BibtexViewer {
                 break;
             case "Sampling":
                 exporter = new ExportSampling(BibtexViewer.BIBTEX_DIR, "literature.bib");
+                break;
+            case "Sampling Latex":
+                exporter = new ExportSamplingLatex(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
             case "HTML_NEW":
                 exporter = new ExportNewHTML(BibtexViewer.BIBTEX_DIR, "literature.bib");
