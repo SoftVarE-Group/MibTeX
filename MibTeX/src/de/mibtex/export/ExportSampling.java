@@ -25,12 +25,11 @@ public class ExportSampling extends Export {
 			"Application" };
 
 	public final static String[][] TAGS = {
-			{ "feature model", "domain knowledge", "code artifacts", "test artifacts", "product set" },
+			{ "feature model", "expert knowledge", "implementation artifacts", "test artifacts" }, //, "product set"
 			{ "greedy", "evolutionary", "manual selection" },
 			{ "feature-wise coverage", "pair-wise coverage", "t-wise coverage", "code coverage",
 					"requirements coverage", "no coverage guarantee" },
-			{ "sampling efficiency", "testing efficiency", "effectiveness", "no tool", "tool unavailable",
-					"available tool", "open-source tool", "evaluation", "no evaluation" },
+			{ "sampling efficiency", "testing efficiency", "effectiveness", "unavailable tool", "available tool", "open-source tool", "evaluation" },
 			{ "testing", "type checking", "data-flow analysis", "non-functional properties" } };
 
 	static final String NAME_PREFIX = "name=";
@@ -107,7 +106,7 @@ public class ExportSampling extends Export {
 				return true;
 			}
 		}
-		return true; // ignore SPLC18 tag for now
+		return false;
 	}
 
 	String getName(List<String> tags) {
@@ -122,7 +121,7 @@ public class ExportSampling extends Export {
 	List<String> filterTags(List<String> allTags) {
 		List<String> tags = new ArrayList<String>();
 		for (String tag : allTags)
-			if (!"SPLC18".equals(tag) && !tag.startsWith("classified by") && !tag.startsWith("subsumed by")
+			if (!"SPLC18".equals(tag) && !tag.startsWith("classified by") && !tag.startsWith("subsumed by") && !tag.startsWith("no tool") && !tag.startsWith("no evaluation")
 					&& !tag.startsWith(NAME_PREFIX))
 				tags.add(tag);
 		return tags;

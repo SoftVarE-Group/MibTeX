@@ -148,4 +148,17 @@ public class ExportSamplingLatex extends ExportSampling {
 		return number;
 	}
 
+	boolean isEntryInScope(List<String> tags) {
+		if (!super.isEntryInScope(tags)) {
+			return false;
+		}
+		for (String tag : tags) {
+			// ignore all papers that are subsumed by newer papers
+			if (tag.startsWith("subsumed by")) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 }
