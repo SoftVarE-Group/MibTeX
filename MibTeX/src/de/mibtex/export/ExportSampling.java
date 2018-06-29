@@ -24,9 +24,10 @@ public class ExportSampling extends Export {
 	public final static String[] TAG_CATEGORIES = { "Input Data", "Algorithm Category", "Coverage", "Evaluation",
 			"Application" };
 
+	// other tags: name=X,compared to Y,subsumed by Z,
 	public final static String[][] TAGS = {
 			{ "feature model", "expert knowledge", "implementation artifacts", "test artifacts" }, //, "product set"
-			{ "greedy", "evolutionary", "manual selection" },
+			{ "greedy", "local search", "population-based search", "manual selection", "semi-automatic selection" }, // , "automatic selection"
 			{ "feature-wise coverage", "pair-wise coverage", "t-wise coverage", "code coverage",
 					"requirements coverage", "no coverage guarantee" },
 			{ "sampling efficiency", "testing efficiency", "effectiveness", "unavailable tool", "available tool", "open-source tool", "evaluation" },
