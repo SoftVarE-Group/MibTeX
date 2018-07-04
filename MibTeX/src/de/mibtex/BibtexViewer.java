@@ -158,20 +158,20 @@ public class BibtexViewer {
 
     public BibtexViewer(String format) throws Exception {
         Export exporter = null;
-        switch (format) {
+        switch (format.toUpperCase()) {
             case "CSV":
                 exporter = new ExportCSV(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
             case "JSON":
                 exporter = new ExportJSON(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
-            case "Citations":
+            case "CITATIONS":
                 exporter = new ExportCitations(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
-            case "Classification":
+            case "CLASSIFICATION":
                 exporter = new ExportClassification(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
-            case "Sampling":
+            case "SAMPLING":
                 exporter = new ExportSampling(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
             case "HTML_NEW":

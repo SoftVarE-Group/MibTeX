@@ -22,11 +22,11 @@ import java.util.regex.Pattern;
  */
 public class ScholarCitations {
 
-    private final static String SCHOLAR_URL = "http://scholar.google.com/scholar?q=";
+    private final static String SCHOLAR_URL = "http://scholar.google.com/scholar?hl=en&q=";
     private static Pattern entryPattern = Pattern.compile("<div class=\\\"gs_r gs_or gs_scl\\\".*?>(.*?)<\\/svg><\\/a><\\/div><\\/div><\\/div>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
 
     private static Pattern citationsPattern = Pattern
-            .compile("<h3 class=\\\"gs_rt\\\" ontouchstart=\\\"gs_evt_dsp\\(event\\)\\\"><a.*?>(.*?)<\\/a><\\/h3>.*?>Cited by (\\d*)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
+            .compile("<h3 class=\\\"gs_rt\\\" ontouchstart=\\\"gs_evt_dsp\\(event\\)\\\">.*?<a.*?>(.*?)<\\/a><\\/h3>.*?>Cited by (\\d*)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
     private static Pattern titlePattern = Pattern
             .compile("<h3 class=\\\"gs_rt\\\" ontouchstart=\\\"gs_evt_dsp\\(event\\)\\\"><a.*?>(.*?)<\\/a><\\/h3>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
     private static float levenshteinParameter = 10; // This factor describes how much a title is allowed to change (Standard: 10%)
@@ -83,6 +83,7 @@ public class ScholarCitations {
         if (bestElementCitations >= 0)
             return bestElementCitations;
         if (title.indexOf(":") >= 0) {
+        	System.out.println("Did not find title. Try again with: "+title.substring(0, title.indexOf(":")));
         	int citations = getCitations(title.substring(0, title.indexOf(":")));
         	return citations;
         }

@@ -41,7 +41,7 @@ public class CitationService {
             String citationDir;
             if (ini != null) {
                 citationDir = ini.get("options", "citation-dir");
-                if (citationDir.isEmpty()) {
+                if (citationDir == null || citationDir.isEmpty()) {
                     CITATION_DIR = ini.get("options", "bibtex-dir");
                 }
             }
