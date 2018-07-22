@@ -19,16 +19,22 @@ import java.util.Random;
  */
 public class ScholarService extends Thread {
 
-    private static final int MIN_DELAY = 60 * 18;
+	/*
+	 * Delay in minutes - Standard 18 min
+	 */
+    private static final int MIN_DELAY = 18;
 
-    private static final int EXTRA_DELAY = 1;
+    private static final int EXTRA_DELAY = 2;
 
     private Random rand = new Random();
 
     private File citationsFile;
 
-    public ScholarService(File file) {
-        citationsFile = file;
+	private File problemsFile;
+
+    public ScholarService(File citationsFile, File problemsFile) {
+        this.citationsFile = citationsFile;
+        this.problemsFile = problemsFile;
     }
 
     @Override
@@ -36,11 +42,18 @@ public class ScholarService extends Thread {
         while (true) {
             List<CitationEntry> entries = readFromFile(citationsFile);
             CitationEntry entry = nextEntry(entries);
+            int oldCitations = entry.getCitations();
             entry.updateCitations();
-            if (entry.getCitations() != CitationEntry.PROBLEM_OCCURED)
+            if (entry.getCitations() != CitationEntry.PROBLEM_OCCURED) {
                 writeToFile(citationsFile, entries);
+            }
+            if (oldCitations > 0 && entry.getCitations() <= 0) {
+            	List<CitationEntry> problems = readFromFile(problemsFile);
+            	problems.add(entry);
+            	writeToFile(problemsFile, problems);
+            }
             try {
-                sleep(MIN_DELAY * 1000 + rand.nextInt(EXTRA_DELAY * 1000));
+                sleep(MIN_DELAY * 60 * 1000 + rand.nextInt(EXTRA_DELAY * 1000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

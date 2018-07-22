@@ -38,10 +38,9 @@ public class CitationService {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-            String citationDir;
             if (ini != null) {
-                citationDir = ini.get("options", "citation-dir");
-                if (citationDir == null || citationDir.isEmpty()) {
+            	CITATION_DIR = ini.get("options", "citation-dir");
+                if (CITATION_DIR == null || CITATION_DIR.isEmpty()) {
                     CITATION_DIR = ini.get("options", "bibtex-dir");
                 }
             }
@@ -53,8 +52,10 @@ public class CitationService {
 			}
 		}
 		try {
-            File file = new File(CITATION_DIR, "citations.csv");
-            ScholarService service = new ScholarService(file);
+            File citationsFile = new File(CITATION_DIR, "citations.csv");
+            File problemsFile = new File(CITATION_DIR, "problems.csv");
+            if (!problemsFile.exists()) problemsFile.createNewFile();
+            ScholarService service = new ScholarService(citationsFile, problemsFile);
             service.start();
         } catch (Exception e) {
 			e.printStackTrace();
