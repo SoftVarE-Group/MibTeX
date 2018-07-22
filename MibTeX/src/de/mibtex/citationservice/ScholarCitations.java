@@ -34,6 +34,12 @@ public class ScholarCitations {
     public static int getCitations(String title) throws IOException {
         String url = SCHOLAR_URL + title.replace(" ", "%20");
         String html = toString(connect(new URL(url)));
+        
+        if (html.contains("<h1>Please show you&#39;re not a robot</h1>")) {
+        	System.out.println("Scholar has detected the robot");
+        	return CitationEntry.ROBOT;
+        }
+        
         Matcher entryMatcher = entryPattern.matcher(html.replace("\n", ""));
 
         // Find minimal Distance between titles found and the original title

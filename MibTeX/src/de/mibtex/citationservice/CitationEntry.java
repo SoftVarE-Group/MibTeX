@@ -23,6 +23,8 @@ public class CitationEntry implements Comparable<CitationEntry> {
     
     public final static int PROBLEM_OCCURED = -3;
     
+    public final static int ROBOT = -4;
+    
     private String key = UNKNOWN;
     
     private String title = UNKNOWN;
@@ -63,22 +65,30 @@ public class CitationEntry implements Comparable<CitationEntry> {
         this.citations = citations;
     }
     
-    public void updateCitations() {
+    public boolean updateCitations() {
+    	int citationsTemp = 0;
         System.out.println("Updating the citations of " + key + " with title \"" + getTitle() + "\"...");
         System.out.println("\told citations: " + citations + "   old timestamp: " + getLastUpdateString());
         try {
-            int citationsTemp = ScholarCitations.getCitations(title);
+            citationsTemp = ScholarCitations.getCitations(title);
             if (this.citations > 0 && citationsTemp < 0) {
                 System.out.println("\t" + this.key
                         + ": Has an old citation count, but now an error occurres");
             }
-            this.citations = citationsTemp;
+            if (citationsTemp != ROBOT) {
+            	this.citations = citationsTemp;
+            }
         } catch (Exception e) {
             this.citations = PROBLEM_OCCURED;
             e.printStackTrace();
         }
         this.lastUpdate = System.currentTimeMillis();
         System.out.println("\tnew citations: " + citations + "   new timestamp: " + getLastUpdateString());
+        if (citationsTemp != ROBOT) {
+        	return true;
+        } else {
+        	return false;
+        }
     }
     
     private String getLastUpdateString() {
