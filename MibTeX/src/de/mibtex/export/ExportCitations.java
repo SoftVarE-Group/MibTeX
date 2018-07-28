@@ -52,6 +52,13 @@ public class ExportCitations extends Export {
 
 	protected List<CitationEntry> readCitationFile(File file) {
 		System.out.print("Reading " + file.getName() + "... ");
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		List<CitationEntry> entries = new ArrayList<CitationEntry>();
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			for (String line; (line = br.readLine()) != null;) {
