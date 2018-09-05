@@ -174,7 +174,7 @@ public class BibtexViewer {
             case "SAMPLING":
                 exporter = new ExportSampling(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
-            case "Sampling Latex":
+            case "SAMPLING LATEX":
                 exporter = new ExportSamplingLatex(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
             case "HTML_NEW":
