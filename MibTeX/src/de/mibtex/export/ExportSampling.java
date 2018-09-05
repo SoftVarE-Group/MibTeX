@@ -102,12 +102,12 @@ public class ExportSampling extends Export {
 	}
 
 	boolean isEntryInScope(List<String> tags) {
-		for (String tag : tags) {
-			if ("SPLC18".equals(tag)) {
+//		for (String tag : tags) {
+//			if ("SPLC18".equals(tag)) {
 				return true;
-			}
-		}
-		return false;
+//			}
+//		}
+//		return false;
 	}
 
 	String getName(List<String> tags) {
@@ -122,8 +122,9 @@ public class ExportSampling extends Export {
 	List<String> filterTags(List<String> allTags) {
 		List<String> tags = new ArrayList<String>();
 		for (String tag : allTags)
-			if (!"SPLC18".equals(tag) && !tag.startsWith("classified by") && !tag.startsWith("subsumed by") && !tag.startsWith("no tool") && !tag.startsWith("no evaluation")
-					&& !tag.startsWith(NAME_PREFIX))
+			if (!tag.startsWith(NAME_PREFIX) && !tag.startsWith("classified by")
+//					&& !"SPLC18".equals(tag) && !tag.startsWith("subsumed by") && !tag.startsWith("no tool") && !tag.startsWith("no evaluation")
+				)
 				tags.add(tag);
 		return tags;
 	}
