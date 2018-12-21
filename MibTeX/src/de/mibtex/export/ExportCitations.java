@@ -35,19 +35,16 @@ public class ExportCitations extends Export {
 	@Override
 	public void writeDocument() {
 		List<CitationEntry> newCitations = new ArrayList<CitationEntry>();
-		List<CitationEntry> citations = readCitationFile(new File(
-				BibtexViewer.CITATION_DIR, "citations.csv"));
+		List<CitationEntry> citations = readCitationFile(new File(BibtexViewer.CITATION_DIR, "citations.csv"));
 		for (BibtexEntry entry : entries.values()) {
-			CitationEntry newEntry = new CitationEntry(entry.key,
-					encodeTitle(entry.title), -1, 0);
+			CitationEntry newEntry = new CitationEntry(entry.key, encodeTitle(entry.title));
 			if (citations.contains(newEntry)) {
 				newCitations.add(citations.get(citations.indexOf(newEntry)));
 			} else {
 				newCitations.add(newEntry);
 			}
 		}
-		writeCitationFile(new File(BibtexViewer.CITATION_DIR, "citations.csv"),
-				newCitations);
+		writeCitationFile(new File(BibtexViewer.CITATION_DIR, "citations.csv"), newCitations);
 	}
 
 	protected List<CitationEntry> readCitationFile(File file) {
@@ -102,8 +99,8 @@ public class ExportCitations extends Export {
 		s = s.replace("\\", "");
 		s = s.replace("/", "");
 		s = s.replace("#", "");
-		
+
 		return s;
 	}
-	
+
 }

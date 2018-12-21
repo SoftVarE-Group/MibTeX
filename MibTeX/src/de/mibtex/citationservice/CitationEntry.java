@@ -25,6 +25,8 @@ public class CitationEntry implements Comparable<CitationEntry> {
     
     public final static int ROBOT = -4;
     
+    public final static int NOT_IN_CITATION_SERVICE = -5;
+    
     private String key = UNKNOWN;
     
     private String title = UNKNOWN;
@@ -32,6 +34,12 @@ public class CitationEntry implements Comparable<CitationEntry> {
     private int citations = UNINITIALIZED;
     
     private long lastUpdate = 0;
+    
+    public CitationEntry(String key, String title) {
+        super();
+        this.key = key;
+        this.title = title;
+    }
     
     public CitationEntry(String key, String title, int citations, long lastUpdate) {
         super();

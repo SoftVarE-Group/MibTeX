@@ -6,11 +6,10 @@
  */
 package de.mibtex.citationservice;
 
-import org.ini4j.Ini;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import org.ini4j.Ini;
 
 /**
  * A class to export the citations from scholar for each BibTeX entry

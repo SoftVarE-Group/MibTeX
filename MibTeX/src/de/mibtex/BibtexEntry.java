@@ -17,6 +17,8 @@ import org.jbibtex.BibTeXEntry;
 import org.jbibtex.Key;
 import org.jbibtex.Value;
 
+import de.mibtex.citationservice.CitationEntry;
+
 /**
  * A class storing a single BibTeX entry with several options for manipulation.
  * 
@@ -47,7 +49,7 @@ public class BibtexEntry {
 
 	public int year = 0;
 
-	public int citations = 0;
+	public int citations = CitationEntry.NOT_IN_CITATION_SERVICE;
 
 	public long lastUpdate = 0;
 
