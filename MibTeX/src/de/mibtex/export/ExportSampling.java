@@ -28,7 +28,7 @@ public class ExportSampling extends Export {
 	public final static String[][] TAGS = {
 			{ "feature model", "expert knowledge", "implementation artifacts", "test artifacts" }, //, "product set"
 			{ "greedy", "local search", "population-based search", "manual selection", "semi-automatic selection" }, // , "automatic selection"
-			{ "feature-wise coverage", "pair-wise coverage", "t-wise coverage", "code coverage",
+			{ "feature-wise coverage", "pair-wise coverage", "t-wise coverage", "code coverage", "specification coverage",
 					"requirements coverage", "no coverage guarantee" },
 			{ "sampling efficiency", "testing efficiency", "effectiveness", "unavailable tool", "available tool", "open-source tool", "evaluation" },
 			{ "testing", "type checking", "data-flow analysis", "non-functional properties" } };
