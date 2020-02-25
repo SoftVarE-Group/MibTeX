@@ -160,6 +160,8 @@ public abstract class Export {
         for (BibtexEntry entry : entries.values()) {
         	if ("GPCE13".equals(entry.venue))
         		entry.venue = "GPCE";
+        	if ("VaMoS20".equals(entry.venue))
+        		entry.venue = "VaMoS";
             if (!venues.contains(entry.venue))
                 venues.add(entry.venue);
         }
