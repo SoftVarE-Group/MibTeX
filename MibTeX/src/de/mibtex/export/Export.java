@@ -79,6 +79,7 @@ public abstract class Export {
             System.exit(0);
         } catch (ParseException e) {
             System.out.println("BibTeX-File cannot be parsed");
+            System.out.println(e.getMessage());
             System.exit(0);
         } finally {
             reader.close();
