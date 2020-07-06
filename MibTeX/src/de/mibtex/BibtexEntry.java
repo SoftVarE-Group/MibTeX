@@ -103,11 +103,11 @@ public class BibtexEntry {
 			pdf += " " + year;
 		pdf += " " + title;
 		pdf += ".pdf";
-		return new File(BibtexViewer.PDF_DIR + toURL(pdf));
+		return new File(BibtexViewer.PDF_DIR, toURL(pdf));
 	}
 
 	public String getRelativePDFPath() {
-		return BibtexViewer.PDF_DIR_REL + getPDFPath().getName();
+		return new File(BibtexViewer.PDF_DIR_REL, getPDFPath().getName()).toString();
 	}
 
 	private String getLastname(String name) {

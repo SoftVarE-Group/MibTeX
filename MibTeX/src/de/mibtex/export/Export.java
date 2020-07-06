@@ -58,7 +58,7 @@ public abstract class Export {
     public Export(String path, String file) throws Exception {
         Reader reader = null;
         try {
-            reader = new FileReader(new File(path + file));
+            reader = new FileReader(new File(path, file));
             BibTeXParser parser = new BibTeXParser() {
                 @Override
                 public void checkStringResolution(Key key, BibTeXString string) {
