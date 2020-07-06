@@ -180,6 +180,9 @@ public class BibtexViewer {
             case "HTML_NEW":
                 exporter = new ExportNewHTML(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
+            case "FIND_PDFS":
+                exporter = new ExportFindPDFs(BibtexViewer.BIBTEX_DIR, "literature.bib");
+                break;
             case "HTML":
             default:
                 exporter = new ExportHTML(BibtexViewer.BIBTEX_DIR, "literature.bib");
