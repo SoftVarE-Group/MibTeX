@@ -1,7 +1,9 @@
 package de.mibtex.export;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -36,8 +38,9 @@ public class ExportTypo3Bibtex extends Export {
 
 	@Override
 	public void writeDocument() {
-		// Put any filter here
-		final Predicate<BibtexEntry> filter = b -> MakeTypo3Safe(b.author).contains("Thomas Thüm");
+		final Predicate<BibtexEntry> filter =
+				// filter for our institute
+				b -> Arrays.asList("Thomas Thüm", "Paul Maximilian Bittner", "Chico Sundermann", "Jeffrey Young", "Tobias Heß").stream().anyMatch(MakeTypo3Safe(b.author)::contains);
 
 		Map<String, String> variables = readVariablesFromBibtexFile(new File(BibtexViewer.BIBTEX_DIR, MYabrv));
 		String typo3 = entries.values().stream()
