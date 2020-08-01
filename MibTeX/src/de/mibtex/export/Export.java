@@ -275,10 +275,18 @@ public abstract class Export {
                 number++;
         return number;
     }
+    
+    protected String readFromFile(String dir, File filename) {
+    	return readFromFile(dir, filename.toString());
+    }
+    
+    protected String readFromFile(String dir, String filename) {
+    	return readFromFile(new File(dir, filename));
+    }
 
-    protected String readFromFile(String path, File filename) {
+    protected String readFromFile(File path) {
         try {
-            InputStream in = new FileInputStream(path + filename);
+            InputStream in = new FileInputStream(path);
             StringBuilder out = new StringBuilder();
             byte[] b = new byte[4096];
             for (int n; (n = in.read(b)) != -1; ) {
@@ -287,30 +295,33 @@ public abstract class Export {
             in.close();
             return out.toString();
         } catch (FileNotFoundException e) {
-            System.out.println("Not Found " + filename);
+            System.out.println("Not Found " + path);
         } catch (IOException e) {
-            System.out.println("IOException for " + filename);
+            System.out.println("IOException for " + path);
         }
         return "";
     }
 
     protected void writeToFile(String path, String filename, String content) {
+        writeToFile(new File(path + filename), content);
+    }
+    
+    protected void writeToFile(File path, String content) {
         try {
-            File file = new File(path + filename);
-            file.getParentFile().mkdirs();
-            String oldContent = readFromFile(path, new File(filename));
+        	path.getParentFile().mkdirs();
+            String oldContent = readFromFile(path);
             if (!content.equals(oldContent)) {
-                System.out.println("Updating " + filename);
-                BufferedWriter out = new BufferedWriter(new FileWriter(file));
+                System.out.println("Updating " + path);
+                BufferedWriter out = new BufferedWriter(new FileWriter(path));
                 out.write(content);
                 out.close();
-                // } else {
-                // System.out.println("Old content is the same! No update required!");
+            } else {
+                System.out.println(path + " unchanged: No update required!");
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Not Found " + filename);
+            System.out.println("Not Found " + path);
         } catch (IOException e) {
-            System.out.println("IOException for " + filename);
+            System.out.println("IOException for " + path);
         }
     }
 
