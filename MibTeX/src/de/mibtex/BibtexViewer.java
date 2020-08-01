@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * A class to export a given BibTeX file to another format
  *
- * @author Thomas Thuem, Christopher Sontag
+ * @author Thomas Thuem, Christopher Sontag, Paul Bittner
  */
 public class BibtexViewer {
 
@@ -183,6 +183,9 @@ public class BibtexViewer {
             case "FIND_PDFS":
                 exporter = new ExportFindPDFs(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
+            case "TYPO3":
+            	exporter = new ExportTypo3Bibtex(BibtexViewer.BIBTEX_DIR, "literature.bib");
+            	break;
             case "HTML":
             default:
                 exporter = new ExportHTML(BibtexViewer.BIBTEX_DIR, "literature.bib");

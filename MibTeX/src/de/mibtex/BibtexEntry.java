@@ -9,8 +9,11 @@ package de.mibtex;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
 import org.jbibtex.BibTeXEntry;
@@ -26,31 +29,28 @@ import de.mibtex.citationservice.CitationEntry;
  */
 public class BibtexEntry {
 
-	private static final String UNKNOWN = "unknown";
+	private static final String UNKNOWN_ATTRIBUTE = "unknown";
 
 	public List<Key> KEY_LIST = new ArrayList<>();
 	// public static final Key KEY_TT_TAGS = new Key(BibtexViewer.TAGS);
 
 	public BibTeXEntry entry = null;
+	
+	public String type = UNKNOWN_ATTRIBUTE;
+	public String key = UNKNOWN_ATTRIBUTE;
 
-	public String key = UNKNOWN;
-
-	public String author = UNKNOWN;
-
+	public String author = UNKNOWN_ATTRIBUTE;
 	public List<String> authorList = new ArrayList<String>();
 
-	public String title = UNKNOWN;
-
-	public String venue = UNKNOWN;
-
-	public List<String> tags = new ArrayList<>();
-
-	public LinkedHashMap<String, List<String>> tagList = new LinkedHashMap<>();
+	public String title = UNKNOWN_ATTRIBUTE;
+	public String venue = UNKNOWN_ATTRIBUTE;
 
 	public int year = 0;
 
-	public int citations = CitationEntry.NOT_IN_CITATION_SERVICE;
+	public List<String> tags = new ArrayList<>();
+	public LinkedHashMap<String, List<String>> tagList = new LinkedHashMap<>();
 
+	public int citations = CitationEntry.NOT_IN_CITATION_SERVICE;
 	public long lastUpdate = 0;
 
 	public BibtexEntry(BibTeXEntry entry) {
@@ -64,6 +64,7 @@ public class BibtexEntry {
 		parseVenue();
 		parseYear();
 		parseTags();
+		parseType();
 	}
 
 	public BibtexEntry(String key, String author, String title, String venue, List<String> tags, int year,
@@ -116,7 +117,7 @@ public class BibtexEntry {
 
 	void parseKey() {
 		try {
-			if (key.equals(UNKNOWN)) {
+			if (key.equals(UNKNOWN_ATTRIBUTE)) {
 				key = entry.getKey().getValue();
 			}
 		} catch (Exception e) {
@@ -126,7 +127,7 @@ public class BibtexEntry {
 
 	void parseAuthor() {
 		try {
-			if (author.equals(UNKNOWN)) {
+			if (author.equals(UNKNOWN_ATTRIBUTE)) {
 				try {
 					author = entry.getField(BibTeXEntry.KEY_AUTHOR).toUserString();
 				} catch (Exception e) {
@@ -151,7 +152,7 @@ public class BibtexEntry {
 			while (tokenizer.hasMoreTokens())
 				authorList.add(tokenizer.nextToken().trim());
 		} catch (Exception e) {
-			if (authorList.equals(UNKNOWN))
+			if (authorList.equals(UNKNOWN_ATTRIBUTE))
 				authorList.add(author);
 			e.printStackTrace();
 		}
@@ -159,7 +160,7 @@ public class BibtexEntry {
 
 	void parseTitle() {
 		try {
-			if (title.equals(UNKNOWN)) {
+			if (title.equals(UNKNOWN_ATTRIBUTE)) {
 				title = entry.getField(BibTeXEntry.KEY_TITLE).toUserString();
 			}
 		} catch (Exception e) {
@@ -169,7 +170,7 @@ public class BibtexEntry {
 	}
 
 	void parseVenue() {
-		if (venue.equals(UNKNOWN)) {
+		if (venue.equals(UNKNOWN_ATTRIBUTE)) {
 			venue = "(" + entry.getType().getValue() + ")";
 			if (venue.equalsIgnoreCase("(incollection)"))
 				return;
@@ -198,7 +199,7 @@ public class BibtexEntry {
 		try {
 			if (tags.isEmpty()) {
 				for (Key key : KEY_LIST) {
-					List<String> tagsForKey = new ArrayList();
+					List<String> tagsForKey = new ArrayList<>();
 					Value value = entry.getField(key);
 					if (value != null) {
 						String tag = value.toUserString();
@@ -217,6 +218,10 @@ public class BibtexEntry {
 		} catch (Exception e) {
 			System.out.println("Parsing tag list failed for unknown reason");
 		}
+	}
+	
+	void parseType() {
+		type = entry.getType().getValue();
 	}
 
 	public static String replaceUmlauts(String s) {
@@ -253,21 +258,31 @@ public class BibtexEntry {
 	}
 
 	public static String toURL(String s) {
-		s = s.replace("&auml;", "ae");
-		s = s.replace("&ouml;", "oe");
-		s = s.replace("&uuml;", "ue");
-		s = s.replace("&Auml;", "Ae");
-		s = s.replace("&Ouml;", "Oe");
-		s = s.replace("�", "O");
-		s = s.replace("&Uuml;", "Ue");
-		s = s.replace("&szlig;", "ss");
-		s = s.replace("&amp;", "and");
-		s = s.replace("&#8211;", "-");
-		s = s.replace(":", "");
-		s = s.replace("?", "");
-		s = s.replace("\\", "");
-		s = s.replace("/", "");
-		s = s.replace("#", "");
+		return toURL(s, new HashMap<>());
+	}
+	
+	public static String toURL(String s, Map<String, String> overwrites) {
+		HashMap<String, String> replacements = new HashMap<String, String>(overwrites);
+		replacements.putIfAbsent("&auml;", "ae");
+		replacements.putIfAbsent("&ouml;", "oe");
+		replacements.putIfAbsent("&uuml;", "ue");
+		replacements.putIfAbsent("&Auml;", "Ae");
+		replacements.putIfAbsent("&Ouml;", "Oe");
+		replacements.putIfAbsent("�", "O");
+		replacements.putIfAbsent("&Uuml;", "Ue");
+		replacements.putIfAbsent("&szlig;", "ss");
+		replacements.putIfAbsent("&amp;", "and");
+		replacements.putIfAbsent("&#8211;", "-");
+		replacements.putIfAbsent(":", "");
+		replacements.putIfAbsent("?", "");
+		replacements.putIfAbsent("\\", "");
+		replacements.putIfAbsent("/", "");
+		replacements.putIfAbsent("#", "");
+		
+		for (Entry<String, String> entry : replacements.entrySet()) {
+			s = s.replace(entry.getKey(), entry.getValue());
+		}
+		
 		return s;
 	}
 
@@ -278,4 +293,7 @@ public class BibtexEntry {
 				+ ", citations=" + citations + "]";
 	}
 
+	public static boolean IsDefined(String attribute) {
+		return attribute != null && !attribute.isEmpty() && !attribute.equals(BibtexEntry.UNKNOWN_ATTRIBUTE) && (!attribute.startsWith("(") || !attribute.endsWith(")"));
+	}
 }
