@@ -1,6 +1,9 @@
 package de.mibtex.export;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -51,9 +54,12 @@ public class ExportTypo3Bibtex extends Export {
 				.reduce((a, b) -> a + "\n\n" + b)
 				.orElseGet(() -> "");
 
-		System.out.println(typo3);
-		
-		writeToFile(new File(BibtexViewer.OUTPUT_DIR, "typo3.bib"), typo3);
+		// System.out.println(typo3);
+
+        CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
+        encoder.onMalformedInput(CodingErrorAction.REPORT);
+        encoder.onUnmappableCharacter(CodingErrorAction.REPORT);
+		writeToFile(new File(BibtexViewer.OUTPUT_DIR, "typo3.bib"), typo3, encoder);
 	}
 	
 	private Map<String, String> readVariablesFromBibtexFile(File pathToBibtex) {

@@ -11,16 +11,22 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Supplier;
 
 import org.jbibtex.BibTeXDatabase;
 import org.jbibtex.BibTeXEntry;
@@ -29,6 +35,8 @@ import org.jbibtex.BibTeXParser;
 import org.jbibtex.BibTeXString;
 import org.jbibtex.Key;
 import org.jbibtex.ParseException;
+
+import com.sun.org.apache.xpath.internal.functions.Function;
 
 import de.mibtex.BibtexEntry;
 import de.mibtex.BibtexFilter;
@@ -306,13 +314,13 @@ public abstract class Export {
         writeToFile(new File(path + filename), content);
     }
     
-    protected void writeToFile(File path, String content) {
-        try {
+    private void writeToFile(File path, String content, Supplier<BufferedWriter> bufferFactory) {
+    	try {
         	path.getParentFile().mkdirs();
             String oldContent = readFromFile(path);
             if (!content.equals(oldContent)) {
                 System.out.println("Updating " + path);
-                BufferedWriter out = new BufferedWriter(new FileWriter(path));
+                BufferedWriter out = bufferFactory.get();
                 out.write(content);
                 out.close();
             } else {
@@ -323,6 +331,28 @@ public abstract class Export {
         } catch (IOException e) {
             System.out.println("IOException for " + path);
         }
+    }
+    
+    protected void writeToFile(File path, String content) {
+    	writeToFile(path, content, () -> {
+			try {
+				return new BufferedWriter(new FileWriter(path));
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+		});
+    }
+    
+    protected void writeToFile(File path, String content, CharsetEncoder encoder) {
+    	writeToFile(path, content, () -> {
+			try {
+				return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), encoder));
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+		});
     }
 
     public abstract void writeDocument();
