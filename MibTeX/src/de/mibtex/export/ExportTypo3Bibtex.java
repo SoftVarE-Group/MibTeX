@@ -24,12 +24,13 @@ public class ExportTypo3Bibtex extends Export {
 	
 	private static Map<String, String> ToURLOverwrites = new HashMap<>();
 	static {
-		ToURLOverwrites.putIfAbsent("&auml;", "ä");
-		ToURLOverwrites.putIfAbsent("&ouml;", "ö");
-		ToURLOverwrites.putIfAbsent("&uuml;", "ü");
-		ToURLOverwrites.putIfAbsent("&Auml;", "Ä");
-		ToURLOverwrites.putIfAbsent("&Ouml;", "Ö");
-		ToURLOverwrites.putIfAbsent("&Uuml;", "Ü");
+		ToURLOverwrites.put("&auml;", "ä");
+		ToURLOverwrites.put("&ouml;", "ö");
+		ToURLOverwrites.put("&uuml;", "ü");
+		ToURLOverwrites.put("&Auml;", "Ä");
+		ToURLOverwrites.put("&Ouml;", "Ö");
+		ToURLOverwrites.put("&Uuml;", "Ü");
+		ToURLOverwrites.put("&8211;", "-");
 	}
 	
 	public ExportTypo3Bibtex(String path, String file) throws Exception {
@@ -38,9 +39,10 @@ public class ExportTypo3Bibtex extends Export {
 
 	@Override
 	public void writeDocument() {
-		final Predicate<BibtexEntry> filter =
-				// filter for our institute
+		// filter for our institute
+		final Predicate<BibtexEntry> safetyGroupFilter =
 				b -> Arrays.asList("Thomas Thüm", "Paul Maximilian Bittner", "Chico Sundermann", "Jeffrey Young", "Tobias Heß").stream().anyMatch(MakeTypo3Safe(b.author)::contains);
+		final Predicate<BibtexEntry> filter = b -> Arrays.asList("YWT:SPLC20", "RTC+:FM19").stream().anyMatch((b.key)::equals);
 
 		Map<String, String> variables = readVariablesFromBibtexFile(new File(BibtexViewer.BIBTEX_DIR, MYabrv));
 		String typo3 = entries.values().stream()
@@ -48,6 +50,8 @@ public class ExportTypo3Bibtex extends Export {
 				.map(b -> toTypo3(b, variables))
 				.reduce((a, b) -> a + "\n\n" + b)
 				.orElseGet(() -> "");
+
+		System.out.println(typo3);
 		
 		writeToFile(new File(BibtexViewer.OUTPUT_DIR, "typo3.bib"), typo3);
 	}
@@ -59,13 +63,14 @@ public class ExportTypo3Bibtex extends Export {
 		for (String line : file) {
 			line = line.trim();
 			if (line.startsWith("@String")) {
-				line = line.substring(line.lastIndexOf("{"));
+				line = line.substring(line.lastIndexOf("{") + 1);
 				String[] words = line.substring(0, line.indexOf("}")).split("=");
 				if (words.length == 2) {
 					String var = words[0].trim();
 					// remove apostrophes ("") at the beginning and end
 					String val = words[1].trim().substring(1, words[1].length() - 2);
 					vars.put(var, val);
+					//System.out.println("[ExportTypo3Bibtex.readVariablesFromBibtexFile] " + var + " -> " + val);
 				}
 			}
 		}
@@ -75,7 +80,9 @@ public class ExportTypo3Bibtex extends Export {
 	private String toTypo3(BibtexEntry bib, Map<String, String> variables) {
 		String typo3 = "@" + bib.type + "{" + bib.key;
 		
-		typo3 += GenBibTeXAttribute("author", bib.author);
+		typo3 += GenBibTeXAttribute("author", bib.authorList.stream()
+				.reduce((a, b) -> a + " and " + b)
+				.orElseGet(() -> {throw new IllegalArgumentException("Author list is empty!");}));
 		typo3 += GenBibTeXAttribute("title", bib.title);
 		typo3 += GenBibTeXAttribute("year", Integer.toString(bib.year));
 		typo3 += GenBibTeXAttributeIfPresent("booktitle", lookup(bib.venue, variables));
