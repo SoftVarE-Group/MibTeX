@@ -41,6 +41,7 @@ public class BibtexEntry {
 
 	public String author = UNKNOWN_ATTRIBUTE;
 	public List<String> authorList = new ArrayList<String>();
+	public boolean authorsAreEditors = false;
 
 	public String title = UNKNOWN_ATTRIBUTE;
 	public String venue = UNKNOWN_ATTRIBUTE;
@@ -130,8 +131,10 @@ public class BibtexEntry {
 			if (author.equals(UNKNOWN_ATTRIBUTE)) {
 				try {
 					author = entry.getField(BibTeXEntry.KEY_AUTHOR).toUserString();
+					authorsAreEditors = false;
 				} catch (Exception e) {
 					author = entry.getField(BibTeXEntry.KEY_EDITOR).toUserString();
+					authorsAreEditors = true;
 				}
 			}
 			author = replaceUmlauts(author);
