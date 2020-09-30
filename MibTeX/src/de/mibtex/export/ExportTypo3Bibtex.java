@@ -20,6 +20,7 @@ import org.jbibtex.BibTeXEntry;
 
 import de.mibtex.BibtexEntry;
 import de.mibtex.BibtexViewer;
+import java.util.stream.Collectors;
 
 /**
  * Exports the bibtex file to bibtex in a carefully adjusted format such that the BibTex-Importer of Typo3 (Website-Framework) can read it correctly.
@@ -27,14 +28,26 @@ import de.mibtex.BibtexViewer;
  * @author Paul Bittner
  */
 public class ExportTypo3Bibtex extends Export {
+	private final static String typo3TagsAttribute = "typo3Tags";
+	
 	private static class Filters {
-		final static Predicate<BibtexEntry> is_misc = b -> b.type.equals("misc");
-		final static Predicate<BibtexEntry> is_proceedings = b -> b.type.equals("proceedings");
-		final static Predicate<BibtexEntry> is_techreport = b -> b.type.equals("techreport");
-		final static Predicate<BibtexEntry> is_bachelorsthesis =
+		final static Predicate<BibtexEntry> Is_misc = b -> b.type.equals("misc");
+		final static Predicate<BibtexEntry> Is_proceedings = b -> b.type.equals("proceedings");
+		final static Predicate<BibtexEntry> Is_techreport = b -> b.type.equals("techreport");
+		final static Predicate<BibtexEntry> Is_bachelorsthesis =
 				b -> b.type.equals("mastersthesis") && GetAttribute(b, BibTeXEntry.KEY_TYPE).toLowerCase().startsWith("bachelor");
-		final static Predicate<BibtexEntry> is_mastersthesis = b -> b.type.equals("mastersthesis");
-		final static Predicate<BibtexEntry> is_phdthesis = b -> b.type.equals("phdthesis");
+		final static Predicate<BibtexEntry> Is_mastersthesis = b -> b.type.equals("mastersthesis");
+		final static Predicate<BibtexEntry> Is_phdthesis = b -> b.type.equals("phdthesis");
+		
+		final static Predicate<BibtexEntry> WithThomas = Filters.ByAuthors("Thomas Thüm");
+		final static Predicate<BibtexEntry> WithThomasAtISF = WithThomas.and(b -> b.year < 2020);
+		final static Predicate<BibtexEntry> WithThomasAtUlm = WithThomas.and(b -> b.year >= 2020);
+		
+		final static Predicate<BibtexEntry> BelongsToVariantSync = b -> {
+			List<String> tags = b.tagList.get(typo3TagsAttribute);
+			if (tags == null) return false;
+			return splitAttributeListString(tags).stream().anyMatch(IsOneOf("VariantSyncPub", "VariantSyncPre", "VariantSyncMT"));
+		};
 		
 		private Filters() {}
 		
@@ -56,9 +69,17 @@ public class ExportTypo3Bibtex extends Export {
 					.stream()
 					.anyMatch(s::equals);
 		}
+		
+		private static <T> Predicate<T> Any() {
+			return x -> true;
+		}
 	}
 	
 	private static class Tagger {
+		final static Tagger MarkThomasAsEditor = new Tagger(
+				Filters.WithThomas.and(b -> b.authorsAreEditors),
+				b -> "EditorialThomasThuem");
+		
 		Predicate<BibtexEntry> condition;
 		Function<BibtexEntry, String> tagFor;
 		
@@ -90,23 +111,15 @@ public class ExportTypo3Bibtex extends Export {
 	}
 
 	@Override
-	public void writeDocument() {		
-		final Predicate<BibtexEntry> withThomas = Filters.ByAuthors("Thomas Thüm");
-		final Predicate<BibtexEntry> thomasISF = withThomas.and(b -> b.year < 2020);
-		final Predicate<BibtexEntry> thomasSP = withThomas.and(b -> b.year >= 2020);
-		
-		final Tagger thomasIsEditor = new Tagger(
-				withThomas.and(b -> b.authorsAreEditors),
-				b -> "EditorialThomasThuem");
-		
-		final Predicate<BibtexEntry> bibFilter = thomasISF.and(AtMost(0, Filters.is_misc));
-		final Predicate<String> tagsFilter = Filters.IsOneOf("VariantSyncPub", "VariantSyncPre", "VariantSyncMT");
-		final List<Tagger> taggers = Arrays.asList(thomasIsEditor);
+	public void writeDocument() {
+		// Configure filtering of BibItems here
+		final Predicate<BibtexEntry> bibFilter = Filters.BelongsToVariantSync;//Filters.WithThomasAtUlm.and(Filters.ByKeys("NST+:VariVolution20",  "KKT+20"));
+		final List<Tagger> taggers = Arrays.asList(Tagger.MarkThomasAsEditor);
 
 		Map<String, String> variables = readVariablesFromBibtexFile(new File(BibtexViewer.BIBTEX_DIR, MYabrv));
 		String typo3 = entries.values().stream()
 				.filter(bibFilter)
-				.map(b -> toTypo3(b, variables, tagsFilter, taggers))
+				.map(b -> toTypo3(b, variables, taggers))
 //				.count() + "";
 				.reduce((a, b) -> a + "\n\n" + b)
 				.orElseGet(() -> "");
@@ -140,7 +153,7 @@ public class ExportTypo3Bibtex extends Export {
 		return vars;
 	}
 
-	private String toTypo3(BibtexEntry bib, Map<String, String> variables, Predicate<String> tagsFilter, List<Tagger> taggers) {
+	private String toTypo3(BibtexEntry bib, Map<String, String> variables, List<Tagger> taggers) {
 		String typo3 = "@" + bib.type + "{" + bib.key;
 
 		typo3 += GenBibTeXAttributeIfPresent("type", GetAttribute(bib, BibTeXEntry.KEY_TYPE));
@@ -154,7 +167,7 @@ public class ExportTypo3Bibtex extends Export {
 		
 		{
 			String booktitle;
-			if (Filters.is_techreport.test(bib)) {
+			if (Filters.Is_techreport.test(bib)) {
 				booktitle = ("Technical Report " + GetAttribute(bib, BibTeXEntry.KEY_NUMBER)).trim();
 //			} else if (Filters.is_phdthesis.test(bib)) {
 //				booktitle = "PhD Thesis";
@@ -181,7 +194,7 @@ public class ExportTypo3Bibtex extends Export {
 		typo3 += GenBibTeXAttributeIfPresent_Unsafe("issn", GetAttribute(bib, "issn"));
 		
 		{
-			List<String> tags = bib.tagList.get("keywords");
+			List<String> tags = bib.tagList.get(typo3TagsAttribute);
 			if (tags == null) {tags = new ArrayList<>();}
 			
 			List<String> taggerTags = new ArrayList<>();
@@ -192,19 +205,11 @@ public class ExportTypo3Bibtex extends Export {
 			}
 			
 			Optional<String> tagsLine = Stream.concat(
-					taggerTags.stream(),
-					// Multiple keywords may be packed into one string and separated by "," or ";".
-					// Thus, divide them here into multiple keywords.
-					Repeat(tags,
-							Arrays.asList(",", ";"),
-							(div, l) -> l.stream().collect(
-									() -> new ArrayList<String>(),
-									(list, kw) -> ((List<String>)list).addAll(Arrays.asList(kw.split(div))),
-									(list1, list2) -> list1.addAll(list2)))
-					.stream()
-					.map(s -> s.trim())
-					.filter(tagsFilter))
-					.reduce((a, b) -> a + ", " + b);
+						taggerTags.stream(),
+						// Multiple keywords may be packed into one string and separated by "," or ";".
+						// Thus, divide them here into multiple keywords.
+						splitAttributeListString(tags).stream()
+					).reduce((a, b) -> a + ", " + b);
 			if (tagsLine.isPresent()) {
 				typo3 += GenBibTeXAttributeIfPresent("tags", tagsLine.get());
 			}
@@ -245,6 +250,16 @@ public class ExportTypo3Bibtex extends Export {
 	
 	private static String GenBibTeXAttributeIfPresent(String name, String value) {
 		return BibtexEntry.IsDefined(value) ? GenBibTeXAttribute(name, value) : "";
+	}
+	
+	private static List<String> splitAttributeListString(List<String> tags) {
+		return Repeat(tags,
+				Arrays.asList(",", ";"),
+				(div, l) -> l.stream().collect(
+						() -> new ArrayList<String>(),
+						(list, kw) -> ((List<String>)list).addAll(Arrays.stream(kw.split(div)).map(s -> s.trim()).collect(Collectors.toList())
+								),
+						(list1, list2) -> list1.addAll(list2)));
 	}
 	
 	private static <T, A> T Repeat(T t, Collection<A> args, BiFunction<A, T, T> f) {
