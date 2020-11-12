@@ -102,6 +102,8 @@ public class ExportTypo3Bibtex extends Export {
 		ToURLOverwrites.put("&Ouml;", "Ö");
 		ToURLOverwrites.put("&Uuml;", "Ü");
 		ToURLOverwrites.put("&8211;", "-");
+		ToURLOverwrites.put("?", "?");
+		ToURLOverwrites.put("\\_", "_");
 		ToURLOverwrites.putIfAbsent(":", ":");
 		ToURLOverwrites.putIfAbsent("/", "/");
 	}
@@ -113,10 +115,11 @@ public class ExportTypo3Bibtex extends Export {
 	@Override
 	public void writeDocument() {
 		// Configure filtering of BibItems here
-		final Predicate<BibtexEntry> bibFilter = Filters.BelongsToVariantSync;//Filters.WithThomasAtUlm.and(Filters.ByKeys("NST+:VariVolution20",  "KKT+20"));
+		final Predicate<BibtexEntry> bibFilter = Filters.ByKeys("BTS:SEFM19");
 		final List<Tagger> taggers = Arrays.asList(Tagger.MarkThomasAsEditor);
 
 		Map<String, String> variables = readVariablesFromBibtexFile(new File(BibtexViewer.BIBTEX_DIR, MYabrv));
+
 		String typo3 = entries.values().stream()
 				.filter(bibFilter)
 				.map(b -> toTypo3(b, variables, taggers))
@@ -189,7 +192,7 @@ public class ExportTypo3Bibtex extends Export {
 		typo3 += GenBibTeXAttributeIfPresent("school", GetAttribute(bib, BibTeXEntry.KEY_SCHOOL));
 		typo3 += GenBibTeXAttributeIfPresent("pages", GetAttribute(bib, BibTeXEntry.KEY_PAGES));
 		
-		typo3 += GenBibTeXAttributeIfPresent_Unsafe("doi", GetAttribute(bib, BibTeXEntry.KEY_DOI));
+		typo3 += GenBibTeXAttributeIfPresent("doi", GetAttribute(bib, BibTeXEntry.KEY_DOI));
 		typo3 += GenBibTeXAttributeIfPresent_Unsafe("isbn", GetAttribute(bib, "isbn"));
 		typo3 += GenBibTeXAttributeIfPresent_Unsafe("issn", GetAttribute(bib, "issn"));
 		
