@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 import javax.swing.JFileChooser;
