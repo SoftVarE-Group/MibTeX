@@ -103,7 +103,6 @@ public class ExportTypo3Bibtex extends Export {
 		ToURLOverwrites.put("&Uuml;", "Ü");
 		ToURLOverwrites.put("&8211;", "-");
 		ToURLOverwrites.put("?", "?");
-		ToURLOverwrites.put("\\_", "_");
 		ToURLOverwrites.putIfAbsent(":", ":");
 		ToURLOverwrites.putIfAbsent("/", "/");
 	}
