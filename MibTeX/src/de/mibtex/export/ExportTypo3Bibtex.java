@@ -114,7 +114,7 @@ public class ExportTypo3Bibtex extends Export {
 	@Override
 	public void writeDocument() {
 		// Configure filtering of BibItems here
-		final Predicate<BibtexEntry> bibFilter = Filters.ByKeys("BTS:SEFM19");
+		final Predicate<BibtexEntry> bibFilter = Filters.Any();//Filters.ByKeys("BTS:SEFM19");
 		final List<Tagger> taggers = Arrays.asList(Tagger.MarkThomasAsEditor);
 
 		Map<String, String> variables = readVariablesFromBibtexFile(new File(BibtexViewer.BIBTEX_DIR, MYabrv));

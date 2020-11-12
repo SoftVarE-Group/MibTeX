@@ -18,9 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
-import java.nio.charset.CodingErrorAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -35,8 +33,6 @@ import org.jbibtex.BibTeXParser;
 import org.jbibtex.BibTeXString;
 import org.jbibtex.Key;
 import org.jbibtex.ParseException;
-
-import com.sun.org.apache.xpath.internal.functions.Function;
 
 import de.mibtex.BibtexEntry;
 import de.mibtex.BibtexFilter;
