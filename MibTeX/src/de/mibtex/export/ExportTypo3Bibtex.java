@@ -20,6 +20,8 @@ import org.jbibtex.BibTeXEntry;
 
 import de.mibtex.BibtexEntry;
 import de.mibtex.BibtexViewer;
+
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -28,39 +30,161 @@ import java.util.stream.Collectors;
  * @author Paul Bittner
  */
 public class ExportTypo3Bibtex extends Export {
-	private final static String typo3TagsAttribute = "typo3Tags";
+	// TODO: Having numbers in Bibtex tags is not conforming the Bibtex standard.
+	private final static String Typo3TagsAttribute = "typo3Tags";
+
+	private static class Typo3Entry {
+		String type; // inproceedings, article, ...
+		String key;
+		String typeAttrib; // type = {...}
+		String title;
+		List<String> authors;
+		List<String> editors;
+		int year;
+		String booktitle;
+		
+		String address;
+		String publisher;
+		String journal;
+		String location;
+		
+		String school;
+		String pages;
+		
+		String doi;
+		String isbn;
+		String issn;
+		
+		List<String> tags;
+		
+		public Typo3Entry(BibtexEntry bib, Map<String, String> variables) {
+			this.type = bib.type;
+			this.typeAttrib = MakeTypo3Safe(GetAttribute(bib, BibTeXEntry.KEY_TYPE));
+			this.key = bib.key;
+
+			this.authors = new ArrayList<>();
+			this.editors = new ArrayList<>();
+			List<String> persons = bib.authorList.stream().map(ExportTypo3Bibtex::MakeTypo3Safe).collect(Collectors.toList());
+			if (bib.authorsAreEditors) {
+				this.editors = persons;
+			} else {
+				this.authors = persons;
+			}
+			
+			this.title = MakeTypo3Safe(bib.title);
+			this.year = bib.year;
+
+			this.address = MakeTypo3Safe(lookup(GetAttribute(bib, BibTeXEntry.KEY_ADDRESS), variables));
+			this.publisher = MakeTypo3Safe(lookup(GetAttribute(bib, BibTeXEntry.KEY_PUBLISHER), variables));
+			this.journal = MakeTypo3Safe(lookup(GetAttribute(bib, BibTeXEntry.KEY_JOURNAL), variables));
+			this.location = MakeTypo3Safe(lookup(GetAttribute(bib, "location"), variables));
+			
+			this.school = MakeTypo3Safe(GetAttribute(bib, BibTeXEntry.KEY_SCHOOL));
+			this.pages = MakeTypo3Safe(GetAttribute(bib, BibTeXEntry.KEY_PAGES));
+			
+			this.doi = MakeTypo3Safe(GetAttribute(bib, BibTeXEntry.KEY_DOI));
+			this.isbn = GetAttribute(bib, "isbn");
+			this.issn = GetAttribute(bib, "issn");
+			
+			{
+				String booktitle;
+				if (Filters.Is_techreport.test(this)) {
+					booktitle = ("Technical Report " + GetAttribute(bib, BibTeXEntry.KEY_NUMBER)).trim();
+//				} else if (Filters.is_phdthesis.test(bib)) {
+//					booktitle = "PhD Thesis";
+//				} else if (Filters.is_bachelorsthesis.test(bib)) {
+//					booktitle = "Bachelor's Thesis";
+//				} else if (Filters.is_mastersthesis.test(bib)) {
+//					booktitle = "Master's Thesis";
+				} else {
+					booktitle = lookup(GetAttribute(bib, BibTeXEntry.KEY_BOOKTITLE), variables);
+				}
+				this.booktitle = MakeTypo3Safe(booktitle);
+			}
+			
+			this.tags = bib.tagList.get(Typo3TagsAttribute);
+			if (this.tags == null) {
+				this.tags = new ArrayList<>();
+			} else {
+				this.tags = splitAttributeListString(this.tags);
+			}
+		}
+		
+		public String toString() {
+			String typo3 = "@" + type + "{" + key;
+
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe("type", this.typeAttrib);
+			
+			List<String> persons;
+			String personType;
+			if (!authors.isEmpty()) {
+				persons = authors;
+				personType = "author";
+			} else if (!editors.isEmpty()) {
+				persons = editors;
+				personType = "editor";
+			} else {
+				throw new RuntimeException("The Typo3Entry with key " + this.key + " has neither authors nor editors!");
+			}
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe(personType,
+					persons.stream()
+					.reduce((a, b) -> a + " and " + b)
+					.orElseGet(() -> {throw new IllegalArgumentException("Person list is empty!");}));
+			
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe("title", title);
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe("year", Integer.toString(year));
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe("booktitle", booktitle);
+			
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe("address", address);
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe("publisher", publisher);
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe("journal", journal);
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe("location", location);
+			
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe("school", school);
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe("pages", pages);
+			
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe("doi", doi);
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe("isbn", isbn);
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe("issn", issn);
+			
+			typo3 += GenBibTeXAttributeIfPresent_Unsafe("tags", tags.stream().reduce("", (a, b) -> a + ", " + b));
+
+			return typo3 + "\n}";
+		}
+	}
 	
 	private static class Filters {
-		final static Predicate<BibtexEntry> Is_misc = b -> b.type.equals("misc");
-		final static Predicate<BibtexEntry> Is_proceedings = b -> b.type.equals("proceedings");
-		final static Predicate<BibtexEntry> Is_techreport = b -> b.type.equals("techreport");
-		final static Predicate<BibtexEntry> Is_bachelorsthesis =
-				b -> b.type.equals("mastersthesis") && GetAttribute(b, BibTeXEntry.KEY_TYPE).toLowerCase().startsWith("bachelor");
-		final static Predicate<BibtexEntry> Is_mastersthesis = b -> b.type.equals("mastersthesis");
-		final static Predicate<BibtexEntry> Is_phdthesis = b -> b.type.equals("phdthesis");
+		final static Predicate<Typo3Entry> Is_misc = b -> b.type.equals("misc");
+		final static Predicate<Typo3Entry> Is_proceedings = b -> b.type.equals("proceedings");
+		final static Predicate<Typo3Entry> Is_techreport = b -> b.type.equals("techreport");
+		final static Predicate<Typo3Entry> Is_bachelorsthesis =
+				b -> b.type.equals("mastersthesis") && b.typeAttrib.toLowerCase().startsWith("bachelor");
+		final static Predicate<Typo3Entry> Is_mastersthesis = b -> b.type.equals("mastersthesis");
+		final static Predicate<Typo3Entry> Is_phdthesis = b -> b.type.equals("phdthesis");
 		
-		final static Predicate<BibtexEntry> WithThomas = Filters.ByAuthors("Thomas Thüm");
-		final static Predicate<BibtexEntry> WithThomasAtISF = WithThomas.and(b -> b.year < 2020);
-		final static Predicate<BibtexEntry> WithThomasAtUlm = WithThomas.and(b -> b.year >= 2020);
+		final static Predicate<Typo3Entry> WithThomas = Filters.AuthorOrEditorIsOneOf("Thomas Thüm");
+		final static Predicate<Typo3Entry> WithThomasAtISF = WithThomas.and(b -> b.year < 2020);
+		final static Predicate<Typo3Entry> WithThomasAtUlm = WithThomas.and(b -> b.year >= 2020);
 		
-		final static Predicate<BibtexEntry> BelongsToVariantSync = b -> {
-			List<String> tags = b.tagList.get(typo3TagsAttribute);
-			if (tags == null) return false;
-			return splitAttributeListString(tags).stream().anyMatch(IsOneOf("VariantSyncPub", "VariantSyncPre", "VariantSyncMT"));
+		final static Predicate<Typo3Entry> SoftVarE = Filters.AuthorOrEditorIsOneOf("Thomas Thüm", "Chico Sundermann", "Tobias Heß", "Paul Maximilian Bittner").and(b -> b.year >= 2020);
+		
+		final static Predicate<Typo3Entry> BelongsToVariantSync = b -> {
+			if (b.tags == null) return false;
+			return b.tags.stream().anyMatch(IsOneOf("VariantSyncPub", "VariantSyncPre", "VariantSyncMT"));
 		};
 		
 		private Filters() {}
 		
-		private static Predicate<BibtexEntry> ByKeys(String... keys) {
+		private static Predicate<Typo3Entry> KeyIsOneOf(String... keys) {
 			return b -> Arrays.asList(keys)
 					.stream()
 					.anyMatch((b.key)::equals);
 		}
 		
-		private static Predicate<BibtexEntry> ByAuthors(String... authors) {
+		private static Predicate<Typo3Entry> AuthorOrEditorIsOneOf(String... authors) {
 			return b -> Arrays.asList(authors)
 					.stream()
-					.anyMatch(MakeTypo3Safe(b.author)::contains);
+					.anyMatch(author -> b.authors.contains(author) || b.editors.contains(author));
 		}
 		
 		@SafeVarargs
@@ -75,17 +199,13 @@ public class ExportTypo3Bibtex extends Export {
 		}
 	}
 	
-	private static class Tagger {
-		final static Tagger MarkThomasAsEditor = new Tagger(
-				Filters.WithThomas.and(b -> b.authorsAreEditors),
-				b -> "EditorialThomasThuem");
-		
-		Predicate<BibtexEntry> condition;
-		Function<BibtexEntry, String> tagFor;
-		
-		public Tagger(Predicate<BibtexEntry> condition, Function<BibtexEntry, String> tagFor) {
-			this.condition = condition;
-			this.tagFor = tagFor;
+	private static class Modifiers {
+		public static Typo3Entry MarkThomasAsEditor(Typo3Entry t) {
+			// This is so pure .... not
+			if (t.editors.contains("Thomas Thüm")) {
+				t.tags.add("EditorialThomasThuem");
+			}
+			return t;
 		}
 	}
 	
@@ -103,8 +223,9 @@ public class ExportTypo3Bibtex extends Export {
 		ToURLOverwrites.put("&Uuml;", "Ü");
 		ToURLOverwrites.put("&8211;", "-");
 		ToURLOverwrites.put("?", "?");
-		ToURLOverwrites.putIfAbsent(":", ":");
-		ToURLOverwrites.putIfAbsent("/", "/");
+		ToURLOverwrites.put(":", ":");
+		ToURLOverwrites.put("/", "/");
+		ToURLOverwrites.put("&szlig;", "ß");
 	}
 	
 	public ExportTypo3Bibtex(String path, String file) throws Exception {
@@ -114,17 +235,34 @@ public class ExportTypo3Bibtex extends Export {
 	@Override
 	public void writeDocument() {
 		// Configure filtering of BibItems here
-		final Predicate<BibtexEntry> bibFilter = Filters.Any();//Filters.ByKeys("BTS:SEFM19");
-		final List<Tagger> taggers = Arrays.asList(Tagger.MarkThomasAsEditor);
+		// TODO: GI not found in MYabrv
+		// TODO: TO appear
+		// TODO: Doppelte Namen -> Hardcoded solution
+		// TODO: Warum fehlen noch 20? Publikationen von Thomas.
+		// TODO: Wiki-Eintrag
+		final Predicate<Typo3Entry> bibFilter =
+				//Filters.Any()
+				//Filters.KeyIsOneOf("KJN+:FASE20")
+				//Filters.SoftVarE
+				Filters.WithThomas
+		;
+		
+		final List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
+				Modifiers::MarkThomasAsEditor
+		);
 
 		Map<String, String> variables = readVariablesFromBibtexFile(new File(BibtexViewer.BIBTEX_DIR, MYabrv));
-
 		String typo3 = entries.values().stream()
+				.map(b -> new Typo3Entry(b, variables))
 				.filter(bibFilter)
-				.map(b -> toTypo3(b, variables, taggers))
-//				.count() + "";
-				.reduce((a, b) -> a + "\n\n" + b)
-				.orElseGet(() -> "");
+				.map(modifiers.stream().reduce(Function.identity(), Function::compose))
+				.map(Typo3Entry::toString)
+/*
+				.count() + ""
+/*/
+				.reduce("", (a, b) -> a + "\n\n" + b)
+//*/
+				;
 
 		System.out.println(typo3);
 
@@ -155,10 +293,11 @@ public class ExportTypo3Bibtex extends Export {
 		return vars;
 	}
 
+	/*
 	private String toTypo3(BibtexEntry bib, Map<String, String> variables, List<Tagger> taggers) {
 		String typo3 = "@" + bib.type + "{" + bib.key;
 
-		typo3 += GenBibTeXAttributeIfPresent("type", GetAttribute(bib, BibTeXEntry.KEY_TYPE));
+		//typo3 += GenBibTeXAttributeIfPresent("type", GetAttribute(bib, BibTeXEntry.KEY_TYPE));
 		typo3 += GenBibTeXAttribute(bib.authorsAreEditors ? "editor" : "author",
 				bib.authorList.stream()
 				.reduce((a, b) -> a + " and " + b)
@@ -196,7 +335,7 @@ public class ExportTypo3Bibtex extends Export {
 		typo3 += GenBibTeXAttributeIfPresent_Unsafe("issn", GetAttribute(bib, "issn"));
 		
 		{
-			List<String> tags = bib.tagList.get(typo3TagsAttribute);
+			List<String> tags = bib.tagList.get(Typo3TagsAttribute);
 			if (tags == null) {tags = new ArrayList<>();}
 			
 			List<String> taggerTags = new ArrayList<>();
@@ -218,9 +357,9 @@ public class ExportTypo3Bibtex extends Export {
 		}		
 
 		return typo3 + "\n}";
-	}
+	}//*/
 	
-	private String lookup(String variable, final Map<String, String> variables) {
+	private static String lookup(String variable, final Map<String, String> variables) {
 		String value = variables.get(variable.toUpperCase());
 		return value == null ? variable : value;
 	}
