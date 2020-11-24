@@ -16,9 +16,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -304,6 +307,18 @@ public abstract class Export {
             System.out.println("IOException for " + path);
         }
         return "";
+    }
+    
+    protected BufferedReader readFromFile(File path, Charset encoding) {
+		try {
+			FileInputStream fi = new FileInputStream(path);
+	    	InputStreamReader isr = new InputStreamReader(fi, encoding);
+	    	return new BufferedReader(isr);
+		} catch (FileNotFoundException e) {
+            System.out.println("Not Found " + path);
+			e.printStackTrace();
+		}
+		return null;
     }
 
     protected void writeToFile(String path, String filename, String content) {
