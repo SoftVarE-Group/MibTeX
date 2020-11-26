@@ -227,6 +227,22 @@ public class BibtexEntry {
 		type = entry.getType().getValue();
 	}
 
+	/**
+	 * Returns the value as string associated to the given bibtex key.
+	 * Returns an empty string if no such key could be found.
+	 */
+	public String getAttribute(org.jbibtex.Key attribKey) {
+		org.jbibtex.Value attrib = this.entry.getField(attribKey);
+		return attrib != null ? attrib.toUserString() : "";
+	}
+	/**
+	 * Returns the value as string associated to the given bibtex key name.
+	 * Returns an empty string if no such key could be found.
+	 */
+	public String getAttribute(String attribKey) {
+		return getAttribute(new org.jbibtex.Key(attribKey));
+	}
+	
 	public static String replaceUmlauts(String s) {
 		s = s.replace("\\\"{", "{\\\"");
 		s = s.replace("\\\"a", "&auml;");

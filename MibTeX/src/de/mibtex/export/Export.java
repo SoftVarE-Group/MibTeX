@@ -98,7 +98,7 @@ public abstract class Export {
         readTags();
     }
 
-    private void extractEntries(BibTeXDatabase database) {
+    private static void extractEntries(BibTeXDatabase database) {
         entries = new LinkedHashMap<String, BibtexEntry>();
         for (BibTeXObject object : database.getObjects()) {
             if (object instanceof BibTeXEntry) {
@@ -114,7 +114,7 @@ public abstract class Export {
         readCitations();
     }
 
-    private void readCitations() {
+    private static void readCitations() {
         List<CitationEntry> citationsEntries = new ArrayList<CitationEntry>();
         File fileHandle = new File(BibtexViewer.CITATION_DIR, "citations.csv");
         if (fileHandle.exists()) {
@@ -139,7 +139,7 @@ public abstract class Export {
 
     }
 
-    private void readAuthors() {
+    private static void readAuthors() {
         authors = new ArrayList<String>();
         for (BibtexEntry entry : entries.values())
             for (String author : entry.authorList)
@@ -148,14 +148,14 @@ public abstract class Export {
         Collections.sort(authors);
     }
 
-    private void readTitles() {
+    private static void readTitles() {
         titles = new ArrayList<String>();
         for (BibtexEntry entry : entries.values())
             titles.add(entry.title);
         Collections.sort(titles);
     }
 
-    private void readYears() {
+    private static void readYears() {
         years = new ArrayList<Integer>();
         for (BibtexEntry entry : entries.values())
             if (!years.contains(entry.year))
@@ -163,7 +163,7 @@ public abstract class Export {
         Collections.sort(years);
     }
 
-    private void readVenues() {
+    private static void readVenues() {
         venues = new ArrayList<String>();
         for (BibtexEntry entry : entries.values()) {
         	if ("GPCE13".equals(entry.venue))
@@ -176,7 +176,7 @@ public abstract class Export {
         Collections.sort(venues);
     }
 
-    private void readTags() {
+    private static void readTags() {
         tags = new ArrayList<>();
         for (BibtexEntry entry : entries.values())
             for (List<String> tagList : entry.tagList.values()) {
@@ -188,7 +188,7 @@ public abstract class Export {
         Collections.sort(tags);
     }
 
-    public void printMissingPDFs() {
+    public static void printMissingPDFs() {
         for (BibtexEntry entry : entries.values()) {
             File file = entry.getPDFPath();
             if (!file.exists())
@@ -196,7 +196,7 @@ public abstract class Export {
         }
     }
 
-    public void renameFiles() {
+    public static void renameFiles() {
         List<File> available = new ArrayList<File>();
         List<BibtexEntry> missing = new ArrayList<BibtexEntry>();
         try {
@@ -268,14 +268,14 @@ public abstract class Export {
         }
     }
 
-    public void cleanOutputFolder() {
+    public static void cleanOutputFolder() {
         File[] files = new File(BibtexViewer.OUTPUT_DIR).listFiles();
         if (files != null)
             for (File file : files)
                 file.delete();
     }
 
-    protected long countEntries(BibtexFilter filter) {
+    protected static long countEntries(BibtexFilter filter) {
         long number = 0;
         for (BibtexEntry entry : entries.values())
             if (filter.include(entry))
@@ -283,15 +283,15 @@ public abstract class Export {
         return number;
     }
     
-    protected String readFromFile(String dir, File filename) {
+    protected static String readFromFile(String dir, File filename) {
     	return readFromFile(dir, filename.toString());
     }
     
-    protected String readFromFile(String dir, String filename) {
+    protected static String readFromFile(String dir, String filename) {
     	return readFromFile(new File(dir, filename));
     }
 
-    protected String readFromFile(File path) {
+    protected static String readFromFile(File path) {
         try {
             InputStream in = new FileInputStream(path);
             StringBuilder out = new StringBuilder();
@@ -309,7 +309,7 @@ public abstract class Export {
         return "";
     }
     
-    protected BufferedReader readFromFile(File path, Charset encoding) {
+    protected static BufferedReader readFromFile(File path, Charset encoding) {
 		try {
 			FileInputStream fi = new FileInputStream(path);
 	    	InputStreamReader isr = new InputStreamReader(fi, encoding);
@@ -321,11 +321,11 @@ public abstract class Export {
 		return null;
     }
 
-    protected void writeToFile(String path, String filename, String content) {
+    protected static void writeToFile(String path, String filename, String content) {
         writeToFile(new File(path + filename), content);
     }
     
-    private void writeToFile(File path, String content, Supplier<BufferedWriter> bufferFactory) {
+    private static void writeToFile(File path, String content, Supplier<BufferedWriter> bufferFactory) {
     	try {
         	path.getParentFile().mkdirs();
             String oldContent = readFromFile(path);
@@ -344,7 +344,7 @@ public abstract class Export {
         }
     }
     
-    protected void writeToFile(File path, String content) {
+    protected static void writeToFile(File path, String content) {
     	writeToFile(path, content, () -> {
 			try {
 				return new BufferedWriter(new FileWriter(path));
@@ -355,7 +355,7 @@ public abstract class Export {
 		});
     }
     
-    protected void writeToFile(File path, String content, CharsetEncoder encoder) {
+    protected static void writeToFile(File path, String content, CharsetEncoder encoder) {
     	writeToFile(path, content, () -> {
 			try {
 				return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), encoder));
