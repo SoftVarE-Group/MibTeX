@@ -50,7 +50,7 @@ public class ExportTypo3Bibtex extends Export {
 	 * Select the modifiers you want to apply to each entry after filtering.
 	 * Each modifier is a function taking a Typo3Entry and returning the modified Typo3Entry.
 	 * Default implementations can be found in de.mibtex.export.typo3.Modifiers.
-	 * For instance, Modifiers::MarkIfThomasIsEditor checks if Thomas Thüm is an editor of the entry and if so,
+	 * For instance, Modifiers::MarkIfThomasIsEditor checks if Thomas ThÃ¼m is an editor of the entry and if so,
 	 * adds a specific tag to the publication that we use for the website.
 	 * Some modifiers are dedicated to resolving duplicate entries (w.r.t. titles) because Typo3 considers entries with the same title to be the same.
 	 * If unsure, leave unchanged.
@@ -69,7 +69,6 @@ public class ExportTypo3Bibtex extends Export {
 			, Modifiers.IfKeyIs("RSC+:SE21", Modifiers.MarkAsExtendedAbstract)
 			, Modifiers.IfKeyIs("KTP+:SE19", Modifiers.MarkAsExtendedAbstract)
 	);
-	
 	
 	public ExportTypo3Bibtex(String path, String file) throws Exception {
 		super(path, file);
