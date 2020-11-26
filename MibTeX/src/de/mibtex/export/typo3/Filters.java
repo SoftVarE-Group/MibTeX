@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 
 public class Filters {
 	public final static String ThomasThuem = "Thomas Thüm";
-	public final static String ChicoShundermann = "Chico Sundermann";
+	public final static String ChicoSundermann = "Chico Sundermann";
 	public final static String TobiasHess = "Tobias Heß";
 	public final static String PaulMBittner = "Paul Maximilan Bittner";
 	
@@ -17,11 +17,11 @@ public class Filters {
 	public final static Predicate<Typo3Entry> Is_mastersthesis = b -> b.type.equals("mastersthesis");
 	public final static Predicate<Typo3Entry> Is_phdthesis = b -> b.type.equals("phdthesis");
 
-	public final static Predicate<Typo3Entry> WithThomas = Filters.AuthorOrEditorIsOneOf(ThomasThuem);
+	public final static Predicate<Typo3Entry> WithThomas = AuthorOrEditorIsOneOf(ThomasThuem).and(Is_misc.negate());
 	public final static Predicate<Typo3Entry> WithThomasBeforeUlm = WithThomas.and(b -> b.year < 2020);
 	public final static Predicate<Typo3Entry> WithThomasAtUlm = WithThomas.and(b -> b.year >= 2020);
 
-	public final static Predicate<Typo3Entry> SoftVarE = Filters.AuthorOrEditorIsOneOf(ThomasThuem, ChicoShundermann, TobiasHess, PaulMBittner).and(b -> b.year >= 2020);
+	public final static Predicate<Typo3Entry> SoftVarE = Filters.AuthorOrEditorIsOneOf(ThomasThuem, ChicoSundermann, TobiasHess, PaulMBittner).and(b -> b.year >= 2020);
 
 	public final static Predicate<Typo3Entry> BelongsToVariantSync = b -> {
 		if (b.tags == null) return false;

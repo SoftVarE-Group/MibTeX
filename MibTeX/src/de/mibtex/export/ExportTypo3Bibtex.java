@@ -48,7 +48,7 @@ public class ExportTypo3Bibtex extends Export {
 	private final Predicate<Typo3Entry> bibFilter =
 			//Filters.Any()
 			//Filters.KeyIsOneOf("RSC+:SE21", "KJN+:SE21", "KJN+:FASE20")
-			Filters.AuthorOrEditorIsOneOf(Filters.ThomasThuem).and(Filters.Is_misc.negate())
+			Filters.WithThomasAtUlm
 	;
 	
 	/**
@@ -82,33 +82,17 @@ public class ExportTypo3Bibtex extends Export {
 
 	@Override
 	public void writeDocument() {
-		// TODO: Wiki-Eintrag
-		// TODO: Warum fehlen noch 20? Publikationen von Thomas.
-		/**
-		 * 1.) Duplikate kann es online nicht geben, da Typo3 den Titel als Primary Key nimmt.
-		 * 2.) Manche Duplikate sind online aber dennoch vorhanden, weil das eine im Ordner "Publikationen" und das andere in "Alte Publikationen Thomas Thüm" liegt.
-		 * 
-		 * Stats:
-		 * A = Thomas ist Autor.
-		 * E = Thomas ist Editor.
-		 * ----------------------------------
-		 * Filter               |total|unique
-		 * ----------------------------------
-		 * A                    | 111 | 102
-		 * E                    |   5 |   5
-		 * A und E              |   0 |   0
-		 * A oder E             | 116 | 107
-		 * (A oder E) und !misc | 115 | 107
-		 */
-
+		// Parse the variables defined in MYabrv.bib
 		Map<String, String> variables = readVariablesFromBibtexFile(new File(BibtexViewer.BIBTEX_DIR, MYabrv));
 		
+		// Transform all Bibtex-Entries to Typo3Entries, filter them and apply all modifiers.
 		List<Typo3Entry> typo3Entries = entries.values().stream()
 				.map(b -> new Typo3Entry(b, variables))
 				.filter(bibFilter)
 				.map(modifiers.stream().reduce(Function.identity(), Function::compose))
 				.collect(Collectors.toList());
 		
+		// Generate the typo3-conforming Bibtex source code.
 		String typo3 = typo3Entries.stream()
 				.map(Typo3Entry::toString)
 				.reduce("", (a, b) -> a + "\n\n" + b);
@@ -138,6 +122,7 @@ public class ExportTypo3Bibtex extends Export {
 			System.err.println("There were unresolved duplicates that can cause problems when imported with TYPO3!");
 		}
 
+		// Write the source code to file.
         CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
         encoder.onMalformedInput(CodingErrorAction.REPORT);
         encoder.onUnmappableCharacter(CodingErrorAction.REPORT);

@@ -24,6 +24,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		ToURLOverwrites.put("?", "?");
 		ToURLOverwrites.put(":", ":");
 		ToURLOverwrites.put("/", "/");
+		ToURLOverwrites.put("#", "#");
 		ToURLOverwrites.put("&szlig;", "ß");
 	}
 	
