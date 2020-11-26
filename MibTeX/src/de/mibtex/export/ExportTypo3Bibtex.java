@@ -6,20 +6,15 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.jbibtex.BibTeXEntry;
-
-import de.mibtex.BibtexEntry;
 import de.mibtex.BibtexViewer;
 import de.mibtex.export.typo3.Filters;
 import de.mibtex.export.typo3.Modifiers;
