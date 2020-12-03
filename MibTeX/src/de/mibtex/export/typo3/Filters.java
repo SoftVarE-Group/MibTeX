@@ -7,7 +7,7 @@ public class Filters {
 	public final static String ThomasThuem = "Thomas Thüm";
 	public final static String ChicoSundermann = "Chico Sundermann";
 	public final static String TobiasHess = "Tobias Heß";
-	public final static String PaulMBittner = "Paul Maximilan Bittner";
+	public final static String PaulMBittner = "Paul Maximilian Bittner";
 	
 	public final static Predicate<Typo3Entry> Is_misc = b -> b.type.equals("misc");
 	public final static Predicate<Typo3Entry> Is_proceedings = b -> b.type.equals("proceedings");
@@ -20,6 +20,15 @@ public class Filters {
 	public final static Predicate<Typo3Entry> WithThomas = AuthorOrEditorIsOneOf(ThomasThuem).and(Is_misc.negate());
 	public final static Predicate<Typo3Entry> WithThomasBeforeUlm = WithThomas.and(b -> b.year < 2020);
 	public final static Predicate<Typo3Entry> WithThomasAtUlm = WithThomas.and(b -> b.year >= 2020);
+	
+	public final static Predicate<Typo3Entry> WithPaul = Filters.AuthorOrEditorIsOneOf(Filters.PaulMBittner);
+	public final static Predicate<Typo3Entry> WithPaulAtICG = WithPaul.and(t -> t.source.getAttribute("pb-tags").contains("ICG"));
+	public final static Predicate<Typo3Entry> WithPaulAtUlm =
+			WithPaul
+			.and(WithPaulAtICG.negate())
+			.and(Is_mastersthesis.negate())
+			.and(t -> t.year >= 2020);
+	public final static Predicate<Typo3Entry> WithPaulBeforeOrNotAtUlm = WithPaul.and(WithPaulAtUlm.negate());
 
 	public final static Predicate<Typo3Entry> SoftVarE = Filters.AuthorOrEditorIsOneOf(ThomasThuem, ChicoSundermann, TobiasHess, PaulMBittner).and(b -> b.year >= 2020);
 

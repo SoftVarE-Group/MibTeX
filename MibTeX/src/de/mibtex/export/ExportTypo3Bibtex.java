@@ -42,15 +42,18 @@ public class ExportTypo3Bibtex extends Export {
 	 */
 	private final Predicate<Typo3Entry> bibFilter =
 			//Filters.Any()
-			//Filters.KeyIsOneOf("RSC+:SE21", "KJN+:SE21", "KJN+:FASE20")
-			Filters.WithThomasAtUlm
+			//Filters.KeyIsOneOf("BTS:SEFM19")
+			//Filters.WithThomasAtUlm
+			//Filters.WithPaulAtUlm
+			//Filters.WithPaulBeforeOrNotAtUlm
+			Filters.WithPaul.and(Filters.WithThomasBeforeUlm)
 	;
 	
 	/**
 	 * Select the modifiers you want to apply to each entry after filtering.
 	 * Each modifier is a function taking a Typo3Entry and returning the modified Typo3Entry.
 	 * Default implementations can be found in de.mibtex.export.typo3.Modifiers.
-	 * For instance, Modifiers::MarkIfThomasIsEditor checks if Thomas ThÃ¼m is an editor of the entry and if so,
+	 * For instance, Modifiers.MarkIfThomasIsEditor checks if Thomas Thüm is an editor of the entry and if so,
 	 * adds a specific tag to the publication that we use for the website.
 	 * Some modifiers are dedicated to resolving duplicate entries (w.r.t. titles) because Typo3 considers entries with the same title to be the same.
 	 * If unsure, leave unchanged.

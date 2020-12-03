@@ -151,7 +151,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		
 		typo3 += GenBibTeXAttributeIfPresent("note", note);
 		
-		typo3 += GenBibTeXAttributeIfPresent("tags", tags.stream().reduce("", (a, b) -> a + ", " + b));
+		typo3 += GenBibTeXAttributeIfPresent("tags", tags.stream().reduce((a, b) -> a + ", " + b).orElseGet(() -> ""));
 
 		return typo3 + "\n}";
 	}
