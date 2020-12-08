@@ -25,7 +25,7 @@ import de.mibtex.citationservice.CitationEntry;
 /**
  * A class storing a single BibTeX entry with several options for manipulation.
  * 
- * @author Thomas Thuem, Christopher Sontag
+ * @author Thomas Thuem, Christopher Sontag, Paul Maximilian Bittner
  */
 public class BibtexEntry {
 
@@ -312,7 +312,7 @@ public class BibtexEntry {
 				+ ", citations=" + citations + "]";
 	}
 
-	public static boolean IsDefined(String attribute) {
+	public static boolean isDefined(String attribute) {
 		return attribute != null && !attribute.isEmpty() && !attribute.equals(BibtexEntry.UNKNOWN_ATTRIBUTE) && (!attribute.startsWith("(") || !attribute.endsWith(")"));
 	}
 }

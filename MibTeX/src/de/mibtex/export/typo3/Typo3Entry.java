@@ -1,3 +1,9 @@
+/* MibTeX - Minimalistic tool to manage your references with BibTeX
+ * 
+ * Distributed under BSD 3-Clause License, available at Github
+ * 
+ * https://github.com/tthuem/MibTeX
+ */
 package de.mibtex.export.typo3;
 
 import java.util.ArrayList;
@@ -11,6 +17,14 @@ import org.jbibtex.BibTeXEntry;
 import de.mibtex.BibtexEntry;
 import de.mibtex.export.ExportTypo3Bibtex;
 
+/**
+ * Represents a bibtex entry similar to BibtexEntry.java that will conform
+ * to the publication importer of Typo3 when transformed to string.
+ * @see toString
+ * 
+ * @author Paul Maximilian Bittner
+ *
+ */
 public class Typo3Entry implements Comparable<Typo3Entry> {
 	private static Map<String, String> ToURLOverwrites = new HashMap<>();
 	static {
@@ -116,23 +130,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		String typo3 = "@" + type + "{" + key;
 
 		typo3 += GenBibTeXAttributeIfPresent("type", this.typeAttrib);
-		
-		List<String> persons;
-		String personType;
-		if (!authors.isEmpty()) {
-			persons = authors;
-			personType = "author";
-		} else if (!editors.isEmpty()) {
-			persons = editors;
-			personType = "editor";
-		} else {
-			throw new RuntimeException("The Typo3Entry with key " + this.key + " has neither authors nor editors!");
-		}
-		typo3 += GenBibTeXAttributeIfPresent(personType,
-				persons.stream()
-				.reduce((a, b) -> a + " and " + b)
-				.orElseGet(() -> {throw new IllegalArgumentException("Person list is empty!");}));
-		
+		typo3 += genAuthorList();
 		typo3 += GenBibTeXAttributeIfPresent("title", title);
 		typo3 += GenBibTeXAttributeIfPresent("year", Integer.toString(year));
 		typo3 += GenBibTeXAttributeIfPresent("booktitle", booktitle);
@@ -154,6 +152,25 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		typo3 += GenBibTeXAttributeIfPresent("tags", tags.stream().reduce((a, b) -> a + ", " + b).orElseGet(() -> ""));
 
 		return typo3 + "\n}";
+	}
+	
+	private String genAuthorList() {
+		List<String> persons;
+		String personType;
+		if (!authors.isEmpty()) {
+			persons = authors;
+			personType = "author";
+		} else if (!editors.isEmpty()) {
+			persons = editors;
+			personType = "editor";
+		} else {
+			throw new RuntimeException("The Typo3Entry with key " + this.key + " has neither authors nor editors!");
+		}
+
+		return GenBibTeXAttributeIfPresent(personType,
+				persons.stream()
+				.reduce((a, b) -> a + " and " + b)
+				.orElseGet(() -> {throw new IllegalArgumentException("Person list is empty!");}));
 	}
 	
 	@Override
@@ -180,6 +197,6 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	}
 	
 	private static String GenBibTeXAttributeIfPresent(String name, String value) {
-		return BibtexEntry.IsDefined(value) ? GenBibTeXAttribute(name, value) : "";
+		return BibtexEntry.isDefined(value) ? GenBibTeXAttribute(name, value) : "";
 	}
 }

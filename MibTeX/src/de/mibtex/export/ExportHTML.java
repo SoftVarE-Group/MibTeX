@@ -206,12 +206,9 @@ public class ExportHTML extends Export {
 
 	public static String getHTMLTitle(BibtexEntry entry) {
 		String htmlTitle = "<a href=\"" + entry.getRelativePDFPath() + "\">";
-		if (entry.getPDFPath().exists())
-		{
+		if (entry.getPDFPath().exists()) {
 			 htmlTitle += entry.title + "</a>";
-		}
-		else
-		{
+		} else {
 			htmlTitle = entry.title + " " + htmlTitle + "pdf</a>";
 		}
 		return htmlTitle;

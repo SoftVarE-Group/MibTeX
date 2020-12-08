@@ -1,8 +1,20 @@
+/* MibTeX - Minimalistic tool to manage your references with BibTeX
+ * 
+ * Distributed under BSD 3-Clause License, available at Github
+ * 
+ * https://github.com/tthuem/MibTeX
+ */
 package de.mibtex.export.typo3;
 
 import java.util.Arrays;
 import java.util.function.Predicate;
 
+/**
+ * This is a collection of default filters to use for the ExportTypo3Bibtex.
+ * Each filter is a java.util.Predicate that can be combined with propositional operators (and, or, negate, ...)
+ * 
+ * @author Paul Maximilian Bittner
+ */
 public class Filters {
 	public final static String ThomasThuem = "Thomas Thüm";
 	public final static String ChicoSundermann = "Chico Sundermann";
@@ -39,33 +51,61 @@ public class Filters {
 	
 	private Filters() {}
 	
+	/**
+	 * The predicate returns true iff the entry's key matches one of the given keys.
+	 */
 	public static Predicate<Typo3Entry> KeyIsOneOf(String... keys) {
 		return b -> Arrays.asList(keys)
 				.stream()
 				.anyMatch(b.key::equals);
 	}
 	
+	/**
+	 * @return A predicate that returns true iff the entry's author list contains at least one of the given authors or if the editor list does so.
+	 * An author string should be in the format "firstname lastname" such as in the fields ThomasThuem, ChicoSundermann, ... in this class.
+	 */
 	public static Predicate<Typo3Entry> AuthorOrEditorIsOneOf(String... authors) {
 		return AuthorIsOneOf(authors).or(EditorIsOneOf(authors));
 	}
+
 	
+	/**
+	 * @return A predicate that returns true iff the entry's author list contains at least one of the given authors.
+	 * An author string should be in the format "firstname lastname" such as in the fields ThomasThuem, ChicoSundermann, ... in this class.
+	 */
 	public static Predicate<Typo3Entry> AuthorIsOneOf(String... authors) {
 		return b -> AnyMatch(b.authors::contains, authors);
 	}
+
 	
+	/**
+	 * @return A predicate that returns true iff the entry's editor list contains at least one of the given authors.
+	 * An editor string should be in the format "firstname lastname" such as in the fields ThomasThuem, ChicoSundermann, ... in this class.
+	 */
 	public static Predicate<Typo3Entry> EditorIsOneOf(String... editors) {
 		return b -> AnyMatch(b.editors::contains, editors);
 	}
 	
+	/**
+	 * @return A predicate that returns true iff the argument passed to that predicate is equal to at least one of the given elements (in terms of Object.equals).
+	 */
 	@SafeVarargs
 	public static <T> Predicate<T> IsOneOf(T... elements) {
 		return s -> AnyMatch(s::equals, elements);
 	}
 	
+	/**
+	 * @return True iff at least one of the given elements satisfies the given condition.
+	 */
+	@SafeVarargs
 	public static <T> boolean AnyMatch(Predicate<T> condition, T... elements) {
 		return Arrays.asList(elements).stream().anyMatch(condition);
 	}
 	
+	/**
+	 * Returns a predicate that will always evaluate to true.
+	 * This is a neutral filter in streams that does not filter any elements but keep the collection as is.
+	 */
 	public static <T> Predicate<T> Any() {
 		return x -> true;
 	}
