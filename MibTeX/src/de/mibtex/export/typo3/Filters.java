@@ -33,7 +33,9 @@ public class Filters {
 	public final static Predicate<Typo3Entry> WithThomasBeforeUlm = WithThomas.and(b -> b.year < 2020);
 	public final static Predicate<Typo3Entry> WithThomasAtUlm = WithThomas.and(b -> b.year >= 2020);
 	
-	public final static Predicate<Typo3Entry> WithPaul = Filters.AuthorOrEditorIsOneOf(Filters.PaulMBittner);
+	public final static Predicate<Typo3Entry> WithChico = AuthorIsOneOf(ChicoSundermann);
+	
+	public final static Predicate<Typo3Entry> WithPaul = Filters.AuthorIsOneOf(PaulMBittner);
 	public final static Predicate<Typo3Entry> WithPaulAtICG = WithPaul.and(t -> t.source.getAttribute("pb-tags").contains("ICG"));
 	public final static Predicate<Typo3Entry> WithPaulAtUlm =
 			WithPaul

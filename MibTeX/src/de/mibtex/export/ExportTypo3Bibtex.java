@@ -60,7 +60,8 @@ public class ExportTypo3Bibtex extends Export {
 			//Filters.WithThomasAtUlm
 			//Filters.WithPaulAtUlm
 			//Filters.WithPaulBeforeOrNotAtUlm
-			Filters.WithPaul.and(Filters.WithThomasBeforeUlm)
+			//Filters.WithPaul.and(Filters.WithThomasBeforeUlm)
+			Filters.WithChico
 			;
 
 	/**
