@@ -23,22 +23,29 @@ import java.util.stream.Collectors;
 public class Util {
 	
 	/**
-	 * @return A function that for a given a, returns f(a) if the given condition is met, and otherwise returns a.
+	 * Creates a branching function for given condition, then and else case.
+	 * @param condition The condition upon which'S result 'then' or 'elze' will be run.
+	 * @param then The function to apply when the given condition is met for a given a.
+	 * @param elze The function to apply when the given condition is not met for a given a.
+	 * @return A function that for a given a, returns then(a) if the given condition is met, and otherwise returns elze(a).
 	 */
-	public static <A> Function<A, A> If(Predicate<A> condition, Function<A, A> f) {
-		return a -> condition.test(a) ? f.apply(a) : a;
+	public static <A> Function<A, A> If(Predicate<A> condition, Function<A, A> then, Function<A, A> elze) {
+		return a -> condition.test(a) ? then.apply(a) : elze.apply(a);
+	}
+	
+	/**
+	 * The same as @see If but without an else case (i.e., else case function identity).
+	 */
+	public static <A> Function<A, A> If(Predicate<A> condition, Function<A, A> then) {
+		return If(condition, then, Function.identity());
 	}
 	
 	/**
 	 * The same as @see If but throws an error when the condition is not met by the argument.
 	 */
-	public static <A> Function<A, A> IfForced(Predicate<A> condition, Function<A, A> f, String errorMsg) {
-		return a -> {
-			if (condition.test(a)) {
-				return f.apply(a);
-			}
-			throw new IllegalArgumentException("Condition failed on \n" + a + "\n: " + errorMsg);
-		};
+	public static <A> Function<A, A> IfForced(Predicate<A> condition, Function<A, A> then, String errorMsg) {
+		return If(condition, then, a -> {
+			throw new IllegalArgumentException("Condition failed on \n" + a + "\n: " + errorMsg);});
 	}
 	
 	/**
