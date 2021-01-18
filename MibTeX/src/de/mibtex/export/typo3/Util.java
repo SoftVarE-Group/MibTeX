@@ -21,16 +21,15 @@ import java.util.stream.Collectors;
  * @author Paul Maximilian Bittner
  */
 public class Util {
-	
 	/**
 	 * Creates a branching function for given condition, then and else case.
-	 * @param condition The condition upon which'S result 'then' or 'elze' will be run.
+	 * @param condition The condition upon which'S result 'then' or 'otherwise' will be run.
 	 * @param then The function to apply when the given condition is met for a given a.
-	 * @param elze The function to apply when the given condition is not met for a given a.
-	 * @return A function that for a given a, returns then(a) if the given condition is met, and otherwise returns elze(a).
+	 * @param otherwise The function to apply when the given condition is not met for a given a.
+	 * @return A function that for a given a, returns then(a) if the given condition is met, and otherwise returns otherwise(a).
 	 */
-	public static <A> Function<A, A> when(Predicate<A> condition, Function<A, A> then, Function<A, A> elze) {
-		return a -> condition.test(a) ? then.apply(a) : elze.apply(a);
+	public static <A, B> Function<A, B> when(Predicate<A> condition, Function<A, B> then, Function<A, B> otherwise) {
+		return a -> condition.test(a) ? then.apply(a) : otherwise.apply(a);
 	}
 	
 	/**
