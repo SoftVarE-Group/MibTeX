@@ -101,21 +101,11 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		
 		this.note = makeTypo3Safe(bib.getAttribute(BibTeXEntry.KEY_NOTE));
 		
-		{
-			String booktitle;
-			if (Filters.IS_TECHREPORT.test(this)) {
-				booktitle = ("Technical Report " + bib.getAttribute(BibTeXEntry.KEY_NUMBER)).trim();
-//			} else if (Filters.is_phdthesis.test(bib)) {
-//				booktitle = "PhD Thesis";
-//			} else if (Filters.is_bachelorsthesis.test(bib)) {
-//				booktitle = "Bachelor's Thesis";
-//			} else if (Filters.is_mastersthesis.test(bib)) {
-//				booktitle = "Master's Thesis";
-			} else {
-				booktitle = lookup(bib.getAttribute(BibTeXEntry.KEY_BOOKTITLE), variables);
-			}
-			this.booktitle = makeTypo3Safe(booktitle);
-		}
+		this.booktitle = makeTypo3Safe(Util.when(
+				Filters.IS_TECHREPORT, 
+				t3 -> ("Technical Report " + bib.getAttribute(BibTeXEntry.KEY_NUMBER)).trim(),
+				t3 -> lookup(bib.getAttribute(BibTeXEntry.KEY_BOOKTITLE), variables)
+				).apply(this));
 		
 		this.tags = bib.tagList.get(ExportTypo3Bibtex.TYPO3_TAGS_ATTRIBUTE);
 		if (this.tags == null) {
