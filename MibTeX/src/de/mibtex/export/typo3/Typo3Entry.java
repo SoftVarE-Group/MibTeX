@@ -100,19 +100,9 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		this.issn = bib.getAttribute("issn");
 		
 		this.note = makeTypo3Safe(bib.getAttribute(BibTeXEntry.KEY_NOTE));
-		
-		this.booktitle = makeTypo3Safe(Util.when(
-				Filters.IS_TECHREPORT, 
-				t3 -> ("Technical Report " + bib.getAttribute(BibTeXEntry.KEY_NUMBER)).trim(),
-				t3 -> lookup(bib.getAttribute(BibTeXEntry.KEY_BOOKTITLE), variables)
-				).apply(this));
-		
-		this.tags = bib.tagList.get(ExportTypo3Bibtex.TYPO3_TAGS_ATTRIBUTE);
-		if (this.tags == null) {
-			this.tags = new ArrayList<>();
-		} else {
-			this.tags = Util.splitAttributeListString(this.tags);
-		}
+
+		this.booktitle = parseBooktitle(bib, variables);		
+		this.tags = parseTags(bib);
 	}
 
 	@Override
@@ -124,21 +114,16 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		typo3 += genBibTeXAttributeIfPresent("title", title);
 		typo3 += genBibTeXAttributeIfPresent("year", Integer.toString(year));
 		typo3 += genBibTeXAttributeIfPresent("booktitle", booktitle);
-		
 		typo3 += genBibTeXAttributeIfPresent("address", address);
 		typo3 += genBibTeXAttributeIfPresent("publisher", publisher);
 		typo3 += genBibTeXAttributeIfPresent("journal", journal);
 		typo3 += genBibTeXAttributeIfPresent("location", location);
-		
 		typo3 += genBibTeXAttributeIfPresent("school", school);
 		typo3 += genBibTeXAttributeIfPresent("pages", pages);
-		
 		typo3 += genBibTeXAttributeIfPresent("doi", doi);
 		typo3 += genBibTeXAttributeIfPresent("isbn", isbn);
 		typo3 += genBibTeXAttributeIfPresent("issn", issn);
-		
 		typo3 += genBibTeXAttributeIfPresent("note", note);
-		
 		typo3 += genBibTeXAttributeIfPresent("tags", tags.stream().reduce((a, b) -> a + ", " + b).orElseGet(() -> ""));
 
 		return typo3 + "\n}";
@@ -188,5 +173,22 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	
 	private static String genBibTeXAttributeIfPresent(String name, String value) {
 		return BibtexEntry.isDefined(value) ? genBibTeXAttribute(name, value) : "";
+	}
+	
+	private static String parseBooktitle(BibtexEntry bib, Map<String, String> variables) {
+		return makeTypo3Safe(Util.when(
+				Filters.IS_TECHREPORT_BIB, 
+				b -> ("Technical Report " + b.getAttribute(BibTeXEntry.KEY_NUMBER)).trim(),
+				b -> lookup(b.getAttribute(BibTeXEntry.KEY_BOOKTITLE), variables)
+				).apply(bib));
+	}
+	
+	private static List<String> parseTags(BibtexEntry bib) {
+		List<String> tags = bib.tagList.get(ExportTypo3Bibtex.TYPO3_TAGS_ATTRIBUTE);
+		if (tags == null) {
+			return new ArrayList<>();
+		} else {
+			return Util.splitAttributeListString(tags);
+		}
 	}
 }
