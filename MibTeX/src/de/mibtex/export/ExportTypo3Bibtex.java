@@ -113,15 +113,11 @@ public class ExportTypo3Bibtex extends Export {
 		System.out.println();
 
 		// Check if we have some duplicates left that were not resolved.
-		int duplicates = Util.getDuplicates(
-				typo3Entries,
-				(a, b) -> System.out.println("  > Found unresolved duplicate: " + a.title));
-
+		int duplicates = Util.getDuplicates(typo3Entries, (a, b) -> System.out.println("  > Found unresolved duplicate: " + a.title));
 		final long numUniqueEntries = typo3Entries.size() - duplicates;
 
 		System.out.println("\nExported " + typo3Entries.size() + " entries.");
-		System.out.println("Thereof " + numUniqueEntries + " entries are unique (by title).");
-		System.out.println();
+		System.out.println("Thereof " + numUniqueEntries + " entries are unique (by title).\n");
 		System.out.flush();
 
 		if (duplicates > 0) {
@@ -129,11 +125,7 @@ public class ExportTypo3Bibtex extends Export {
 			System.err.println("There were unresolved duplicates that can cause problems when imported with TYPO3!");
 		}
 
-		// Write the source code to file.
-		CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
-		encoder.onMalformedInput(CodingErrorAction.REPORT);
-		encoder.onUnmappableCharacter(CodingErrorAction.REPORT);
-		writeToFile(new File(BibtexViewer.OUTPUT_DIR, "typo3.bib"), typo3, encoder);
+		writeToFileInUTF8(new File(BibtexViewer.OUTPUT_DIR, "typo3.bib"), typo3);
 	}
 
 	private static Map<String, String> readVariablesFromBibtexFile(File pathToBibtex) {

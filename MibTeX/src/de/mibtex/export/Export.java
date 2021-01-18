@@ -21,6 +21,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -352,6 +353,13 @@ public abstract class Export {
 				return null;
 			}
 		});
+    }
+    
+    protected static void writeToFileInUTF8(File path, String content) {
+		CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
+		encoder.onMalformedInput(CodingErrorAction.REPORT);
+		encoder.onUnmappableCharacter(CodingErrorAction.REPORT);
+		writeToFile(path, content, encoder);
     }
     
     protected static void writeToFile(File path, String content, CharsetEncoder encoder) {
