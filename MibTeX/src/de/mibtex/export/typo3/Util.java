@@ -29,23 +29,47 @@ public class Util {
 	 * @param elze The function to apply when the given condition is not met for a given a.
 	 * @return A function that for a given a, returns then(a) if the given condition is met, and otherwise returns elze(a).
 	 */
-	public static <A> Function<A, A> If(Predicate<A> condition, Function<A, A> then, Function<A, A> elze) {
+	public static <A> Function<A, A> when(Predicate<A> condition, Function<A, A> then, Function<A, A> elze) {
 		return a -> condition.test(a) ? then.apply(a) : elze.apply(a);
 	}
 	
 	/**
-	 * The same as @see If but without an else case (i.e., else case function identity).
+	 * The same as @see when but without an else case (i.e., else case function identity).
 	 */
-	public static <A> Function<A, A> If(Predicate<A> condition, Function<A, A> then) {
-		return If(condition, then, Function.identity());
+	public static <A> Function<A, A> when(Predicate<A> condition, Function<A, A> then) {
+		return when(condition, then, Function.identity());
 	}
 	
 	/**
-	 * The same as @see If but throws an error when the condition is not met by the argument.
+	 * The same as @see when but throws an error when the condition is not met by the argument.
 	 */
-	public static <A> Function<A, A> IfForced(Predicate<A> condition, Function<A, A> then, String errorMsg) {
-		return If(condition, then, a -> {
+	public static <A> Function<A, A> whenForced(Predicate<A> condition, Function<A, A> then, String errorMsg) {
+		return when(condition, then, a -> {
 			throw new IllegalArgumentException("Condition failed on \n" + a + "\n: " + errorMsg);});
+	}
+	
+	/**
+	 * @return A predicate that returns true iff the argument passed to that predicate is equal to at least one of the given elements (in terms of Object.equals).
+	 */
+	@SafeVarargs
+	public static <T> Predicate<T> isOneOf(T... elements) {
+		return s -> anyMatch(s::equals, elements);
+	}
+	
+	/**
+	 * @return True iff at least one of the given elements satisfies the given condition.
+	 */
+	@SafeVarargs
+	public static <T> boolean anyMatch(Predicate<T> condition, T... elements) {
+		return Arrays.asList(elements).stream().anyMatch(condition);
+	}
+	
+	/**
+	 * Returns a predicate that will always evaluate to true.
+	 * This is a neutral filter in streams that does not filter any elements but keep the collection as is.
+	 */
+	public static <T> Predicate<T> any() {
+		return x -> true;
 	}
 	
 	/**
@@ -78,7 +102,7 @@ public class Util {
 	 * @param tags
 	 * @return
 	 */
-	public static List<String> SplitAttributeListString(List<String> tags) {
+	public static List<String> splitAttributeListString(List<String> tags) {
 		Function<String, Function<List<String>, List<String>>> splitByDivider = div -> l -> {
 			return l.stream().collect(
 					() -> new ArrayList<String>(),

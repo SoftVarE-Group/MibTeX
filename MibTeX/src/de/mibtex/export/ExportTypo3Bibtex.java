@@ -33,9 +33,9 @@ import de.mibtex.export.typo3.Util;
  */
 public class ExportTypo3Bibtex extends Export {
 	// TODO: Having numbers in Bibtex tags is not conforming the Bibtex standard.
-	public final static String Typo3TagsAttribute = "typo3Tags";
-	private final static String MYabrv = "MYabrv.bib";
-	private final static String MYshort = "MYshort.bib";
+	public final static String TYPO3_TAGS_ATTRIBUTE = "typo3Tags";
+	private final static String MYABRV = "MYabrv.bib";
+	private final static String MYSHORT = "MYshort.bib";
 	// We do not consider MYfull because it is deprecated.
 
 	/**
@@ -44,7 +44,7 @@ public class ExportTypo3Bibtex extends Export {
 	 * @see MYabrv
 	 * @see MYshort
 	 */
-	private final String VariablesFile = MYabrv;
+	private final String VariablesFile = MYABRV;
 	
 	/**
 	 * Select the filter you need to export only the publications you are interested in.
@@ -61,7 +61,7 @@ public class ExportTypo3Bibtex extends Export {
 			//Filters.WithPaulAtUlm
 			//Filters.WithPaulBeforeOrNotAtUlm
 			//Filters.WithPaul.and(Filters.WithThomasBeforeUlm)
-			Filters.WithChico
+			Filters.WITH_CHICO
 			;
 
 	/**
@@ -74,18 +74,18 @@ public class ExportTypo3Bibtex extends Export {
 	 * If unsure, leave unchanged.
 	 */
 	private final List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
-			Modifiers.MarkIfThomasIsEditor
-			, Modifiers.MarkIfToAppear
+			Modifiers.MARK_IF_THOMAS_IS_EDITOR
+			, Modifiers.MARK_IF_TO_APPEAR
 
 			// Resolving duplicates
-			, Modifiers.IfKeyIs("useRLB+:AOSD14", Modifiers.MarkIfTechreport)
-			, Modifiers.IfKeyIs("TKL:SPLC18", Modifiers.AppendToTitle("(Second Edition)"))
-			, Modifiers.IfKeyIs("KAT:TR16", Modifiers.MarkIfTechreport)
-			, Modifiers.IfKeyIs("TKK+:SPLC19", Modifiers.MarkAsExtendedAbstract)
-			, Modifiers.IfKeyIs("KTS+:SE19", Modifiers.MarkAsExtendedAbstract)
-			, Modifiers.IfKeyIs("KJN+:SE21", Modifiers.MarkAsExtendedAbstract)
-			, Modifiers.IfKeyIs("RSC+:SE21", Modifiers.MarkAsExtendedAbstract)
-			, Modifiers.IfKeyIs("KTP+:SE19", Modifiers.MarkAsExtendedAbstract)
+			, Modifiers.whenKeyIs("useRLB+:AOSD14", Modifiers.MARK_IF_TECHREPORT)
+			, Modifiers.whenKeyIs("TKL:SPLC18", Modifiers.appendToTitle("(Second Edition)"))
+			, Modifiers.whenKeyIs("KAT:TR16", Modifiers.MARK_IF_TECHREPORT)
+			, Modifiers.whenKeyIs("TKK+:SPLC19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
+			, Modifiers.whenKeyIs("KTS+:SE19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
+			, Modifiers.whenKeyIs("KJN+:SE21", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
+			, Modifiers.whenKeyIs("RSC+:SE21", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
+			, Modifiers.whenKeyIs("KTP+:SE19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
 			);
 
 	public ExportTypo3Bibtex(String path, String file) throws Exception {
