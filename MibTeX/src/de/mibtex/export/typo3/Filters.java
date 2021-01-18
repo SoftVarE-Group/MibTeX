@@ -9,6 +9,8 @@ package de.mibtex.export.typo3;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
+import de.mibtex.BibtexEntry;
+
 /**
  * This is a collection of default filters to use for the ExportTypo3Bibtex.
  * Each filter is a java.util.Predicate that can be combined with propositional operators (and, or, negate, ...)
@@ -24,6 +26,7 @@ public class Filters {
 	public final static Predicate<Typo3Entry> IS_MISC = b -> b.type.equals("misc");
 	public final static Predicate<Typo3Entry> IS_PROCEEDINGS = b -> b.type.equals("proceedings");
 	public final static Predicate<Typo3Entry> IS_TECHREPORT = b -> b.type.equals("techreport");
+	public final static Predicate<BibtexEntry> IS_TECHREPORT_BIB = b -> b.type.equals("techreport");
 	public final static Predicate<Typo3Entry> IS_BACHELORSTHESIS =
 			b -> b.type.equals("mastersthesis") && b.typeAttrib.toLowerCase().startsWith("bachelor");
 	public final static Predicate<Typo3Entry> IS_MASTERSTHESIS = b -> b.type.equals("mastersthesis");
