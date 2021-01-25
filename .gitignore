@@ -1,3 +1,7 @@
 *.class
 /MibTeX/bin/*.gitignore
 /.metadata/
+
+# IntelliJ
+/MibTeX/.idea
+/MibTeX/MibTeX.iml
