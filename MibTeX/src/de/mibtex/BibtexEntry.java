@@ -30,6 +30,7 @@ import de.mibtex.citationservice.CitationEntry;
 public class BibtexEntry {
 
 	private static final String UNKNOWN_ATTRIBUTE = "unknown";
+	private static final String EMPTY_ATTRIBUTE = "";
 
 	public List<Key> KEY_LIST = new ArrayList<>();
 	// public static final Key KEY_TT_TAGS = new Key(BibtexViewer.TAGS);
@@ -60,12 +61,12 @@ public class BibtexEntry {
 		}
 		this.entry = entry;
 		parseKey();
+		parseType();
 		parseAuthor();
 		parseTitle();
 		parseVenue();
 		parseYear();
 		parseTags();
-		parseType();
 	}
 
 	public BibtexEntry(String key, String author, String title, String venue, List<String> tags, int year,
@@ -79,6 +80,7 @@ public class BibtexEntry {
 		this.citations = citations;
 		parseAuthor();
 		parseTags();
+		System.err.println("[BibtexEntry(String,String,String,String,List<String>,int,int)] Field type remains unitialized!");
 	}
 
 	public int getCitations() {
@@ -129,12 +131,21 @@ public class BibtexEntry {
 	void parseAuthor() {
 		try {
 			if (author.equals(UNKNOWN_ATTRIBUTE)) {
-				try {
-					author = entry.getField(BibTeXEntry.KEY_AUTHOR).toUserString();
-					authorsAreEditors = false;
-				} catch (Exception e) {
-					author = entry.getField(BibTeXEntry.KEY_EDITOR).toUserString();
+				Value field = entry.getField(BibTeXEntry.KEY_AUTHOR);
+				authorsAreEditors = false;
+				
+				if (field == null) {
+					field = entry.getField(BibTeXEntry.KEY_EDITOR);
 					authorsAreEditors = true;
+				}
+				
+				if (field == null) {
+					author = EMPTY_ATTRIBUTE;
+					if (!isMisc()) {
+						System.err.println("[BibtexEntry.parseAuthor] Warning: " + key + " does neither have authors nor editors!");
+					}
+				} else {
+					author = field.toUserString();
 				}
 			}
 			author = replaceUmlauts(author);
@@ -164,9 +175,18 @@ public class BibtexEntry {
 	void parseTitle() {
 		try {
 			if (title.equals(UNKNOWN_ATTRIBUTE)) {
-				title = entry.getField(BibTeXEntry.KEY_TITLE).toUserString();
+				Value field = entry.getField(BibTeXEntry.KEY_TITLE);
+				if (field == null) {
+					title = EMPTY_ATTRIBUTE;
+					if (!isMisc()) {
+						System.err.println("[BibtexEntry.parseTitle] Warning: " + key + " does not have a title!");
+					}
+				} else {
+					title = field.toUserString();
+				}
 			}
 		} catch (Exception e) {
+			System.out.println("parseTitle failed for " + key);
 			e.printStackTrace();
 		}
 		title = replaceUmlauts(title);
@@ -225,6 +245,10 @@ public class BibtexEntry {
 	
 	void parseType() {
 		type = entry.getType().getValue();
+	}
+	
+	boolean isMisc() {
+		return "misc".equals(type);
 	}
 
 	/**
