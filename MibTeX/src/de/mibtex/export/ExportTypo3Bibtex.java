@@ -1,3 +1,9 @@
+/* MibTeX - Minimalistic tool to manage your references with BibTeX
+ * 
+ * Distributed under BSD 3-Clause License, available at Github
+ * 
+ * https://github.com/tthuem/MibTeX
+ */
 package de.mibtex.export;
 
 import java.io.BufferedReader;
@@ -7,7 +13,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,18 +24,27 @@ import de.mibtex.BibtexViewer;
 import de.mibtex.export.typo3.Filters;
 import de.mibtex.export.typo3.Modifiers;
 import de.mibtex.export.typo3.Typo3Entry;
+import de.mibtex.export.typo3.Util;
 
 /**
  * Exports the bibtex file to bibtex in a carefully adjusted format such that the BibTex-Importer of Typo3 (Website-Framework) can read it correctly.
  *
- * @author Paul Bittner
+ * @author Paul Maximilian Bittner
  */
 public class ExportTypo3Bibtex extends Export {
 	// TODO: Having numbers in Bibtex tags is not conforming the Bibtex standard.
-	public final static String Typo3TagsAttribute = "typo3Tags";
-	private final static String MYabrv = "MYabrv.bib";
-	private final static String MYshort = "MYshort.bib";
+	public final static String TYPO3_TAGS_ATTRIBUTE = "typo3Tags";
+	private final static String MYABRV = "MYabrv.bib";
+	private final static String MYSHORT = "MYshort.bib";
 	// We do not consider MYfull because it is deprecated.
+
+	/**
+	 * Choose the variables file that you want to use to substitute names in the exported bibtex file.
+	 * Choose from
+	 * @see MYabrv
+	 * @see MYshort
+	 */
+	private final String VariablesFile = MYABRV;
 	
 	/**
 	 * Select the filter you need to export only the publications you are interested in.
@@ -46,9 +60,10 @@ public class ExportTypo3Bibtex extends Export {
 			//Filters.WithThomasAtUlm
 			//Filters.WithPaulAtUlm
 			//Filters.WithPaulBeforeOrNotAtUlm
-			Filters.WithPaul.and(Filters.WithThomasBeforeUlm)
-	;
-	
+			//Filters.WithPaul.and(Filters.WithThomasBeforeUlm)
+			Filters.WITH_CHICO
+			;
+
 	/**
 	 * Select the modifiers you want to apply to each entry after filtering.
 	 * Each modifier is a function taking a Typo3Entry and returning the modified Typo3Entry.
@@ -59,20 +74,20 @@ public class ExportTypo3Bibtex extends Export {
 	 * If unsure, leave unchanged.
 	 */
 	private final List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
-			  Modifiers.MarkIfThomasIsEditor
-			, Modifiers.MarkIfToAppear
-			
+			Modifiers.MARK_IF_THOMAS_IS_EDITOR
+			, Modifiers.MARK_IF_TO_APPEAR
+
 			// Resolving duplicates
-			, Modifiers.IfKeyIs("useRLB+:AOSD14", Modifiers.MarkIfTechreport)
-			, Modifiers.IfKeyIs("TKL:SPLC18", Modifiers.AppendToTitle("(Second Edition)"))
-			, Modifiers.IfKeyIs("KAT:TR16", Modifiers.MarkIfTechreport)
-			, Modifiers.IfKeyIs("TKK+:SPLC19", Modifiers.MarkAsExtendedAbstract)
-			, Modifiers.IfKeyIs("KTS+:SE19", Modifiers.MarkAsExtendedAbstract)
-			, Modifiers.IfKeyIs("KJN+:SE21", Modifiers.MarkAsExtendedAbstract)
-			, Modifiers.IfKeyIs("RSC+:SE21", Modifiers.MarkAsExtendedAbstract)
-			, Modifiers.IfKeyIs("KTP+:SE19", Modifiers.MarkAsExtendedAbstract)
-	);
-	
+			, Modifiers.whenKeyIs("useRLB+:AOSD14", Modifiers.MARK_IF_TECHREPORT)
+			, Modifiers.whenKeyIs("TKL:SPLC18", Modifiers.appendToTitle("(Second Edition)"))
+			, Modifiers.whenKeyIs("KAT:TR16", Modifiers.MARK_IF_TECHREPORT)
+			, Modifiers.whenKeyIs("TKK+:SPLC19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
+			, Modifiers.whenKeyIs("KTS+:SE19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
+			, Modifiers.whenKeyIs("KJN+:SE21", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
+			, Modifiers.whenKeyIs("RSC+:SE21", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
+			, Modifiers.whenKeyIs("KTP+:SE19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
+			);
+
 	public ExportTypo3Bibtex(String path, String file) throws Exception {
 		super(path, file);
 	}
@@ -80,15 +95,15 @@ public class ExportTypo3Bibtex extends Export {
 	@Override
 	public void writeDocument() {
 		// Parse the variables defined in MYabrv.bib
-		Map<String, String> variables = readVariablesFromBibtexFile(new File(BibtexViewer.BIBTEX_DIR, MYabrv));
-		
+		Map<String, String> variables = readVariablesFromBibtexFile(new File(BibtexViewer.BIBTEX_DIR, VariablesFile));
+
 		// Transform all Bibtex-Entries to Typo3Entries, filter them and apply all modifiers.
 		List<Typo3Entry> typo3Entries = entries.values().stream()
 				.map(b -> new Typo3Entry(b, variables))
 				.filter(bibFilter)
 				.map(modifiers.stream().reduce(Function.identity(), Function::compose))
 				.collect(Collectors.toList());
-		
+
 		// Generate the typo3-conforming Bibtex source code.
 		String typo3 = typo3Entries.stream()
 				.map(Typo3Entry::toString)
@@ -96,39 +111,26 @@ public class ExportTypo3Bibtex extends Export {
 
 		System.out.println(typo3);
 		System.out.println();
-		
+
 		// Check if we have some duplicates left that were not resolved.
-		Collections.sort(typo3Entries);
-		int duplicates = 0;
-		for (int i = 0; i < typo3Entries.size() - 1; ++i) {
-			if (typo3Entries.get(i).equals(typo3Entries.get(i + 1))) {
-				System.out.println("  > Found unresolved duplicate: " + typo3Entries.get(i).title);
-				++duplicates;
-			}
-		}
-		
+		int duplicates = Util.getDuplicates(typo3Entries, (a, b) -> System.out.println("  > Found unresolved duplicate: " + a.title));
 		final long numUniqueEntries = typo3Entries.size() - duplicates;
-		
+
 		System.out.println("\nExported " + typo3Entries.size() + " entries.");
-		System.out.println("Thereof " + numUniqueEntries + " entries are unique (by title).");
-		System.out.println();
+		System.out.println("Thereof " + numUniqueEntries + " entries are unique (by title).\n");
 		System.out.flush();
-		
+
 		if (duplicates > 0) {
 			System.err.flush();
 			System.err.println("There were unresolved duplicates that can cause problems when imported with TYPO3!");
 		}
 
-		// Write the source code to file.
-        CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
-        encoder.onMalformedInput(CodingErrorAction.REPORT);
-        encoder.onUnmappableCharacter(CodingErrorAction.REPORT);
-		writeToFile(new File(BibtexViewer.OUTPUT_DIR, "typo3.bib"), typo3, encoder);
+		writeToFileInUTF8(new File(BibtexViewer.OUTPUT_DIR, "typo3.bib"), typo3);
 	}
 
 	private static Map<String, String> readVariablesFromBibtexFile(File pathToBibtex) {
 		Map<String, String> vars = new HashMap<String, String>();
-		
+
 		BufferedReader file = readFromFile(pathToBibtex, Charset.forName("UTF-8"));
 		try {
 			while (file.ready()) {
@@ -149,7 +151,7 @@ public class ExportTypo3Bibtex extends Export {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return vars;
 	}
 }
