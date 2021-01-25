@@ -165,7 +165,7 @@ public class BibtexEntry {
 			StringTokenizer tokenizer = new StringTokenizer(author, ",");
 			while (tokenizer.hasMoreTokens())
 				authorList.add(tokenizer.nextToken().trim());
-		} catch (Exception e) {
+		} catch (Exception e) { // What types of exceptions are expected here?
 			if (authorList.equals(UNKNOWN_ATTRIBUTE))
 				authorList.add(author);
 			e.printStackTrace();
@@ -173,21 +173,16 @@ public class BibtexEntry {
 	}
 
 	void parseTitle() {
-		try {
-			if (title.equals(UNKNOWN_ATTRIBUTE)) {
-				Value field = entry.getField(BibTeXEntry.KEY_TITLE);
-				if (field == null) {
-					title = EMPTY_ATTRIBUTE;
-					if (!isMisc()) {
-						System.err.println("[BibtexEntry.parseTitle] Warning: " + key + " does not have a title!");
-					}
-				} else {
-					title = field.toUserString();
+		if (title.equals(UNKNOWN_ATTRIBUTE)) {
+			Value field = entry.getField(BibTeXEntry.KEY_TITLE);
+			if (field == null) {
+				title = EMPTY_ATTRIBUTE;
+				if (!isMisc()) {
+					System.err.println("[BibtexEntry.parseTitle] Warning: " + key + " does not have a title!");
 				}
+			} else {
+				title = field.toUserString();
 			}
-		} catch (Exception e) {
-			System.out.println("parseTitle failed for " + key);
-			e.printStackTrace();
 		}
 		title = replaceUmlauts(title);
 	}
