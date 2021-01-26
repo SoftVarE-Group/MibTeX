@@ -40,6 +40,7 @@ import org.jbibtex.ParseException;
 import de.mibtex.BibtexEntry;
 import de.mibtex.BibtexFilter;
 import de.mibtex.BibtexViewer;
+import de.mibtex.FileUtils;
 import de.mibtex.Levenshtein;
 import de.mibtex.citationservice.CitationEntry;
 
@@ -65,7 +66,7 @@ public abstract class Export {
     public Export(String path, String file) throws Exception {
         Reader reader = null;
         try {
-            reader = new FileReader(new File(path, file));
+            reader = new FileReader(FileUtils.concat(path, file));
             BibTeXParser parser = new BibTeXParser() {
                 @Override
                 public void checkStringResolution(Key key, BibTeXString string) {
