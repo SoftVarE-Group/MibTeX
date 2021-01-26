@@ -205,13 +205,18 @@ public class ExportHTML extends Export {
 	}
 
 	public static String getHTMLTitle(BibtexEntry entry) {
+		String title = "unspecified"; // for misc entries
+		if (BibtexEntry.isDefined(entry.title)) {
+			title = entry.title;
+		}
+		
 		String htmlTitle = "<a href=\"" + entry.getRelativePDFPath() + "\">";
 		if (entry.getPDFPath().exists()) {
-			 htmlTitle += entry.title + "</a>";
+			htmlTitle += title;
 		} else {
-			htmlTitle = entry.title + " " + htmlTitle + "pdf</a>";
+			htmlTitle = title + " " + htmlTitle + "pdf";
 		}
-		return htmlTitle;
+		return htmlTitle + "</a>";
 	}
 
 	private String getHTMLVenue(BibtexEntry entry) {
