@@ -79,8 +79,16 @@ public class ExportNewHTML extends Export {
     }
 
     private String generateAuthorLinks(BibtexEntry entry) {
+    	List<String> authors;
+        if (entry.authorList.isEmpty()) {
+        	authors = new ArrayList<>(1);
+        	authors.add("unknown");
+        } else {
+        	authors = entry.authorList;
+        }
+
         StringBuilder HTML = new StringBuilder();
-        for (String author : entry.authorList) {
+        for (String author : authors) {
             HTML.append("<a href=\"\" onclick=\"setTag('searchAuthor','").append(author.trim())
                 .append("');event.preventDefault();Filter();\">").append(author).append("</a>, ");
         }
