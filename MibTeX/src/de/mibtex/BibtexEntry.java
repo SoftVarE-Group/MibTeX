@@ -109,13 +109,17 @@ public class BibtexEntry {
 			pdf += " " + venue;
 		if (year > 0)
 			pdf += " " + year;
-		pdf += " " + title;
+		if (!EMPTY_ATTRIBUTE.equals(title)) {
+			pdf += " " + title;
+		} else {
+			pdf += " " + key;
+		}
 		pdf = pdf.trim() + ".pdf";
-		return new File(BibtexViewer.PDF_DIR, toURL(pdf));
+		return FileUtils.concat(BibtexViewer.PDF_DIR, toURL(pdf));
 	}
 
 	public String getRelativePDFPath() {
-		return new File(BibtexViewer.PDF_DIR_REL, getPDFPath().getName()).toString();
+		return FileUtils.concat(BibtexViewer.PDF_DIR_REL, getPDFPath().getName()).toString();
 	}
 
 	private String getLastname(String name) {
@@ -336,6 +340,11 @@ public class BibtexEntry {
 	}
 
 	public static boolean isDefined(String attribute) {
-		return attribute != null && !attribute.isEmpty() && !attribute.equals(BibtexEntry.UNKNOWN_ATTRIBUTE) && (!attribute.startsWith("(") || !attribute.endsWith(")"));
+		return
+				attribute != null
+				&& !attribute.isEmpty()
+				&& !attribute.equals(BibtexEntry.UNKNOWN_ATTRIBUTE)
+				&& !attribute.equals(BibtexEntry.EMPTY_ATTRIBUTE)
+				&& (!attribute.startsWith("(") || !attribute.endsWith(")"));
 	}
 }
