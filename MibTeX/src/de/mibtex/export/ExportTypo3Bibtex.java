@@ -56,12 +56,12 @@ public class ExportTypo3Bibtex extends Export {
 	 */
 	private final Predicate<Typo3Entry> bibFilter =
 			//Filters.Any()
-			//Filters.KeyIsOneOf("BTS:SEFM19")
+			Filters.keyIsOneOf("KTSB:ICSE21")
 			//Filters.WithThomasAtUlm
 			//Filters.WithPaulAtUlm
 			//Filters.WithPaulBeforeOrNotAtUlm
 			//Filters.WithPaul.and(Filters.WithThomasBeforeUlm)
-			Filters.WITH_CHICO
+			//Filters.WITH_CHICO
 			;
 
 	/**

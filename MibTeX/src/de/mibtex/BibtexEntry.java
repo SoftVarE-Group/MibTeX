@@ -96,17 +96,21 @@ public class BibtexEntry {
 	}
 
 	public File getPDFPath() {
-		String pdf = getLastname(authorList.get(0));
-		if (authorList.size() == 2)
-			pdf += " and " + getLastname(authorList.get(1));
-		else if (authorList.size() > 2)
-			pdf += " et al.";
+		String pdf = "";
+		
+		if (!authorList.isEmpty()) {
+			pdf += getLastname(authorList.get(0));
+			if (authorList.size() == 2)
+				pdf += " and " + getLastname(authorList.get(1));
+			else if (authorList.size() > 2)
+				pdf += " et al.";
+		}
 		if (!venue.startsWith("("))
 			pdf += " " + venue;
 		if (year > 0)
 			pdf += " " + year;
 		pdf += " " + title;
-		pdf += ".pdf";
+		pdf = pdf.trim() + ".pdf";
 		return new File(BibtexViewer.PDF_DIR, toURL(pdf));
 	}
 
