@@ -33,7 +33,7 @@ public class ExportSampling extends Export {
 			{ "sampling efficiency", "testing efficiency", "effectiveness", "unavailable tool", "available tool", "open-source tool", "evaluation" },
 			{ "testing", "type checking", "data-flow analysis", "non-functional properties" } };
 
-	static final String NAME_PREFIX = "name=";
+	static final String NAME_PREFIX = "name = ";
 
 	public final static String SEP = ",";
 
