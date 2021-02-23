@@ -10,8 +10,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
-import java.nio.charset.CodingErrorAction;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -56,8 +54,8 @@ public class ExportTypo3Bibtex extends Export {
 	 */
 	private final Predicate<Typo3Entry> bibFilter =
 			//Filters.Any()
-			Filters.keyIsOneOf("KTSB:ICSE21")
-			//Filters.WithThomasAtUlm
+			//Filters.keyIsOneOf("KTSB:ICSE21")
+			Filters.WITH_THOMAS_AT_ULM
 			//Filters.WithPaulAtUlm
 			//Filters.WithPaulBeforeOrNotAtUlm
 			//Filters.WithPaul.and(Filters.WithThomasBeforeUlm)
@@ -78,14 +76,15 @@ public class ExportTypo3Bibtex extends Export {
 			, Modifiers.MARK_IF_TO_APPEAR
 
 			// Resolving duplicates
-			, Modifiers.whenKeyIs("useRLB+:AOSD14", Modifiers.MARK_IF_TECHREPORT)
-			, Modifiers.whenKeyIs("TKL:SPLC18", Modifiers.appendToTitle("(Second Edition)"))
-			, Modifiers.whenKeyIs("KAT:TR16", Modifiers.MARK_IF_TECHREPORT)
-			, Modifiers.whenKeyIs("TKK+:SPLC19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
-			, Modifiers.whenKeyIs("KTS+:SE19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
 			, Modifiers.whenKeyIs("KJN+:SE21", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
 			, Modifiers.whenKeyIs("RSC+:SE21", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
+			, Modifiers.whenKeyIs("TKK+:SPLC19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
+			, Modifiers.whenKeyIs("KTS+:SE19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
 			, Modifiers.whenKeyIs("KTP+:SE19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
+			, Modifiers.whenKeyIs("TKL:SPLC18", Modifiers.appendToTitle("(Second Edition)"))
+			, Modifiers.whenKeyIs("KTM+:SE18", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
+			, Modifiers.whenKeyIs("KAT:TR16", Modifiers.MARK_IF_TECHREPORT)
+			, Modifiers.whenKeyIs("useRLB+:AOSD14", Modifiers.MARK_IF_TECHREPORT)
 			);
 
 	public ExportTypo3Bibtex(String path, String file) throws Exception {
