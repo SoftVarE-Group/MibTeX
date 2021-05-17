@@ -138,6 +138,8 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		} else if (!editors.isEmpty()) {
 			persons = editors;
 			personType = "editor";
+		} else if (Filters.IS_MISC.test(this)) {
+			return "";
 		} else {
 			throw new RuntimeException("The Typo3Entry with key " + this.key + " has neither authors nor editors!");
 		}
