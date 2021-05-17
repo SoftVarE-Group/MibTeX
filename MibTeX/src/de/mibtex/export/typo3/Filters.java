@@ -23,6 +23,8 @@ public class Filters {
 	public final static String TOBIAS_HESS = "Tobias Heﬂ";
 	public final static String PAUL_MAXIMILIAN_BITTNER = "Paul Maximilian Bittner";
 	
+	public final static Predicate<Typo3Entry> ANY = b -> true;
+	
 	public final static Predicate<Typo3Entry> IS_MISC = b -> b.type.equals("misc");
 	public final static Predicate<Typo3Entry> IS_PROCEEDINGS = b -> b.type.equals("proceedings");
 	public final static Predicate<Typo3Entry> IS_TECHREPORT = b -> b.type.equals("techreport");
