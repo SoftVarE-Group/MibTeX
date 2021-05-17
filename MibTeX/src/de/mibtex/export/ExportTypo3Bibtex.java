@@ -53,10 +53,11 @@ public class ExportTypo3Bibtex extends Export {
 	 * For instance, if you want to select a subset of specific publications manually, use
 	 *     Filters.KeyIsOneOf("Key1", "Key2", ...)
 	 * to select all publications with these keys.
+	 * Compose filters with the respective methods of Predicate<T> (such as `and`, `or`).
 	 */
 	private final Predicate<Typo3Entry> bibFilter =
-			//Filters.Any()
-			Filters.keyIsOneOf("KTSB:ICSE21")
+			Filters.ANY
+			//Filters.keyIsOneOf("KTSB:ICSE21")
 			//Filters.WithThomasAtUlm
 			//Filters.WithPaulAtUlm
 			//Filters.WithPaulBeforeOrNotAtUlm
@@ -74,7 +75,7 @@ public class ExportTypo3Bibtex extends Export {
 	 * If unsure, leave unchanged.
 	 */
 	private final List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
-			Modifiers.MARK_IF_THOMAS_IS_EDITOR
+			  Modifiers.MARK_IF_THOMAS_IS_EDITOR
 			, Modifiers.MARK_IF_TO_APPEAR
 
 			// Resolving duplicates
