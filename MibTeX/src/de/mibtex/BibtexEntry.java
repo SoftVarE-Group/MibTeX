@@ -99,9 +99,9 @@ public class BibtexEntry {
 		String pdf = "";
 		
 		if (!authorList.isEmpty()) {
-			pdf += getLastname(authorList.get(0));
+			pdf += getLastnameOfFirstAuthor();
 			if (authorList.size() == 2)
-				pdf += " and " + getLastname(authorList.get(1));
+				pdf += " and " + getLastnameOfAuthorNo(1);
 			else if (authorList.size() > 2)
 				pdf += " et al.";
 		}
@@ -124,6 +124,14 @@ public class BibtexEntry {
 
 	private String getLastname(String name) {
 		return name.substring(name.lastIndexOf(" ") + 1);
+	}
+	
+	public String getLastnameOfAuthorNo(int authorIndex) {
+		return getLastname(authorList.get(authorIndex));
+	}
+	
+	public String getLastnameOfFirstAuthor() {
+		return getLastnameOfAuthorNo(0);
 	}
 
 	void parseKey() {
