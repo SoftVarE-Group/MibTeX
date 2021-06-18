@@ -1,4 +1,4 @@
-package de.mibtex;
+package de.mibtex.clean;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
