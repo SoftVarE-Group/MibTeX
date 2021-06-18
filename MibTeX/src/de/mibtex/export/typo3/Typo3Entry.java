@@ -26,6 +26,7 @@ import de.mibtex.export.ExportTypo3Bibtex;
  *
  */
 public class Typo3Entry implements Comparable<Typo3Entry> {
+	private static final String PAPER_REPO_URL = "https://github.com/SoftVarE-Group/Papers";
 	private static final Map<String, String> TO_URL_OVERWRITES = new HashMap<>();
 	static {
 		TO_URL_OVERWRITES.put("&auml;", "ä");
@@ -51,6 +52,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	public String title;
 	public List<String> authors;
 	public List<String> editors;
+	public String venueVariable; // the variable used in the booktitle field in BibTags
 	public String booktitle;
 	public String address;
 	public String publisher;
@@ -58,6 +60,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	public String location;
 	public String school;
 	public String pages;
+	public String month;
 	public int year;
 	
 	public String doi;
@@ -86,6 +89,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		
 		this.title = makeTypo3Safe(bib.title);
 		this.year = bib.year;
+		this.month = bib.getAttribute(BibTeXEntry.KEY_MONTH);
 
 		this.address = makeTypo3Safe(lookup(bib.getAttribute(BibTeXEntry.KEY_ADDRESS), variables));
 		this.publisher = makeTypo3Safe(lookup(bib.getAttribute(BibTeXEntry.KEY_PUBLISHER), variables));
@@ -101,7 +105,8 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		
 		this.note = makeTypo3Safe(bib.getAttribute(BibTeXEntry.KEY_NOTE));
 
-		this.booktitle = parseBooktitle(bib, variables);		
+		this.booktitle = parseBooktitle(bib, variables);
+		this.venueVariable = bib.getAttribute(BibTeXEntry.KEY_BOOKTITLE);
 		this.tags = parseTags(bib);
 	}
 
@@ -113,6 +118,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		typo3 += genAuthorList();
 		typo3 += genBibTeXAttributeIfPresent("title", title);
 		typo3 += genBibTeXAttributeIfPresent("year", Integer.toString(year));
+		typo3 += genBibTeXAttributeIfPresent("month", month);
 		typo3 += genBibTeXAttributeIfPresent("booktitle", booktitle);
 		typo3 += genBibTeXAttributeIfPresent("address", address);
 		typo3 += genBibTeXAttributeIfPresent("publisher", publisher);
@@ -127,6 +133,20 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		typo3 += genBibTeXAttributeIfPresent("tags", tags.stream().reduce((a, b) -> a + ", " + b).orElseGet(() -> ""));
 
 		return typo3 + "\n}";
+	}
+	
+	public String getPaperURL() {
+		StringBuilder b = new StringBuilder();
+		b.append(PAPER_REPO_URL);
+		b.append("/blob/master/");
+		b.append(year);
+		b.append("/");
+		b.append(year);
+		b.append("-");
+		b.append(venueVariable);
+		b.append("-");
+		b.append(this.source.getLastnameOfFirstAuthor());
+		return b.toString();
 	}
 	
 	private String genAuthorList() {

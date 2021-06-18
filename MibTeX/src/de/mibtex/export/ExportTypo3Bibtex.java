@@ -54,8 +54,8 @@ public class ExportTypo3Bibtex extends Export {
 	 * Compose filters with the respective methods of Predicate<T> (such as `and`, `or`).
 	 */
 	private final Predicate<Typo3Entry> bibFilter =
-			Filters.ANY
-			//Filters.keyIsOneOf("KTSB:ICSE21")
+			//Filters.ANY,
+			Filters.keyIsOneOf("BST+:ESECFSE21")
 			//Filters.WithThomasAtUlm
 			//Filters.Any()
 			//Filters.keyIsOneOf("KTSB:ICSE21")
