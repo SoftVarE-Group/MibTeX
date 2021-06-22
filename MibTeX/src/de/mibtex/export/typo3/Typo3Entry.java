@@ -29,18 +29,18 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	private static final String PAPER_REPO_URL = "https://github.com/SoftVarE-Group/Papers";
 	private static final Map<String, String> TO_URL_OVERWRITES = new HashMap<>();
 	static {
-		TO_URL_OVERWRITES.put("&auml;", "ä");
-		TO_URL_OVERWRITES.put("&ouml;", "ö");
-		TO_URL_OVERWRITES.put("&uuml;", "ü");
-		TO_URL_OVERWRITES.put("&Auml;", "Ä");
-		TO_URL_OVERWRITES.put("&Ouml;", "Ö");
-		TO_URL_OVERWRITES.put("&Uuml;", "Ü");
+		TO_URL_OVERWRITES.put("&auml;", "ï¿½");
+		TO_URL_OVERWRITES.put("&ouml;", "ï¿½");
+		TO_URL_OVERWRITES.put("&uuml;", "ï¿½");
+		TO_URL_OVERWRITES.put("&Auml;", "ï¿½");
+		TO_URL_OVERWRITES.put("&Ouml;", "ï¿½");
+		TO_URL_OVERWRITES.put("&Uuml;", "ï¿½");
 		TO_URL_OVERWRITES.put("&8211;", "-");
 		TO_URL_OVERWRITES.put("?", "?");
 		TO_URL_OVERWRITES.put(":", ":");
 		TO_URL_OVERWRITES.put("/", "/");
 		TO_URL_OVERWRITES.put("#", "#");
-		TO_URL_OVERWRITES.put("&szlig;", "ß");
+		TO_URL_OVERWRITES.put("&szlig;", "ï¿½");
 	}
 	
 	public final BibtexEntry source;
@@ -112,27 +112,30 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 
 	@Override
 	public String toString() {
-		String typo3 = "@" + type + "{" + key;
+		final StringBuilder typo3 = new StringBuilder();
+		typo3.append("@").append(type).append("{").append(key);
 
-		typo3 += genBibTeXAttributeIfPresent("type", this.typeAttrib);
-		typo3 += genAuthorList();
-		typo3 += genBibTeXAttributeIfPresent("title", title);
-		typo3 += genBibTeXAttributeIfPresent("year", Integer.toString(year));
-		typo3 += genBibTeXAttributeIfPresent("month", month);
-		typo3 += genBibTeXAttributeIfPresent("booktitle", booktitle);
-		typo3 += genBibTeXAttributeIfPresent("address", address);
-		typo3 += genBibTeXAttributeIfPresent("publisher", publisher);
-		typo3 += genBibTeXAttributeIfPresent("journal", journal);
-		typo3 += genBibTeXAttributeIfPresent("location", location);
-		typo3 += genBibTeXAttributeIfPresent("school", school);
-		typo3 += genBibTeXAttributeIfPresent("pages", pages);
-		typo3 += genBibTeXAttributeIfPresent("doi", doi);
-		typo3 += genBibTeXAttributeIfPresent("isbn", isbn);
-		typo3 += genBibTeXAttributeIfPresent("issn", issn);
-		typo3 += genBibTeXAttributeIfPresent("note", note);
-		typo3 += genBibTeXAttributeIfPresent("tags", tags.stream().reduce((a, b) -> a + ", " + b).orElseGet(() -> ""));
+		typo3.append(genBibTeXAttributeIfPresent("type", this.typeAttrib));
+		typo3.append(genAuthorList());
+		typo3.append(genBibTeXAttributeIfPresent("title", title));
+		typo3.append(genBibTeXAttributeIfPresent("year", Integer.toString(year)));
+		typo3.append(genBibTeXAttributeIfPresent("month", month));
+		typo3.append(genBibTeXAttributeIfPresent("booktitle", booktitle));
+		typo3.append(genBibTeXAttributeIfPresent("address", address));
+		typo3.append(genBibTeXAttributeIfPresent("publisher", publisher));
+		typo3.append(genBibTeXAttributeIfPresent("journal", journal));
+		typo3.append(genBibTeXAttributeIfPresent("location", location));
+		typo3.append(genBibTeXAttributeIfPresent("school", school));
+		typo3.append(genBibTeXAttributeIfPresent("pages", pages));
+		typo3.append(genBibTeXAttributeIfPresent("doi", doi));
+		typo3.append(genBibTeXAttributeIfPresent("isbn", isbn));
+		typo3.append(genBibTeXAttributeIfPresent("issn", issn));
+		typo3.append(genBibTeXAttributeIfPresent("note", note));
+		typo3.append(genBibTeXAttributeIfPresent("tags", tags.stream().reduce((a, b) -> a + ", " + b).orElseGet(() -> "")));
 
-		return typo3 + "\n}";
+		typo3.append("\n}");
+		
+		return typo3.toString();
 	}
 	
 	public String getPaperURL() {
