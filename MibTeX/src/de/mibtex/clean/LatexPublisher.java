@@ -18,6 +18,7 @@ import java.util.List;
  */
 public class LatexPublisher {
 	private final static char COMMENT_BEGIN = '%';
+	private static boolean allowDocsComments = true;
 	
 	private static class Blacklists {
 		/// Wrap in ArrayList to make mutable. Otherwise the list is immutable.
@@ -48,15 +49,25 @@ public class LatexPublisher {
 		}
 	}
 	
-	private static void jankyBlackListUpdateForFTR() {
+	private static void activateProjectSpecificSettingsBecauseIAmToLazyToWriteAnArgumentParser() {
+		// ACM requires the .bbl file
 		Blacklists.FILE_ENDINGS.removeAll(Arrays.asList(
-				".pdf",
 				".bbl"
 				));
-		Blacklists.FILE_ENDINGS.addAll(Arrays.asList(
-				".sh",
-				".bat"
-				));
+		
+		// Set to true if comments starting with %%% should remain in the tex files.
+		allowDocsComments = true;
+		
+		/* Feature Trace Recording
+		{
+			Blacklists.FILE_ENDINGS.removeAll(Arrays.asList(
+					".bbl"
+					));
+			Blacklists.FILE_ENDINGS.addAll(Arrays.asList(
+					".sh",
+					".bat"
+					));
+		}//*/
 	}
 	
 	public static void main(String[] args) {
@@ -65,7 +76,7 @@ public class LatexPublisher {
 			return;
 		}
 		
-		jankyBlackListUpdateForFTR();
+		activateProjectSpecificSettingsBecauseIAmToLazyToWriteAnArgumentParser();
 		
 		processDirectory(new File(args[0]));
 	}
@@ -109,9 +120,9 @@ public class LatexPublisher {
 				
 				/// Keep the entire line if there is no comment or if the comment
 				/// is for documentation purposes.
-				if (pos < 0 || isDocumentationComment(line, pos))
+				if (pos < 0 || (allowDocsComments && isDocumentationComment(line, pos))) {
 					out.write(line + "\r\n");
-				else {
+				} else {
 					//System.out.print(putInQuotes(line) + " with pos = " + pos + " > ");
 					line = line.substring(0, pos).trim();
 					//System.out.println(putInQuotes(line));
