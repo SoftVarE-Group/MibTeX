@@ -16,11 +16,18 @@ import java.util.function.Function;
  * @author Paul Maximilian Bittner
  */
 public class Modifiers {
-	public static Function<Typo3Entry, Typo3Entry> MARK_IF_THOMAS_IS_EDITOR = Util.when(t -> t.editors.contains(Filters.THOMAS_THUEM), addTag("EditorialThomasThuem"));
-	public static Function<Typo3Entry, Typo3Entry> MARK_IF_VENUE_IS_SE = Util.when(t -> "SE".equals(t.source.venue), appendToTitle("(SE)"));
-	public static Function<Typo3Entry, Typo3Entry> MARK_IF_TO_APPEAR = Util.when(t -> t.note.toLowerCase().contains("to appear"), appendToBookTitle("(To Appear)"));
-	public static Function<Typo3Entry, Typo3Entry> MARK_IF_TECHREPORT = Util.whenForced(Filters.IS_TECHREPORT, appendToTitle("(Technical Report)"), "Given entry is not a technical report! (Perhaps an illegal modifier?)");
-	public static Function<Typo3Entry, Typo3Entry> MARK_AS_EXTENDED_ABSTRACT = appendToTitle("(Extended Abstract)");
+	public static Function<Typo3Entry, Typo3Entry> MARK_IF_THOMAS_IS_EDITOR =
+			Util.when(t -> t.editors.contains(Filters.THOMAS_THUEM), addTag("EditorialThomasThuem"));
+	public static Function<Typo3Entry, Typo3Entry> MARK_IF_VENUE_IS_SE =
+			Util.when(t -> "SE".equals(t.source.venue), appendToTitle("(SE)"));
+	public static Function<Typo3Entry, Typo3Entry> MARK_IF_TO_APPEAR =
+			Util.when(t -> t.note.toLowerCase().contains("to appear"), appendToBookTitle("(To Appear)"));
+	public static Function<Typo3Entry, Typo3Entry> MARK_IF_TECHREPORT =
+			Util.whenForced(Filters.IS_TECHREPORT, appendToTitle("(Technical Report)"), "Given entry is not a technical report! (Perhaps an illegal modifier?)");
+	public static Function<Typo3Entry, Typo3Entry> MARK_AS_EXTENDED_ABSTRACT =
+			appendToTitle("(Extended Abstract)");
+	public static Function<Typo3Entry, Typo3Entry> ADD_PAPER_LINK_IF_SOFVARE = 
+			Util.when(Filters.BELONGS_TO_SOFTVARE, setSoftVarEURL());
 	
 	public static Function<Typo3Entry, Typo3Entry> appendToTitle(String suffix) {
 		return t -> {
@@ -39,6 +46,20 @@ public class Modifiers {
 	public static Function<Typo3Entry, Typo3Entry> addTag(String tag) {
 		return t -> {
 			t.tags.add(tag);
+			return t;
+		};
+	}
+	
+	public static Function<Typo3Entry, Typo3Entry> setSoftVarEURL() {
+		return t -> {
+			t.url = t.getPaperUrlInSoftVarERepo();
+			return t;
+		};
+	}
+	
+	public static Function<Typo3Entry, Typo3Entry> setURL(String url) {
+		return t -> {
+			t.url = url;
 			return t;
 		};
 	}

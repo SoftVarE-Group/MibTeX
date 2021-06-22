@@ -26,21 +26,21 @@ import de.mibtex.export.ExportTypo3Bibtex;
  *
  */
 public class Typo3Entry implements Comparable<Typo3Entry> {
-	private static final String PAPER_REPO_URL = "https://github.com/SoftVarE-Group/Papers";
+	private static final String SOFTVARE_PAPER_REPO_URL = "https://github.com/SoftVarE-Group/Papers";
 	private static final Map<String, String> TO_URL_OVERWRITES = new HashMap<>();
 	static {
-		TO_URL_OVERWRITES.put("&auml;", "ï¿½");
-		TO_URL_OVERWRITES.put("&ouml;", "ï¿½");
-		TO_URL_OVERWRITES.put("&uuml;", "ï¿½");
-		TO_URL_OVERWRITES.put("&Auml;", "ï¿½");
-		TO_URL_OVERWRITES.put("&Ouml;", "ï¿½");
-		TO_URL_OVERWRITES.put("&Uuml;", "ï¿½");
+		TO_URL_OVERWRITES.put("&auml;", "ä");
+		TO_URL_OVERWRITES.put("&ouml;", "ö");
+		TO_URL_OVERWRITES.put("&uuml;", "ü");
+		TO_URL_OVERWRITES.put("&Auml;", "Ä");
+		TO_URL_OVERWRITES.put("&Ouml;", "Ö");
+		TO_URL_OVERWRITES.put("&Uuml;", "Ü");
 		TO_URL_OVERWRITES.put("&8211;", "-");
 		TO_URL_OVERWRITES.put("?", "?");
 		TO_URL_OVERWRITES.put(":", ":");
 		TO_URL_OVERWRITES.put("/", "/");
 		TO_URL_OVERWRITES.put("#", "#");
-		TO_URL_OVERWRITES.put("&szlig;", "ï¿½");
+		TO_URL_OVERWRITES.put("&szlig;", "ß");
 	}
 	
 	public final BibtexEntry source;
@@ -70,6 +70,9 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	public String note;
 	
 	public List<String> tags;
+	
+	// Not set automatically, only with modifiers
+	public String url;
 	
 	public Typo3Entry(BibtexEntry bib, Map<String, String> variables) {
 		this.source = bib;
@@ -132,15 +135,16 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		typo3.append(genBibTeXAttributeIfPresent("issn", issn));
 		typo3.append(genBibTeXAttributeIfPresent("note", note));
 		typo3.append(genBibTeXAttributeIfPresent("tags", tags.stream().reduce((a, b) -> a + ", " + b).orElseGet(() -> "")));
-
+		typo3.append(genBibTeXAttributeIfPresent("url", url));
+		
 		typo3.append("\n}");
 		
 		return typo3.toString();
 	}
 	
-	public String getPaperURL() {
-		StringBuilder b = new StringBuilder();
-		b.append(PAPER_REPO_URL);
+	public String getPaperUrlInSoftVarERepo() {
+		final StringBuilder b = new StringBuilder();
+		b.append(SOFTVARE_PAPER_REPO_URL);
 		b.append("/blob/master/");
 		b.append(year);
 		b.append("/");

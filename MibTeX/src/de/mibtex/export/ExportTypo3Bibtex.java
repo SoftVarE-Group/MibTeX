@@ -77,6 +77,7 @@ public class ExportTypo3Bibtex extends Export {
 	private final List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
 			  Modifiers.MARK_IF_THOMAS_IS_EDITOR
 			, Modifiers.MARK_IF_TO_APPEAR
+			, Modifiers.ADD_PAPER_LINK_IF_SOFVARE
 
 			// Resolving duplicates
 			, Modifiers.whenKeyIs("KJN+:SE21", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
@@ -97,17 +98,17 @@ public class ExportTypo3Bibtex extends Export {
 	@Override
 	public void writeDocument() {
 		// Parse the variables defined in MYabrv.bib
-		Map<String, String> variables = readVariablesFromBibtexFile(new File(BibtexViewer.BIBTEX_DIR, VariablesFile));
+		final Map<String, String> variables = readVariablesFromBibtexFile(new File(BibtexViewer.BIBTEX_DIR, VariablesFile));
 
 		// Transform all Bibtex-Entries to Typo3Entries, filter them and apply all modifiers.
-		List<Typo3Entry> typo3Entries = entries.values().stream()
+		final List<Typo3Entry> typo3Entries = entries.values().stream()
 				.map(b -> new Typo3Entry(b, variables))
 				.filter(bibFilter)
 				.map(modifiers.stream().reduce(Function.identity(), Function::compose))
 				.collect(Collectors.toList());
 
 		// Generate the typo3-conforming Bibtex source code.
-		String typo3 = typo3Entries.stream()
+		final String typo3 = typo3Entries.stream()
 				.map(Typo3Entry::toString)
 				.reduce("", (a, b) -> a + "\n\n" + b);
 
@@ -115,7 +116,7 @@ public class ExportTypo3Bibtex extends Export {
 		System.out.println();
 
 		// Check if we have some duplicates left that were not resolved.
-		int duplicates = Util.getDuplicates(typo3Entries, (a, b) -> System.out.println("  > Found unresolved duplicate: " + a.title));
+		final int duplicates = Util.getDuplicates(typo3Entries, (a, b) -> System.out.println("  > Found unresolved duplicate: " + a.title));
 		final long numUniqueEntries = typo3Entries.size() - duplicates;
 
 		System.out.println("\nExported " + typo3Entries.size() + " entries.");
@@ -131,9 +132,9 @@ public class ExportTypo3Bibtex extends Export {
 	}
 
 	private static Map<String, String> readVariablesFromBibtexFile(File pathToBibtex) {
-		Map<String, String> vars = new HashMap<String, String>();
+		final Map<String, String> vars = new HashMap<String, String>();
 
-		BufferedReader file = readFromFile(pathToBibtex, Charset.forName("UTF-8"));
+		final BufferedReader file = readFromFile(pathToBibtex, Charset.forName("UTF-8"));
 		try {
 			while (file.ready()) {
 				String line = file.readLine().trim();
@@ -152,6 +153,12 @@ public class ExportTypo3Bibtex extends Export {
 			file.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				file.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		return vars;

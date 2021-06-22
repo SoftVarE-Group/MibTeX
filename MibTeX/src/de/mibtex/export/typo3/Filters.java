@@ -49,7 +49,10 @@ public class Filters {
 			.and(t -> t.year >= 2020);
 	public final static Predicate<Typo3Entry> WITH_PAUL_BEFORE_OR_NOT_AT_ULM = WITH_PAUL.and(WITH_PAUL_AT_ULM.negate());
 
-	public final static Predicate<Typo3Entry> BELONGS_TO_SOFTVARE = Filters.authorOrEditorIsOneOf(THOMAS_THUEM, CHICO_SUNDERMANN, TOBIAS_HESS, PAUL_MAXIMILIAN_BITTNER).and(b -> b.year >= 2020);
+	public final static Predicate<Typo3Entry> BELONGS_TO_SOFTVARE = Filters
+			.authorOrEditorIsOneOf(THOMAS_THUEM, CHICO_SUNDERMANN, TOBIAS_HESS, PAUL_MAXIMILIAN_BITTNER)
+			.and(WITH_PAUL_AT_ICG.negate())
+			.and(b -> b.year >= 2020);
 
 	public final static Predicate<Typo3Entry> BELONGS_TO_VARIANTSYNC = b -> {
 		if (b.tags == null) return false;
