@@ -13,20 +13,24 @@ import java.util.List;
 /**
  * A class to prepare LaTeX documents for publishing. It removes all generated files and comments.
  * 
- * @author Thomas Thuem
+ * @author Thomas Thuem, Paul Maximilian Bittner
  * 
  */
 public class LatexPublisher {
 	private final static char COMMENT_BEGIN = '%';
-	private static boolean allowDocsComments = true;
 	
-	private static class Blacklists {
+	private static class Options {
+		// Set to true if comments starting with %%% should remain in the tex files.
+		boolean allowDocsComments = true;
+		boolean isACM = true;
+		boolean removeShellScripts = true;
+
 		/// Wrap in ArrayList to make mutable. Otherwise the list is immutable.
-		final static List<String> FILES = new ArrayList<>(Arrays.asList(
+		final List<String> BLACKLISTED_FILES = new ArrayList<>(Arrays.asList(
 				".svn"
 				));
 	
-		final static List<String> FILE_ENDINGS = new ArrayList<>(Arrays.asList(
+		final List<String> BLACKLISTED_FILE_ENDINGS = new ArrayList<>(Arrays.asList(
 				".pdf",
 				".toc",
 				".tps",
@@ -39,36 +43,45 @@ public class LatexPublisher {
 				".synctex.gz",
 				".log"
 				));
-		static {
-			assert !FILE_ENDINGS.contains(".tex");
+		
+		public Options() {
+			validate();
 		}
 		
-		static boolean isBlackListed(String filename) {
-			return FILES.stream().anyMatch(filename::equals)
-					|| FILE_ENDINGS.stream().anyMatch(filename::endsWith);
+		private void validate() {
+			/// Do not delete any tex files but clean them!
+			assert !BLACKLISTED_FILE_ENDINGS.contains(".tex");
+		}
+		
+		void apply() {
+			// ACM requires the .bbl file
+			if (options.isACM) {
+				BLACKLISTED_FILE_ENDINGS.removeAll(Arrays.asList(
+						".bbl"
+						));
+			}
+			
+			if (options.removeShellScripts)
+			{
+				BLACKLISTED_FILE_ENDINGS.addAll(Arrays.asList(
+						".sh",
+						".bat"
+						));
+			}
+			
+			validate();
+		}
+		
+		/**
+		 * @return True iff a given file should be deleted upon project cleaning.
+		 */
+		boolean isBlackListed(String filename) {
+			return BLACKLISTED_FILES.stream().anyMatch(filename::equals)
+					|| BLACKLISTED_FILE_ENDINGS.stream().anyMatch(filename::endsWith);
 		}
 	}
 	
-	private static void activateProjectSpecificSettingsBecauseIAmToLazyToWriteAnArgumentParser() {
-		// ACM requires the .bbl file
-		Blacklists.FILE_ENDINGS.removeAll(Arrays.asList(
-				".bbl"
-				));
-		
-		// Set to true if comments starting with %%% should remain in the tex files.
-		allowDocsComments = true;
-		
-		/* Feature Trace Recording
-		{
-			Blacklists.FILE_ENDINGS.removeAll(Arrays.asList(
-					".bbl"
-					));
-			Blacklists.FILE_ENDINGS.addAll(Arrays.asList(
-					".sh",
-					".bat"
-					));
-		}//*/
-	}
+	private static Options options;
 	
 	public static void main(String[] args) {
 		if (args.length != 1) {
@@ -76,14 +89,21 @@ public class LatexPublisher {
 			return;
 		}
 		
-		activateProjectSpecificSettingsBecauseIAmToLazyToWriteAnArgumentParser();
+		options = new Options();
 		
+		/// Adapt options to your project here.
+		/// TODO: Create an argument parser or ini file to parse options.
+		options.allowDocsComments = true;
+		options.isACM = true;
+		options.removeShellScripts = true;
+		
+		options.apply();
 		processDirectory(new File(args[0]));
 	}
 
 	private static void processDirectory(File dir) {
 		for (File file : dir.listFiles()) {
-			if (Blacklists.isBlackListed(file.getName())) {
+			if (options.isBlackListed(file.getName())) {
 				if (file.delete()) {
 					System.out.println(file + " deleted.");
 				} else {
@@ -120,7 +140,7 @@ public class LatexPublisher {
 				
 				/// Keep the entire line if there is no comment or if the comment
 				/// is for documentation purposes.
-				if (pos < 0 || (allowDocsComments && isDocumentationComment(line, pos))) {
+				if (pos < 0 || (options.allowDocsComments && isDocumentationComment(line, pos))) {
 					out.write(line + "\r\n");
 				} else {
 					//System.out.print(putInQuotes(line) + " with pos = " + pos + " > ");
