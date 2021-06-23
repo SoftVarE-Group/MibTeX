@@ -55,7 +55,8 @@ public class ExportTypo3Bibtex extends Export {
 	 */
 	private final Predicate<Typo3Entry> bibFilter =
 			//Filters.ANY,
-			Filters.keyIsOneOf("BST+:ESECFSE21")
+			//Filters.keyIsOneOf("BST+:ESECFSE21")
+			Filters.BELONGS_TO_SOFTVARE
 			//Filters.WithThomasAtUlm
 			//Filters.Any()
 			//Filters.keyIsOneOf("KTSB:ICSE21")

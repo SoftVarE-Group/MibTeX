@@ -71,8 +71,8 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	
 	public List<String> tags;
 	
-	// Not set automatically, only with modifiers
-	public String url;
+	/// Empty by default. We only set the URL via modifiers as we have no general policy for where and how to get URLs.
+	public String url = "";
 	
 	public Typo3Entry(BibtexEntry bib, Map<String, String> variables) {
 		this.source = bib;
@@ -175,6 +175,10 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 				persons.stream()
 				.reduce((a, b) -> a + " and " + b)
 				.orElseGet(() -> {throw new IllegalArgumentException("Person list is empty!");}));
+	}
+	
+	public boolean isJournalPaper() {
+		return BibtexEntry.isDefined(journal);
 	}
 	
 	@Override
