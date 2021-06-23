@@ -21,7 +21,6 @@ public class Modifiers {
 	public static final Function<Typo3Entry, Typo3Entry> MARK_IF_VENUE_IS_SE =
 			Util.when(t -> "SE".equals(t.source.venue), appendToTitle("(SE)"));
 	public static final Function<Typo3Entry, Typo3Entry> MARK_IF_TO_APPEAR =
-			// TODO: appendToBookTitle if inproceedings but append to journal if journal!
 			Util.when(t -> t.note.toLowerCase().contains("to appear"), appendToVenue("(To Appear)"));
 	public static final Function<Typo3Entry, Typo3Entry> MARK_IF_TECHREPORT =
 			Util.whenForced(Filters.IS_TECHREPORT, appendToTitle("(Technical Report)"), "Given entry is not a technical report! (Perhaps an illegal modifier?)");
