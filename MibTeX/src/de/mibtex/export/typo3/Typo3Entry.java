@@ -52,7 +52,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	public String title;
 	public List<String> authors;
 	public List<String> editors;
-	public String venueVariable; // the variable used in the booktitle field in BibTags
+	public String shortVenue; // the variable used in the booktitle or journal field in BibTags
 	public String booktitle;
 	public String address;
 	public String publisher;
@@ -109,8 +109,8 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		this.note = makeTypo3Safe(bib.getAttribute(BibTeXEntry.KEY_NOTE));
 
 		this.booktitle = parseBooktitle(bib, variables);
-		this.venueVariable = bib.getAttribute(BibTeXEntry.KEY_BOOKTITLE);
 		this.tags = parseTags(bib);
+		this.shortVenue = parseVenue(bib, variables);
 	}
 
 	@Override
@@ -143,16 +143,21 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	}
 	
 	public String getPaperUrlInSoftVarERepo() {
+		final String venue = makeTypo3Safe(shortVenue);
+		
 		final StringBuilder b = new StringBuilder();
 		b.append(SOFTVARE_PAPER_REPO_URL);
 		b.append("/blob/master/");
 		b.append(year);
 		b.append("/");
 		b.append(year);
+		if (!venue.isEmpty()) {
+			b.append("-");
+			b.append(venue);
+		}
 		b.append("-");
-		b.append(venueVariable);
-		b.append("-");
-		b.append(this.source.getLastnameOfFirstAuthor());
+		b.append(makeTypo3Safe(this.source.getLastnameOfFirstAuthor()));
+		b.append(".pdf");
 		return b.toString();
 	}
 	
@@ -214,6 +219,21 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 				b -> ("Technical Report " + b.getAttribute(BibTeXEntry.KEY_NUMBER)).trim(),
 				b -> lookup(b.getAttribute(BibTeXEntry.KEY_BOOKTITLE), variables)
 				).apply(bib));
+	}
+	
+	private static String parseVenue(BibtexEntry bib, final Map<String, String> variables) {
+		// If the key has a colon, then it separates the author names from the venue.
+		// Otherwise, we have entries such as books or theses for which no specific venue or journal exists.
+		if (variables.containsKey(bib.key)) {
+			return bib.venue;
+		} else if (bib.key.contains(":")) {
+			// extract abrv from key
+			final int shortVenueBegin = bib.key.indexOf(':') + 1;
+			final int shortVenueEnd = Util.indexOfFirstMatch(bib.key, Character::isDigit, shortVenueBegin);
+			return bib.key.substring(shortVenueBegin, shortVenueEnd);
+		} else {
+			return "";
+		}
 	}
 	
 	private static List<String> parseTags(BibtexEntry bib) {

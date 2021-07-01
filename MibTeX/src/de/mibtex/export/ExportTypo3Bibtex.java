@@ -54,35 +54,9 @@ public class ExportTypo3Bibtex extends Export {
 	 * Compose filters with the respective methods of Predicate<T> (such as `and`, `or`).
 	 */
 	private final Predicate<Typo3Entry> bibFilter =
-			Filters.keyIsOneOf(
-					"DGT:EMSE21",
-					"KTSB:ICSE21",
-					"BST+:ESECFSE21",
-					"KAN+:SPLC21",
-					"SFE+:SPLC21",
-					"PKT+:SPLC21",
-					"NST+:SoSyM21",
-					"KTS:FormaliSE21",
-					"RSC+:SE21",
-					"KJN+:SE21",
-					"PKR+:VaMoS21",
-					"HPTS:VaMoS21",
-					"SNB+:VaMoS21",
-					"KKT+20",
-					"useNST+:SoSyM21",
-					"YWT:SPLC20",
-					"SBKT:SPLC20",
-					"T:SPLC20",
-					"RKTS:FormaliSE20",
-					"RTC+:REFINE20",
-					"KJN+:FASE20",
-					"KTS+:VaMoS20",
-					"BRK+:VaMoS20",
-					"SSK+:VaMoS20",
-					"STS:VaMoS20")
 			//Filters.ANY,
 			//Filters.keyIsOneOf("BST+:ESECFSE21")
-			//Filters.BELONGS_TO_SOFTVARE
+			Filters.BELONGS_TO_SOFTVARE
 			//Filters.WithThomasAtUlm
 			//Filters.Any()
 			//Filters.keyIsOneOf("KTSB:ICSE21")
@@ -104,7 +78,7 @@ public class ExportTypo3Bibtex extends Export {
 	private final List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
 			  Modifiers.MARK_IF_THOMAS_IS_EDITOR
 			, Modifiers.MARK_IF_TO_APPEAR
-			//, Modifiers.ADD_PAPER_LINK_IF_SOFVARE
+			, Modifiers.ADD_PAPER_LINK_IF_SOFVARE
 			, Modifiers.whenKeyIs("DGT:EMSE21", Modifiers.MARK_THOMAS_AS_EDITOR)
 
 			// Resolving duplicates
