@@ -79,6 +79,8 @@ public class ExportTypo3Bibtex extends Export {
 			  Modifiers.MARK_IF_THOMAS_IS_EDITOR
 			, Modifiers.MARK_IF_TO_APPEAR
 			, Modifiers.ADD_PAPER_LINK_IF_SOFTVARE
+			
+			// Custom solutions
 			, Modifiers.whenKeyIs("DGT:EMSE21", Modifiers.MARK_THOMAS_AS_EDITOR)
 
 			// Resolving duplicates

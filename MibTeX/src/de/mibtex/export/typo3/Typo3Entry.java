@@ -156,7 +156,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 			b.append(venue);
 		}
 		b.append("-");
-		b.append(makeTypo3Safe(this.source.getLastnameOfFirstAuthor()));
+		b.append(BibtexEntry.toURL(this.source.getLastnameOfFirstAuthor()));
 		b.append(".pdf");
 		return b.toString();
 	}
@@ -222,18 +222,13 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	}
 	
 	private static String parseVenue(BibtexEntry bib, final Map<String, String> variables) {
-		// If the key has a colon, then it separates the author names from the venue.
-		// Otherwise, we have entries such as books or theses for which no specific venue or journal exists.
-		if (variables.containsKey(bib.key)) {
-			return bib.venue;
-		} else if (bib.key.contains(":")) {
-			// extract abrv from key
-			final int shortVenueBegin = bib.key.indexOf(':') + 1;
-			final int shortVenueEnd = Util.indexOfFirstMatch(bib.key, Character::isDigit, shortVenueBegin);
-			return bib.key.substring(shortVenueBegin, shortVenueEnd);
-		} else {
+		// If the venue is a not just a single word but a long name, we don't have a short venue name.
+		if (Util.indexOfFirstMatch(bib.venue, Character::isWhitespace) < bib.venue.length()) {
 			return "";
 		}
+
+		// Remove parenthesis such that, for example, "(techreport)" becomes "techreport".
+		return bib.venue.replaceAll("[()]", "").trim();
 	}
 	
 	private static List<String> parseTags(BibtexEntry bib) {
