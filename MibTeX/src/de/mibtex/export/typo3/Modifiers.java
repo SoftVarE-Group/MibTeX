@@ -28,7 +28,7 @@ public class Modifiers {
 			Util.whenForced(Filters.IS_TECHREPORT, appendToTitle("(Technical Report)"), "Given entry is not a technical report! (Perhaps an illegal modifier?)");
 	public static final Function<Typo3Entry, Typo3Entry> MARK_AS_EXTENDED_ABSTRACT =
 			appendToTitle("(Extended Abstract)");
-	public static final Function<Typo3Entry, Typo3Entry> ADD_PAPER_LINK_IF_SOFVARE = 
+	public static final Function<Typo3Entry, Typo3Entry> ADD_PAPER_LINK_IF_SOFTVARE = 
 			Util.when(Filters.BELONGS_TO_SOFTVARE, setSoftVarEURL());
 	
 	public static Function<Typo3Entry, Typo3Entry> appendToTitle(String suffix) {

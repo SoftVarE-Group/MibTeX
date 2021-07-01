@@ -78,7 +78,7 @@ public class ExportTypo3Bibtex extends Export {
 	private final List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
 			  Modifiers.MARK_IF_THOMAS_IS_EDITOR
 			, Modifiers.MARK_IF_TO_APPEAR
-			, Modifiers.ADD_PAPER_LINK_IF_SOFVARE
+			, Modifiers.ADD_PAPER_LINK_IF_SOFTVARE
 			, Modifiers.whenKeyIs("DGT:EMSE21", Modifiers.MARK_THOMAS_AS_EDITOR)
 
 			// Resolving duplicates
