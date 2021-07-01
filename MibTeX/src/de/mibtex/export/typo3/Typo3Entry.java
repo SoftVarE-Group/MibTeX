@@ -26,7 +26,7 @@ import de.mibtex.export.ExportTypo3Bibtex;
  *
  */
 public class Typo3Entry implements Comparable<Typo3Entry> {
-	private static final String SOFTVARE_PAPER_REPO_URL = "https://github.com/SoftVarE-Group/Papers";
+	private static final String SOFTVARE_PAPER_REPO_URL = "https://github.com/SoftVarE-Group/Papers/raw/master/";
 	private static final Map<String, String> TO_URL_OVERWRITES = new HashMap<>();
 	static {
 		TO_URL_OVERWRITES.put("&auml;", "ä");
@@ -147,7 +147,6 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		
 		final StringBuilder b = new StringBuilder();
 		b.append(SOFTVARE_PAPER_REPO_URL);
-		b.append("/blob/master/");
 		b.append(year);
 		b.append("/");
 		b.append(year);
