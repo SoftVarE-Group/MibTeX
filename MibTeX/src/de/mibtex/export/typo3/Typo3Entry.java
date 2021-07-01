@@ -92,7 +92,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		
 		this.title = makeTypo3Safe(bib.title);
 		this.year = bib.year;
-		this.month = bib.getAttribute(BibTeXEntry.KEY_MONTH);
+		this.month = bib.getMonthAsNumber().map(i -> i.toString()).orElse("");
 
 		this.address = makeTypo3Safe(lookup(bib.getAttribute(BibTeXEntry.KEY_ADDRESS), variables));
 		this.publisher = makeTypo3Safe(lookup(bib.getAttribute(BibTeXEntry.KEY_PUBLISHER), variables));
