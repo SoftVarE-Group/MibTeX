@@ -55,8 +55,8 @@ public class ExportTypo3Bibtex extends Export {
 	 */
 	private final Predicate<Typo3Entry> bibFilter =
 			//Filters.ANY,
-			//Filters.keyIsOneOf("BST+:ESECFSE21")
-			Filters.BELONGS_TO_SOFTVARE
+			Filters.keyIsOneOf("Y21", "YWT:SPLC20")
+			//Filters.BELONGS_TO_SOFTVARE
 			//Filters.WithThomasAtUlm
 			//Filters.Any()
 			//Filters.keyIsOneOf("KTSB:ICSE21")
@@ -82,8 +82,10 @@ public class ExportTypo3Bibtex extends Export {
 			
 			// Custom solutions
 			, Modifiers.whenKeyIs("DGT:EMSE21", Modifiers.MARK_THOMAS_AS_EDITOR)
+			, Modifiers.whenKeyIs("Y21", Modifiers.KEEP_URL_IF_PRESENT)
 
 			// Resolving duplicates
+			, Modifiers.whenKeyIs("Y21", Modifiers.MARK_AS_PHDTHESIS)
 			, Modifiers.whenKeyIs("KJN+:SE21", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
 			, Modifiers.whenKeyIs("RSC+:SE21", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
 			, Modifiers.whenKeyIs("TKK+:SPLC19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
