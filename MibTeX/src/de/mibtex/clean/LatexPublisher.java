@@ -79,7 +79,6 @@ public class LatexPublisher {
 			if (keepPDFs) {
 				BLACKLISTED_FILE_ENDINGS.remove(".pdf");
 			} else {
-
 				BLACKLISTED_FILE_ENDINGS.add(".pdf");
 			}
 			
@@ -191,14 +190,10 @@ public class LatexPublisher {
 	 */
 	private static boolean isDocumentationComment(String line, int commentBeginIndex) {
 		final int charactersAfterBeginIndex = line.length() - 1 - commentBeginIndex;
-		final boolean isDocsComment = charactersAfterBeginIndex >= 2
+		return charactersAfterBeginIndex >= 2
 				&& COMMENT_BEGIN == line.charAt(commentBeginIndex)
 				&& COMMENT_BEGIN == line.charAt(commentBeginIndex + 1)
 				&& COMMENT_BEGIN == line.charAt(commentBeginIndex + 2);
-		//System.out.println("  isDocumentationComment(\"" + line + "\", " + commentBeginIndex + ")");
-		//System.out.println("= isDocumentationComment(" + line.substring(commentBeginIndex) + ")");
-		//System.out.println("= " + isDocsComment);
-		return isDocsComment;
 	}
 	
 	private static String putInQuotes(String s) {
