@@ -30,6 +30,7 @@ public class LatexPublisher {
 		boolean allowDocsComments = true;
 		boolean isACM = true;
 		boolean removeShellScripts = true;
+		boolean keepPDFs = true;
 
 		/// Wrap in ArrayList to make mutable. Otherwise the list is immutable.
 		final List<String> BLACKLISTED_FILES = new ArrayList<>(Arrays.asList(
@@ -43,7 +44,7 @@ public class LatexPublisher {
 				".tcp",
 				".aux",
 				".out",
-				//".bbl", // required by ACM
+				".bbl",
 				".blg",
 				".synctex",
 				".synctex.gz",
@@ -61,18 +62,25 @@ public class LatexPublisher {
 		
 		void apply() {
 			// ACM requires the .bbl file
-			if (options.isACM) {
+			if (isACM) {
 				BLACKLISTED_FILE_ENDINGS.removeAll(Arrays.asList(
 						".bbl"
 						));
 			}
 			
-			if (options.removeShellScripts)
+			if (removeShellScripts)
 			{
 				BLACKLISTED_FILE_ENDINGS.addAll(Arrays.asList(
 						".sh",
 						".bat"
 						));
+			}
+			
+			if (keepPDFs) {
+				BLACKLISTED_FILE_ENDINGS.remove(".pdf");
+			} else {
+
+				BLACKLISTED_FILE_ENDINGS.add(".pdf");
 			}
 			
 			validate();
@@ -102,9 +110,12 @@ public class LatexPublisher {
 		options.allowDocsComments = true;
 		options.isACM = true;
 		options.removeShellScripts = true;
+		options.keepPDFs = true;
 		
 		options.apply();
 		processDirectory(new File(args[0]));
+		
+		System.out.println("\nFinished!");
 	}
 
 	private static void processDirectory(File dir) {
@@ -149,8 +160,17 @@ public class LatexPublisher {
 				if (pos < 0 || (options.allowDocsComments && isDocumentationComment(line, pos))) {
 					out.write(line + "\r\n");
 				} else {
+					/* DEBUG: Show code that was removed.
+					{
+						final String removedPart = line.substring(pos);
+						System.out.println(removedPart);
+					}//*/
+
 					//System.out.print(putInQuotes(line) + " with pos = " + pos + " > ");
-					line = line.substring(0, pos).trim();
+					/* + 1 to keep the % sign itself.
+					 * Removing it can cause side-effects as it also comments out the linebreak itself.
+					 */
+					line = line.substring(0, pos + 1);
 					//System.out.println(putInQuotes(line));
 					if (!line.isEmpty()) {
 						out.write(line + "\r\n");
@@ -171,10 +191,14 @@ public class LatexPublisher {
 	 */
 	private static boolean isDocumentationComment(String line, int commentBeginIndex) {
 		final int charactersAfterBeginIndex = line.length() - 1 - commentBeginIndex;
-		return charactersAfterBeginIndex > 2
+		final boolean isDocsComment = charactersAfterBeginIndex >= 2
 				&& COMMENT_BEGIN == line.charAt(commentBeginIndex)
 				&& COMMENT_BEGIN == line.charAt(commentBeginIndex + 1)
 				&& COMMENT_BEGIN == line.charAt(commentBeginIndex + 2);
+		//System.out.println("  isDocumentationComment(\"" + line + "\", " + commentBeginIndex + ")");
+		//System.out.println("= isDocumentationComment(" + line.substring(commentBeginIndex) + ")");
+		//System.out.println("= " + isDocsComment);
+		return isDocsComment;
 	}
 	
 	private static String putInQuotes(String s) {
