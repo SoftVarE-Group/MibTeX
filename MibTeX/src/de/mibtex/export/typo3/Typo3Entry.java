@@ -29,18 +29,18 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	private static final String SOFTVARE_PAPER_REPO_URL = "https://github.com/SoftVarE-Group/Papers/raw/master/";
 	private static final Map<String, String> TO_URL_OVERWRITES = new HashMap<>();
 	static {
-		TO_URL_OVERWRITES.put("&auml;", "ä");
-		TO_URL_OVERWRITES.put("&ouml;", "ö");
-		TO_URL_OVERWRITES.put("&uuml;", "ü");
-		TO_URL_OVERWRITES.put("&Auml;", "Ä");
-		TO_URL_OVERWRITES.put("&Ouml;", "Ö");
-		TO_URL_OVERWRITES.put("&Uuml;", "Ü");
+		TO_URL_OVERWRITES.put("&auml;", "Ã¤");
+		TO_URL_OVERWRITES.put("&ouml;", "Ã¶");
+		TO_URL_OVERWRITES.put("&uuml;", "Ã¼");
+		TO_URL_OVERWRITES.put("&Auml;", "Ã„");
+		TO_URL_OVERWRITES.put("&Ouml;", "Ã–");
+		TO_URL_OVERWRITES.put("&Uuml;", "Ãœ");
 		TO_URL_OVERWRITES.put("&8211;", "-");
 		TO_URL_OVERWRITES.put("?", "?");
 		TO_URL_OVERWRITES.put(":", ":");
 		TO_URL_OVERWRITES.put("/", "/");
 		TO_URL_OVERWRITES.put("#", "#");
-		TO_URL_OVERWRITES.put("&szlig;", "ß");
+		TO_URL_OVERWRITES.put("&szlig;", "ÃŸ");
 	}
 	
 	public final BibtexEntry source;

@@ -349,7 +349,7 @@ public class BibtexEntry {
 		replacements.putIfAbsent("&uuml;", "ue");
 		replacements.putIfAbsent("&Auml;", "Ae");
 		replacements.putIfAbsent("&Ouml;", "Oe");
-		replacements.putIfAbsent("�", "O");
+		replacements.putIfAbsent("ï¿½", "O");
 		replacements.putIfAbsent("&Uuml;", "Ue");
 		replacements.putIfAbsent("&szlig;", "ss");
 		replacements.putIfAbsent("&amp;", "and");
