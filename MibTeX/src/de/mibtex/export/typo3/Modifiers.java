@@ -19,10 +19,16 @@ import de.mibtex.BibtexEntry;
  * @author Paul Maximilian Bittner
  */
 public class Modifiers {
-	public static final Function<Typo3Entry, Typo3Entry> MARK_THOMAS_AS_EDITOR =
+	/** add tags for our website **/
+	public static final Function<Typo3Entry, Typo3Entry> TAG_THOMAS_AS_EDITOR =
 			addTag("EditorialThomasThuem");
-	public static final Function<Typo3Entry, Typo3Entry> MARK_IF_THOMAS_IS_EDITOR =
-			Util.when(t -> t.editors.contains(Filters.THOMAS_THUEM), MARK_THOMAS_AS_EDITOR);
+	public static final Function<Typo3Entry, Typo3Entry> TAG_IF_THOMAS_IS_EDITOR =
+			Util.when(t -> t.editors.contains(Filters.THOMAS_THUEM), TAG_THOMAS_AS_EDITOR);
+	public static final Function<Typo3Entry, Typo3Entry> TAG_IF_SOFTVARE = 
+			Util.when(Filters.BELONGS_TO_SOFTVARE, addTag("SoftVarE"));
+
+	/** resolve special types of entries **/
+	
 	public static final Function<Typo3Entry, Typo3Entry> MARK_IF_VENUE_IS_SE =
 			Util.when(t -> "SE".equals(t.source.venue), appendToTitle("(SE)"));
 	public static final Function<Typo3Entry, Typo3Entry> MARK_IF_TO_APPEAR =
@@ -33,6 +39,8 @@ public class Modifiers {
 			appendToTitle("(Extended Abstract)");
 	public static final Function<Typo3Entry, Typo3Entry> MARK_AS_PHDTHESIS =
 			appendToTitle("(PhD Thesis)");
+
+	/** misc **/
 	public static final Function<Typo3Entry, Typo3Entry> ADD_PAPER_LINK_IF_SOFTVARE = 
 			Util.when(Filters.BELONGS_TO_SOFTVARE, setSoftVarEURL());
 	public static final Function<Typo3Entry, Typo3Entry> KEEP_URL_IF_PRESENT =
