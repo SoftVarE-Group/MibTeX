@@ -23,6 +23,8 @@ public class Filters {
 	public final static String TOBIAS_HESS = "Tobias Heﬂ";
 	public final static String PAUL_MAXIMILIAN_BITTNER = "Paul Maximilian Bittner";
 	
+	public final static Predicate<Typo3Entry> ANY = b -> true;
+	
 	public final static Predicate<Typo3Entry> IS_MISC = b -> b.type.equals("misc");
 	public final static Predicate<Typo3Entry> IS_PROCEEDINGS = b -> b.type.equals("proceedings");
 	public final static Predicate<Typo3Entry> IS_TECHREPORT = b -> b.type.equals("techreport");
@@ -47,7 +49,11 @@ public class Filters {
 			.and(t -> t.year >= 2020);
 	public final static Predicate<Typo3Entry> WITH_PAUL_BEFORE_OR_NOT_AT_ULM = WITH_PAUL.and(WITH_PAUL_AT_ULM.negate());
 
-	public final static Predicate<Typo3Entry> BELONGS_TO_SOFTVARE = Filters.authorOrEditorIsOneOf(THOMAS_THUEM, CHICO_SUNDERMANN, TOBIAS_HESS, PAUL_MAXIMILIAN_BITTNER).and(b -> b.year >= 2020);
+	public final static Predicate<Typo3Entry> BELONGS_TO_SOFTVARE = Filters
+			.authorOrEditorIsOneOf(THOMAS_THUEM, CHICO_SUNDERMANN, TOBIAS_HESS, PAUL_MAXIMILIAN_BITTNER)
+			.and(IS_MASTERSTHESIS.negate())
+			.and(WITH_PAUL_AT_ICG.negate())
+			.and(b -> b.year >= 2020);
 
 	public final static Predicate<Typo3Entry> BELONGS_TO_VARIANTSYNC = b -> {
 		if (b.tags == null) return false;

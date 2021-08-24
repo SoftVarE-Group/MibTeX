@@ -117,4 +117,28 @@ public class Util {
 				.reduce(Function.identity(), Function::compose)
 				.apply(tags);
 	}
+	
+	/**
+	 * Find the first character in the given string that meets the given condition.
+	 * Return that characters index.
+	 * @return The index of the first character in the given string meeting the given condition.
+	 */
+	public static int indexOfFirstMatch(String string, Predicate<Character> condition) {
+		return indexOfFirstMatch(string, condition, 0);
+	}
+	
+	/**
+	 * Find the first character at or after the given index in the given string that meets the given condition.
+	 * Return that characters index.
+	 * @param fromIndex The index in the string from which the search should begin. Characters with indices < fromIndex will not be considered.
+	 * @return The index of the first character in the given string meeting the given condition.
+	 */
+	public static int indexOfFirstMatch(String string, Predicate<Character> condition, int fromIndex) {
+		for (int i = fromIndex; i < string.length(); ++i) {
+			if (condition.test(string.charAt(i))) {
+				return i;
+			}
+		}
+		return string.length();
+	}
 }

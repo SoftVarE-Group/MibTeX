@@ -214,6 +214,7 @@ public class ExportHTML extends Export {
 		if (entry.getPDFPath().exists()) {
 			htmlTitle += title;
 		} else {
+			//System.out.println("Entry \"" + entry.getPDFPath() + "\" does not exist!");
 			htmlTitle = title + " " + htmlTitle + "pdf";
 		}
 		return htmlTitle + "</a>";

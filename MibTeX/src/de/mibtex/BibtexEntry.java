@@ -14,8 +14,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.StringTokenizer;
 
+import org.jbibtex.BibTeXComment;
+import org.jbibtex.BibTeXDatabase;
 import org.jbibtex.BibTeXEntry;
 import org.jbibtex.Key;
 import org.jbibtex.Value;
@@ -28,9 +31,9 @@ import de.mibtex.citationservice.CitationEntry;
  * @author Thomas Thuem, Christopher Sontag, Paul Maximilian Bittner
  */
 public class BibtexEntry {
-
 	private static final String UNKNOWN_ATTRIBUTE = "unknown";
 	private static final String EMPTY_ATTRIBUTE = "";
+	private static final Map<String, Integer> MONTH_NAME_TO_NUMBER;
 
 	public List<Key> KEY_LIST = new ArrayList<>();
 	// public static final Key KEY_TT_TAGS = new Key(BibtexViewer.TAGS);
@@ -54,6 +57,22 @@ public class BibtexEntry {
 
 	public int citations = CitationEntry.NOT_IN_CITATION_SERVICE;
 	public long lastUpdate = 0;
+	
+	static {
+		MONTH_NAME_TO_NUMBER = new HashMap<>();
+		MONTH_NAME_TO_NUMBER.put("january", 1);
+		MONTH_NAME_TO_NUMBER.put("february", 2);
+		MONTH_NAME_TO_NUMBER.put("march", 3);
+		MONTH_NAME_TO_NUMBER.put("april", 4);
+		MONTH_NAME_TO_NUMBER.put("may", 5);
+		MONTH_NAME_TO_NUMBER.put("june", 6);
+		MONTH_NAME_TO_NUMBER.put("july", 7);
+		MONTH_NAME_TO_NUMBER.put("august", 8);
+		MONTH_NAME_TO_NUMBER.put("september", 9);
+		MONTH_NAME_TO_NUMBER.put("october", 10);
+		MONTH_NAME_TO_NUMBER.put("november", 11);
+		MONTH_NAME_TO_NUMBER.put("december", 12);
+	}
 
 	public BibtexEntry(BibTeXEntry entry) {
 		for (String tagKey : BibtexViewer.TAGS) {
@@ -99,9 +118,9 @@ public class BibtexEntry {
 		String pdf = "";
 		
 		if (!authorList.isEmpty()) {
-			pdf += getLastname(authorList.get(0));
+			pdf += getLastnameOfFirstAuthor();
 			if (authorList.size() == 2)
-				pdf += " and " + getLastname(authorList.get(1));
+				pdf += " and " + getLastnameOfAuthorNo(1);
 			else if (authorList.size() > 2)
 				pdf += " et al.";
 		}
@@ -124,6 +143,14 @@ public class BibtexEntry {
 
 	private String getLastname(String name) {
 		return name.substring(name.lastIndexOf(" ") + 1);
+	}
+	
+	public String getLastnameOfAuthorNo(int authorIndex) {
+		return getLastname(authorList.get(authorIndex));
+	}
+	
+	public String getLastnameOfFirstAuthor() {
+		return getLastnameOfAuthorNo(0);
 	}
 
 	void parseKey() {
@@ -253,6 +280,14 @@ public class BibtexEntry {
 	boolean isMisc() {
 		return "misc".equals(type);
 	}
+	
+	public Optional<Integer> getMonthAsNumber() {
+		final String monthName = getAttribute(BibTeXEntry.KEY_MONTH).toLowerCase();
+		if (MONTH_NAME_TO_NUMBER.containsKey(monthName)) {
+			return Optional.of(MONTH_NAME_TO_NUMBER.get(monthName));
+		}
+		return Optional.empty();
+	}
 
 	/**
 	 * Returns the value as string associated to the given bibtex key.
@@ -314,7 +349,7 @@ public class BibtexEntry {
 		replacements.putIfAbsent("&uuml;", "ue");
 		replacements.putIfAbsent("&Auml;", "Ae");
 		replacements.putIfAbsent("&Ouml;", "Oe");
-		replacements.putIfAbsent("�", "O");
+		replacements.putIfAbsent("ï¿½", "O");
 		replacements.putIfAbsent("&Uuml;", "Ue");
 		replacements.putIfAbsent("&szlig;", "ss");
 		replacements.putIfAbsent("&amp;", "and");

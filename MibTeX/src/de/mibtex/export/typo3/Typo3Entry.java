@@ -26,20 +26,21 @@ import de.mibtex.export.ExportTypo3Bibtex;
  *
  */
 public class Typo3Entry implements Comparable<Typo3Entry> {
+	private static final String SOFTVARE_PAPER_REPO_URL = "https://github.com/SoftVarE-Group/Papers/raw/master/";
 	private static final Map<String, String> TO_URL_OVERWRITES = new HashMap<>();
 	static {
-		TO_URL_OVERWRITES.put("&auml;", "ä");
-		TO_URL_OVERWRITES.put("&ouml;", "ö");
-		TO_URL_OVERWRITES.put("&uuml;", "ü");
-		TO_URL_OVERWRITES.put("&Auml;", "Ä");
-		TO_URL_OVERWRITES.put("&Ouml;", "Ö");
-		TO_URL_OVERWRITES.put("&Uuml;", "Ü");
+		TO_URL_OVERWRITES.put("&auml;", "Ã¤");
+		TO_URL_OVERWRITES.put("&ouml;", "Ã¶");
+		TO_URL_OVERWRITES.put("&uuml;", "Ã¼");
+		TO_URL_OVERWRITES.put("&Auml;", "Ã„");
+		TO_URL_OVERWRITES.put("&Ouml;", "Ã–");
+		TO_URL_OVERWRITES.put("&Uuml;", "Ãœ");
 		TO_URL_OVERWRITES.put("&8211;", "-");
 		TO_URL_OVERWRITES.put("?", "?");
 		TO_URL_OVERWRITES.put(":", ":");
 		TO_URL_OVERWRITES.put("/", "/");
 		TO_URL_OVERWRITES.put("#", "#");
-		TO_URL_OVERWRITES.put("&szlig;", "ß");
+		TO_URL_OVERWRITES.put("&szlig;", "ÃŸ");
 	}
 	
 	public final BibtexEntry source;
@@ -51,6 +52,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	public String title;
 	public List<String> authors;
 	public List<String> editors;
+	public String shortVenue; // the variable used in the booktitle or journal field in BibTags
 	public String booktitle;
 	public String address;
 	public String publisher;
@@ -58,6 +60,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	public String location;
 	public String school;
 	public String pages;
+	public String month;
 	public int year;
 	
 	public String doi;
@@ -67,6 +70,9 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	public String note;
 	
 	public List<String> tags;
+	
+	/// Empty by default. We only set the URL via modifiers as we have no general policy for where and how to get URLs.
+	public String url = "";
 	
 	public Typo3Entry(BibtexEntry bib, Map<String, String> variables) {
 		this.source = bib;
@@ -86,6 +92,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		
 		this.title = makeTypo3Safe(bib.title);
 		this.year = bib.year;
+		this.month = bib.getMonthAsNumber().map(i -> i.toString()).orElse("");
 
 		this.address = makeTypo3Safe(lookup(bib.getAttribute(BibTeXEntry.KEY_ADDRESS), variables));
 		this.publisher = makeTypo3Safe(lookup(bib.getAttribute(BibTeXEntry.KEY_PUBLISHER), variables));
@@ -101,32 +108,56 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		
 		this.note = makeTypo3Safe(bib.getAttribute(BibTeXEntry.KEY_NOTE));
 
-		this.booktitle = parseBooktitle(bib, variables);		
+		this.booktitle = parseBooktitle(bib, variables);
 		this.tags = parseTags(bib);
+		this.shortVenue = parseVenue(bib, variables);
 	}
 
 	@Override
 	public String toString() {
-		String typo3 = "@" + type + "{" + key;
+		final StringBuilder typo3 = new StringBuilder();
+		typo3.append("@").append(type).append("{").append(key);
 
-		typo3 += genBibTeXAttributeIfPresent("type", this.typeAttrib);
-		typo3 += genAuthorList();
-		typo3 += genBibTeXAttributeIfPresent("title", title);
-		typo3 += genBibTeXAttributeIfPresent("year", Integer.toString(year));
-		typo3 += genBibTeXAttributeIfPresent("booktitle", booktitle);
-		typo3 += genBibTeXAttributeIfPresent("address", address);
-		typo3 += genBibTeXAttributeIfPresent("publisher", publisher);
-		typo3 += genBibTeXAttributeIfPresent("journal", journal);
-		typo3 += genBibTeXAttributeIfPresent("location", location);
-		typo3 += genBibTeXAttributeIfPresent("school", school);
-		typo3 += genBibTeXAttributeIfPresent("pages", pages);
-		typo3 += genBibTeXAttributeIfPresent("doi", doi);
-		typo3 += genBibTeXAttributeIfPresent("isbn", isbn);
-		typo3 += genBibTeXAttributeIfPresent("issn", issn);
-		typo3 += genBibTeXAttributeIfPresent("note", note);
-		typo3 += genBibTeXAttributeIfPresent("tags", tags.stream().reduce((a, b) -> a + ", " + b).orElseGet(() -> ""));
-
-		return typo3 + "\n}";
+		typo3.append(genBibTeXAttributeIfPresent("type", this.typeAttrib));
+		typo3.append(genAuthorList());
+		typo3.append(genBibTeXAttributeIfPresent("title", title));
+		typo3.append(genBibTeXAttributeIfPresent("year", Integer.toString(year)));
+		typo3.append(genBibTeXAttributeIfPresent("month", month));
+		typo3.append(genBibTeXAttributeIfPresent("booktitle", booktitle));
+		typo3.append(genBibTeXAttributeIfPresent("address", address));
+		typo3.append(genBibTeXAttributeIfPresent("publisher", publisher));
+		typo3.append(genBibTeXAttributeIfPresent("journal", journal));
+		typo3.append(genBibTeXAttributeIfPresent("location", location));
+		typo3.append(genBibTeXAttributeIfPresent("school", school));
+		typo3.append(genBibTeXAttributeIfPresent("pages", pages));
+		typo3.append(genBibTeXAttributeIfPresent("doi", doi));
+		typo3.append(genBibTeXAttributeIfPresent("isbn", isbn));
+		typo3.append(genBibTeXAttributeIfPresent("issn", issn));
+		typo3.append(genBibTeXAttributeIfPresent("note", note));
+		typo3.append(genBibTeXAttributeIfPresent("tags", tags.stream().reduce((a, b) -> a + ", " + b).orElseGet(() -> "")));
+		typo3.append(genBibTeXAttributeIfPresent("url", url));
+		
+		typo3.append("\n}");
+		
+		return typo3.toString();
+	}
+	
+	public String getPaperUrlInSoftVarERepo() {
+		final String venue = makeTypo3Safe(shortVenue);
+		
+		final StringBuilder b = new StringBuilder();
+		b.append(SOFTVARE_PAPER_REPO_URL);
+		b.append(year);
+		b.append("/");
+		b.append(year);
+		if (!venue.isEmpty()) {
+			b.append("-");
+			b.append(venue);
+		}
+		b.append("-");
+		b.append(BibtexEntry.toURL(this.source.getLastnameOfFirstAuthor()));
+		b.append(".pdf");
+		return b.toString();
 	}
 	
 	private String genAuthorList() {
@@ -138,6 +169,8 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		} else if (!editors.isEmpty()) {
 			persons = editors;
 			personType = "editor";
+		} else if (Filters.IS_MISC.test(this)) {
+			return "";
 		} else {
 			throw new RuntimeException("The Typo3Entry with key " + this.key + " has neither authors nor editors!");
 		}
@@ -146,6 +179,10 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 				persons.stream()
 				.reduce((a, b) -> a + " and " + b)
 				.orElseGet(() -> {throw new IllegalArgumentException("Person list is empty!");}));
+	}
+	
+	public boolean isJournalPaper() {
+		return BibtexEntry.isDefined(journal);
 	}
 	
 	@Override
@@ -181,6 +218,16 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 				b -> ("Technical Report " + b.getAttribute(BibTeXEntry.KEY_NUMBER)).trim(),
 				b -> lookup(b.getAttribute(BibTeXEntry.KEY_BOOKTITLE), variables)
 				).apply(bib));
+	}
+	
+	private static String parseVenue(BibtexEntry bib, final Map<String, String> variables) {
+		// If the venue is a not just a single word but a long name, we don't have a short venue name.
+		if (Util.indexOfFirstMatch(bib.venue, Character::isWhitespace) < bib.venue.length()) {
+			return "";
+		}
+
+		// Remove parenthesis such that, for example, "(techreport)" becomes "techreport".
+		return bib.venue.replaceAll("[()]", "").trim();
 	}
 	
 	private static List<String> parseTags(BibtexEntry bib) {
