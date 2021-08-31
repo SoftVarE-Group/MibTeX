@@ -57,7 +57,9 @@ public class ExportTypo3Bibtex extends Export {
 			//Filters.ANY,
 			//Filters.keyIsOneOf("Y21", "YWT:SPLC20")
 			//Filters.keyIsOneOf("BST+:ESECFSE21")
-			Filters.BELONGS_TO_SOFTVARE
+			// Filters.BELONGS_TO_SOFTVARE
+			//Filters.keyIsOneOf("HST:SPLC21")
+			Filters.BELONGS_TO_OBDDIMAL
 			//Filters.WithThomasAtUlm
 			//Filters.Any()
 			//Filters.keyIsOneOf("KTSB:ICSE21")

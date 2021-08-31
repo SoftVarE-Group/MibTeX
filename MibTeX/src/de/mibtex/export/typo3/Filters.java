@@ -18,9 +18,9 @@ import de.mibtex.BibtexEntry;
  * @author Paul Maximilian Bittner
  */
 public class Filters {
-	public final static String THOMAS_THUEM = "Thomas Thüm";
+	public final static String THOMAS_THUEM = "Thomas Thï¿½m";
 	public final static String CHICO_SUNDERMANN = "Chico Sundermann";
-	public final static String TOBIAS_HESS = "Tobias Heß";
+	public final static String TOBIAS_HESS = "Tobias Heï¿½";
 	public final static String PAUL_MAXIMILIAN_BITTNER = "Paul Maximilian Bittner";
 	
 	public final static Predicate<Typo3Entry> ANY = b -> true;
@@ -58,6 +58,11 @@ public class Filters {
 	public final static Predicate<Typo3Entry> BELONGS_TO_VARIANTSYNC = b -> {
 		if (b.tags == null) return false;
 		return b.tags.stream().anyMatch(Util.isOneOf("VariantSyncPub", "VariantSyncPre", "VariantSyncMT"));
+	};
+	
+	public final static Predicate<Typo3Entry> BELONGS_TO_OBDDIMAL = b -> {
+		if (b.tags == null) return false;
+		return b.tags.stream().anyMatch(Util.isOneOf("OBDDimal", "OBDDimalTheses"));
 	};
 	
 	private Filters() {}
