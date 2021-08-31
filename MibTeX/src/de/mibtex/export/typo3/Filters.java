@@ -18,9 +18,9 @@ import de.mibtex.BibtexEntry;
  * @author Paul Maximilian Bittner
  */
 public class Filters {
-	public final static String THOMAS_THUEM = "Thomas Th�m";
+	public final static String THOMAS_THUEM = "Thomas Thüm";
 	public final static String CHICO_SUNDERMANN = "Chico Sundermann";
-	public final static String TOBIAS_HESS = "Tobias He�";
+	public final static String TOBIAS_HESS = "Tobias Heß";
 	public final static String PAUL_MAXIMILIAN_BITTNER = "Paul Maximilian Bittner";
 	
 	public final static Predicate<Typo3Entry> ANY = b -> true;
