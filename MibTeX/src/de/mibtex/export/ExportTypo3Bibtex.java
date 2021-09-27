@@ -56,8 +56,10 @@ public class ExportTypo3Bibtex extends Export {
 	private final Predicate<Typo3Entry> bibFilter =
 			//Filters.ANY,
 			//Filters.keyIsOneOf("Y21", "YWT:SPLC20")
-			Filters.keyIsOneOf("HST:SPLC21")
-			//Filters.BELONGS_TO_SOFTVARE
+			//Filters.keyIsOneOf("BST+:ESECFSE21")
+			// Filters.BELONGS_TO_SOFTVARE
+			//Filters.keyIsOneOf("HST:SPLC21")
+			Filters.BELONGS_TO_OBDDIMAL
 			//Filters.WithThomasAtUlm
 			//Filters.Any()
 			//Filters.keyIsOneOf("KTSB:ICSE21")
@@ -71,18 +73,19 @@ public class ExportTypo3Bibtex extends Export {
 	 * Select the modifiers you want to apply to each entry after filtering.
 	 * Each modifier is a function taking a Typo3Entry and returning the modified Typo3Entry.
 	 * Default implementations can be found in de.mibtex.export.typo3.Modifiers.
-	 * For instance, Modifiers.MarkIfThomasIsEditor checks if Thomas Thüm is an editor of the entry and if so,
+	 * For instance, Modifiers.MarkIfThomasIsEditor checks if Thomas ThÃ¼m is an editor of the entry and if so,
 	 * adds a specific tag to the publication that we use for the website.
 	 * Some modifiers are dedicated to resolving duplicate entries (w.r.t. titles) because Typo3 considers entries with the same title to be the same.
 	 * If unsure, leave unchanged.
 	 */
 	private final List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
-			  Modifiers.MARK_IF_THOMAS_IS_EDITOR
+			  Modifiers.TAG_IF_THOMAS_IS_EDITOR
+			, Modifiers.TAG_IF_SOFTVARE
 			, Modifiers.MARK_IF_TO_APPEAR
 			, Modifiers.ADD_PAPER_LINK_IF_SOFTVARE
 			
 			// Custom solutions
-			, Modifiers.whenKeyIs("DGT:EMSE21", Modifiers.MARK_THOMAS_AS_EDITOR)
+			, Modifiers.whenKeyIs("DGT:EMSE21", Modifiers.TAG_THOMAS_AS_EDITOR)
 			, Modifiers.whenKeyIs("Y21", Modifiers.KEEP_URL_IF_PRESENT)
 
 			// Resolving duplicates

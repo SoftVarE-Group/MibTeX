@@ -18,9 +18,9 @@ import de.mibtex.BibtexEntry;
  * @author Paul Maximilian Bittner
  */
 public class Filters {
-	public final static String THOMAS_THUEM = "Thomas Th¸m";
+	public final static String THOMAS_THUEM = "Thomas Th√ºm";
 	public final static String CHICO_SUNDERMANN = "Chico Sundermann";
-	public final static String TOBIAS_HESS = "Tobias Heﬂ";
+	public final static String TOBIAS_HESS = "Tobias He√ü";
 	public final static String PAUL_MAXIMILIAN_BITTNER = "Paul Maximilian Bittner";
 	
 	public final static Predicate<Typo3Entry> ANY = b -> true;
@@ -50,14 +50,23 @@ public class Filters {
 	public final static Predicate<Typo3Entry> WITH_PAUL_BEFORE_OR_NOT_AT_ULM = WITH_PAUL.and(WITH_PAUL_AT_ULM.negate());
 
 	public final static Predicate<Typo3Entry> BELONGS_TO_SOFTVARE = Filters
-			.authorOrEditorIsOneOf(THOMAS_THUEM, CHICO_SUNDERMANN, TOBIAS_HESS, PAUL_MAXIMILIAN_BITTNER)
+			.authorIsOneOf(
+					THOMAS_THUEM
+					, CHICO_SUNDERMANN
+					, TOBIAS_HESS
+					, PAUL_MAXIMILIAN_BITTNER
+					)
 			.and(IS_MASTERSTHESIS.negate())
-			.and(WITH_PAUL_AT_ICG.negate())
-			.and(b -> b.year >= 2020);
+			.and(WITH_PAUL_AT_ICG.negate());
 
 	public final static Predicate<Typo3Entry> BELONGS_TO_VARIANTSYNC = b -> {
 		if (b.tags == null) return false;
 		return b.tags.stream().anyMatch(Util.isOneOf("VariantSyncPub", "VariantSyncPre", "VariantSyncMT"));
+	};
+	
+	public final static Predicate<Typo3Entry> BELONGS_TO_OBDDIMAL = b -> {
+		if (b.tags == null) return false;
+		return b.tags.stream().anyMatch(Util.isOneOf("OBDDimal", "OBDDimalTheses"));
 	};
 	
 	private Filters() {}
