@@ -50,10 +50,14 @@ public class Filters {
 	public final static Predicate<Typo3Entry> WITH_PAUL_BEFORE_OR_NOT_AT_ULM = WITH_PAUL.and(WITH_PAUL_AT_ULM.negate());
 
 	public final static Predicate<Typo3Entry> BELONGS_TO_SOFTVARE = Filters
-			.authorOrEditorIsOneOf(THOMAS_THUEM, CHICO_SUNDERMANN, TOBIAS_HESS, PAUL_MAXIMILIAN_BITTNER)
+			.authorIsOneOf(
+					THOMAS_THUEM
+					, CHICO_SUNDERMANN
+					, TOBIAS_HESS
+					, PAUL_MAXIMILIAN_BITTNER
+					)
 			.and(IS_MASTERSTHESIS.negate())
-			.and(WITH_PAUL_AT_ICG.negate())
-			.and(b -> b.year >= 2020);
+			.and(WITH_PAUL_AT_ICG.negate());
 
 	public final static Predicate<Typo3Entry> BELONGS_TO_VARIANTSYNC = b -> {
 		if (b.tags == null) return false;
