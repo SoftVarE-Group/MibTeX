@@ -9,10 +9,12 @@ Besides the export to HTML, there is an export to CSV, which is useful to embed 
 
 ## Setup Instructions
 
-MibTeX is implemented in Java and comes as an Eclipse project which is straightforward to compile. Once you have compiled the code, you can run the main method in class `BibtexViewer`. As MibTeX requires numerous paths on your local system there are two ways to specify those settings: as command-line parameters or by a configuration file. Of those two options, we recommend the configuration file.
+MibTeX is implemented in Java and comes as an Eclipse/Maven project.
+Install and run it with `./MibTeX.sh` (Maven required).
+As MibTeX requires numerous paths on your local system there are two ways to specify those settings: as command-line parameters or by a configuration file. Of those two options, we recommend the configuration file.
 
 ### Option 1: Configuration File (recommended)
-Create a configuration file specifying the required paths:
+Create a configuration file (by default, `options.ini` in the root directory) specifying the required paths:
 ```
 [options]
 bibtex-dir=[absolute path to your literature.bib file]
