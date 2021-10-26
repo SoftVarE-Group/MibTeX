@@ -54,12 +54,14 @@ public class ExportTypo3Bibtex extends Export {
 	 * Compose filters with the respective methods of Predicate<T> (such as `and`, `or`).
 	 */
 	private final Predicate<Typo3Entry> bibFilter =
-			//Filters.ANY,
+			Filters.ANY
 			//Filters.keyIsOneOf("Y21", "YWT:SPLC20")
 			//Filters.keyIsOneOf("BST+:ESECFSE21")
 			// Filters.BELONGS_TO_SOFTVARE
 			//Filters.keyIsOneOf("HST:SPLC21")
-			Filters.BELONGS_TO_OBDDIMAL
+			//Filters.BELONGS_TO_OBDDIMAL
+			//Filters.keyIsOneOf("TCA:SPLC21")
+			//Filters.keyIsOneOf("BTS:SEFM19")
 			//Filters.WithThomasAtUlm
 			//Filters.Any()
 			//Filters.keyIsOneOf("KTSB:ICSE21")
@@ -99,6 +101,9 @@ public class ExportTypo3Bibtex extends Export {
 			, Modifiers.whenKeyIs("KTM+:SE18", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
 			, Modifiers.whenKeyIs("KAT:TR16", Modifiers.MARK_IF_TECHREPORT)
 			, Modifiers.whenKeyIs("useRLB+:AOSD14", Modifiers.MARK_IF_TECHREPORT)
+			, Modifiers.whenKeyIs("B19", Modifiers.MARK_AS_PROJECTTHESIS)
+			, Modifiers.whenKeyIs("Sprey19", Modifiers.MARK_AS_PROJECTTHESIS)
+			, Modifiers.whenKeyIs("PK14", Modifiers.MARK_IF_TECHREPORT)
 			);
 
 	public ExportTypo3Bibtex(String path, String file) throws Exception {
@@ -122,11 +127,17 @@ public class ExportTypo3Bibtex extends Export {
 				.map(Typo3Entry::toString)
 				.reduce("", (a, b) -> a + "\n\n" + b);
 
-		System.out.println(typo3);
+		//System.out.println(typo3);
 		System.out.println();
 
 		// Check if we have some duplicates left that were not resolved.
-		final int duplicates = Util.getDuplicates(typo3Entries, (a, b) -> System.out.println("  > Found unresolved duplicate: " + a.title));
+		final int duplicates = Util.getDuplicates(typo3Entries, (a, b) -> {
+			if (a.title.isBlank() && b.title.isBlank()) {
+				System.out.println("  > Found entries without title: " + a.key + ", " + b.key);
+				return;
+			}
+			System.out.println("  > Found unresolved duplicate title: " + a.title + " (" + a.key + ", " + b.key + ")");
+		});
 		final long numUniqueEntries = typo3Entries.size() - duplicates;
 
 		System.out.println("\nExported " + typo3Entries.size() + " entries.");

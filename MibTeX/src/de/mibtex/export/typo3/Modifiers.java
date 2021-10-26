@@ -39,6 +39,8 @@ public class Modifiers {
 			appendToTitle("(Extended Abstract)");
 	public static final Function<Typo3Entry, Typo3Entry> MARK_AS_PHDTHESIS =
 			appendToTitle("(PhD Thesis)");
+	public static final Function<Typo3Entry, Typo3Entry> MARK_AS_PROJECTTHESIS =
+			appendToTitle("(Project Thesis)");
 
 	/** misc **/
 	public static final Function<Typo3Entry, Typo3Entry> ADD_PAPER_LINK_IF_SOFTVARE = 
