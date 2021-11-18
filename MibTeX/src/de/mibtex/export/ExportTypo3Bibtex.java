@@ -54,9 +54,9 @@ public class ExportTypo3Bibtex extends Export {
 	 * Compose filters with the respective methods of Predicate<T> (such as `and`, `or`).
 	 */
 	private final Predicate<Typo3Entry> bibFilter =
-			Filters.ANY
-			//Filters.keyIsOneOf("Y21", "YWT:SPLC20")
-			//Filters.keyIsOneOf("BST+:ESECFSE21")
+			//Filters.ANY
+			//Filters.keyIsOneOf("SBG+:MODELS21")
+			Filters.keyIsOneOf("BST+:ESECFSE21")
 			// Filters.BELONGS_TO_SOFTVARE
 			//Filters.keyIsOneOf("HST:SPLC21")
 			//Filters.BELONGS_TO_OBDDIMAL
@@ -127,7 +127,7 @@ public class ExportTypo3Bibtex extends Export {
 				.map(Typo3Entry::toString)
 				.reduce("", (a, b) -> a + "\n\n" + b);
 
-		//System.out.println(typo3);
+		System.out.println(typo3);
 		System.out.println();
 
 		// Check if we have some duplicates left that were not resolved.

@@ -133,9 +133,11 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		typo3.append(genBibTeXAttributeIfPresent("doi", doi));
 		typo3.append(genBibTeXAttributeIfPresent("isbn", isbn));
 		typo3.append(genBibTeXAttributeIfPresent("issn", issn));
-		typo3.append(genBibTeXAttributeIfPresent("note", note));
 		typo3.append(genBibTeXAttributeIfPresent("tags", tags.stream().reduce((a, b) -> a + ", " + b).orElseGet(() -> "")));
 		typo3.append(genBibTeXAttributeIfPresent("url", url));
+		// Generate note always in case it was "to appear" once but is empty now.
+		// Then it will be overriden in typo3 with empty string.
+		typo3.append(genBibTeXAttribute("note", note));
 		
 		typo3.append("\n}");
 		
