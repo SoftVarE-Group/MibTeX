@@ -9,7 +9,7 @@ package de.mibtex.export;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -153,9 +153,12 @@ public class ExportTypo3Bibtex extends Export {
 	}
 
 	private static Map<String, String> readVariablesFromBibtexFile(File pathToBibtex) {
-		final Map<String, String> vars = new HashMap<String, String>();
+		final Map<String, String> vars = new HashMap<>();
 
-		final BufferedReader file = readFromFile(pathToBibtex, Charset.forName("UTF-8"));
+		final BufferedReader file = readFromFile(pathToBibtex, StandardCharsets.UTF_8);
+		if (file == null) {
+			throw new RuntimeException("Could read file " + pathToBibtex + " for some reason.");
+		}
 		try {
 			while (file.ready()) {
 				String line = file.readLine().trim();
