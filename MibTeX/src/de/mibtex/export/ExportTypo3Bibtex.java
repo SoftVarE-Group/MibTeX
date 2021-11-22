@@ -6,6 +6,11 @@
  */
 package de.mibtex.export;
 
+import de.mibtex.BibtexViewer;
+import de.mibtex.export.typo3.Filters;
+import de.mibtex.export.typo3.Typo3Entry;
+import de.mibtex.export.typo3.Util;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -18,11 +23,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import de.mibtex.BibtexViewer;
-import de.mibtex.export.typo3.Filters;
-import de.mibtex.export.typo3.Modifiers;
-import de.mibtex.export.typo3.Typo3Entry;
-import de.mibtex.export.typo3.Util;
+import static de.mibtex.export.typo3.Modifiers.*;
 
 /**
  * Exports the bibtex file to bibtex in a carefully adjusted format such that the BibTex-Importer of Typo3 (Website-Framework) can read it correctly.
@@ -56,7 +57,7 @@ public class ExportTypo3Bibtex extends Export {
 	private final Predicate<Typo3Entry> bibFilter =
 			//Filters.ANY
 			//Filters.keyIsOneOf("SBG+:MODELS21")
-			Filters.keyIsOneOf("BST+:ESECFSE21")
+			Filters.keyIsOneOf("DGT:EMSE21", "TCA:SPLC21")
 			// Filters.BELONGS_TO_SOFTVARE
 			//Filters.keyIsOneOf("HST:SPLC21")
 			//Filters.BELONGS_TO_OBDDIMAL
@@ -81,29 +82,29 @@ public class ExportTypo3Bibtex extends Export {
 	 * If unsure, leave unchanged.
 	 */
 	private final List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
-			  Modifiers.TAG_IF_THOMAS_IS_EDITOR
-			, Modifiers.TAG_IF_SOFTVARE
-			, Modifiers.MARK_IF_TO_APPEAR
-			, Modifiers.ADD_PAPER_LINK_IF_SOFTVARE
+			  TAG_IF_THOMAS_IS_EDITOR
+			, TAG_IF_SOFTVARE
+			, MARK_IF_TO_APPEAR
+			, ADD_PAPER_LINK_IF_SOFTVARE
 			
 			// Custom solutions
-			, Modifiers.whenKeyIs("DGT:EMSE21", Modifiers.TAG_THOMAS_AS_EDITOR)
-			, Modifiers.whenKeyIs("Y21", Modifiers.KEEP_URL_IF_PRESENT)
+			, whenKeyIs("DGT:EMSE21", SWITCH_AUTHORS_TO_EDITORS)
+			, whenKeyIs("Y21", KEEP_URL_IF_PRESENT)
 
 			// Resolving duplicates
-			, Modifiers.whenKeyIs("Y21", Modifiers.MARK_AS_PHDTHESIS)
-			, Modifiers.whenKeyIs("KJN+:SE21", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
-			, Modifiers.whenKeyIs("RSC+:SE21", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
-			, Modifiers.whenKeyIs("TKK+:SPLC19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
-			, Modifiers.whenKeyIs("KTS+:SE19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
-			, Modifiers.whenKeyIs("KTP+:SE19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
-			, Modifiers.whenKeyIs("TKL:SPLC18", Modifiers.appendToTitle("(Second Edition)"))
-			, Modifiers.whenKeyIs("KTM+:SE18", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
-			, Modifiers.whenKeyIs("KAT:TR16", Modifiers.MARK_IF_TECHREPORT)
-			, Modifiers.whenKeyIs("useRLB+:AOSD14", Modifiers.MARK_IF_TECHREPORT)
-			, Modifiers.whenKeyIs("B19", Modifiers.MARK_AS_PROJECTTHESIS)
-			, Modifiers.whenKeyIs("Sprey19", Modifiers.MARK_AS_PROJECTTHESIS)
-			, Modifiers.whenKeyIs("PK14", Modifiers.MARK_IF_TECHREPORT)
+			, whenKeyIs("Y21", MARK_AS_PHDTHESIS)
+			, whenKeyIs("KJN+:SE21", MARK_AS_EXTENDED_ABSTRACT)
+			, whenKeyIs("RSC+:SE21", MARK_AS_EXTENDED_ABSTRACT)
+			, whenKeyIs("TKK+:SPLC19", MARK_AS_EXTENDED_ABSTRACT)
+			, whenKeyIs("KTS+:SE19", MARK_AS_EXTENDED_ABSTRACT)
+			, whenKeyIs("KTP+:SE19", MARK_AS_EXTENDED_ABSTRACT)
+			, whenKeyIs("TKL:SPLC18", appendToTitle("(Second Edition)"))
+			, whenKeyIs("KTM+:SE18", MARK_AS_EXTENDED_ABSTRACT)
+			, whenKeyIs("KAT:TR16", MARK_IF_TECHREPORT)
+			, whenKeyIs("useRLB+:AOSD14", MARK_IF_TECHREPORT)
+			, whenKeyIs("B19", MARK_AS_PROJECTTHESIS)
+			, whenKeyIs("Sprey19", MARK_AS_PROJECTTHESIS)
+			, whenKeyIs("PK14", MARK_IF_TECHREPORT)
 			);
 
 	public ExportTypo3Bibtex(String path, String file) throws Exception {

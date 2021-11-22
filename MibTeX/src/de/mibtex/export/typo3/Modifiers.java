@@ -6,10 +6,10 @@
  */
 package de.mibtex.export.typo3;
 
-import java.util.function.Function;
-import org.jbibtex.BibTeXEntry;
-
 import de.mibtex.BibtexEntry;
+
+import java.util.ArrayList;
+import java.util.function.Function;
 
 /**
  * This is a collection of default modifiers to use for the ExportTypo3Bibtex.
@@ -51,6 +51,13 @@ public class Modifiers {
 				if (BibtexEntry.isDefined(url)) {
 					t.url = url;
 				}
+				return t;
+			};
+
+	public static final Function<Typo3Entry, Typo3Entry> SWITCH_AUTHORS_TO_EDITORS =
+			t -> {
+				t.editors = t.authors;
+				t.authors = new ArrayList<>();
 				return t;
 			};
 	
