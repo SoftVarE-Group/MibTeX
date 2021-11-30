@@ -83,7 +83,7 @@ public class CitationEntry implements Comparable<CitationEntry> {
                 System.out.println("\t" + this.key
                         + ": Has an old citation count, but now an error occurres");
             }
-            if (citationsTemp != ROBOT) {
+            else if (citationsTemp != ROBOT) {
             	this.citations = citationsTemp;
             }
         } catch (Exception e) {
