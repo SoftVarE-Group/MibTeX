@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  */
 public class ScholarCitations {
 
-	private final static String SCHOLAR_URL = "http://scholar.google.com/scholar?hl=en&q=";
+	private final static String SCHOLAR_URL = "https://scholar.google.com/scholar?hl=en&q=";
 	private static Pattern entryPattern = Pattern.compile(
 			"<div class=\\\"gs_r gs_or gs_scl\\\".*?>(.*?)<\\/svg><\\/a><\\/div><\\/div><\\/div>",
 			Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
