@@ -100,7 +100,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		this.journal = makeTypo3Safe(lookup(bib.getAttribute(BibTeXEntry.KEY_JOURNAL), variables));
 		this.location = makeTypo3Safe(lookup(bib.getAttribute("location"), variables));
 		
-		this.school = makeTypo3Safe(bib.getAttribute(BibTeXEntry.KEY_SCHOOL));
+		this.school = makeTypo3Safe(lookup(bib.getAttribute(BibTeXEntry.KEY_SCHOOL), variables));
 		this.pages = makeTypo3Safe(bib.getAttribute(BibTeXEntry.KEY_PAGES));
 		
 		this.doi = makeTypo3Safe(bib.getAttribute(BibTeXEntry.KEY_DOI));
