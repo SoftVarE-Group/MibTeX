@@ -55,22 +55,13 @@ public class ExportTypo3Bibtex extends Export {
 	 * Compose filters with the respective methods of Predicate<T> (such as `and`, `or`).
 	 */
 	private final Predicate<Typo3Entry> bibFilter =
-			//Filters.ANY
-			//Filters.keyIsOneOf("SBG+:MODELS21")
-//			Filters.keyIsOneOf("DGT:EMSE21", "TCA:SPLC21")
-            Filters.BELONGS_TO_SOFTVARE.and(Filters.IS_MISC.negate())
-			// Filters.BELONGS_TO_SOFTVARE
-			//Filters.keyIsOneOf("HST:SPLC21")
-			//Filters.BELONGS_TO_OBDDIMAL
-			//Filters.keyIsOneOf("TCA:SPLC21")
-			//Filters.keyIsOneOf("BTS:SEFM19")
-			//Filters.WithThomasAtUlm
-			//Filters.Any()
-			//Filters.keyIsOneOf("KTSB:ICSE21")
-			//Filters.WithPaulAtUlm
-			//Filters.WithPaulBeforeOrNotAtUlm
-			//Filters.WithPaul.and(Filters.WithThomasBeforeUlm)
-			//Filters.WITH_CHICO
+//            Filters.THESIS_SUPERVISED_BY_SOFTVARE
+            Filters.THESIS_AUTHORED_BY_SOFTVARE
+//            Filters.IS_SOFTVARE_WEBSITE_PAPER.and(Filters.WITH_THOMAS_BEFORE_ULM)
+//            Filters.IS_SOFTVARE_WEBSITE_PAPER.and(Filters.WITH_THOMAS_BEFORE_ULM.negate())
+//			  Filters.BELONGS_TO_SOFTVARE
+//            Filters.BELONGS_TO_OBDDIMAL
+//			  Filters.keyIsOneOf("TCA:SPLC21")
 			;
 
 	/**

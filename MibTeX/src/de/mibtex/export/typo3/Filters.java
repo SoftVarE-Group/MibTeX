@@ -6,10 +6,10 @@
  */
 package de.mibtex.export.typo3;
 
+import de.mibtex.BibtexEntry;
+
 import java.util.Arrays;
 import java.util.function.Predicate;
-
-import de.mibtex.BibtexEntry;
 
 /**
  * This is a collection of default filters to use for the ExportTypo3Bibtex.
@@ -49,25 +49,37 @@ public class Filters {
 			.and(t -> t.year >= 2020);
 	public final static Predicate<Typo3Entry> WITH_PAUL_BEFORE_OR_NOT_AT_ULM = WITH_PAUL.and(WITH_PAUL_AT_ULM.negate());
 
-	public final static Predicate<Typo3Entry> BELONGS_TO_SOFTVARE = Filters
-			.authorIsOneOf(
-					THOMAS_THUEM
-					, CHICO_SUNDERMANN
-					, TOBIAS_HESS
-					, PAUL_MAXIMILIAN_BITTNER
-					)
+    public final static Predicate<Typo3Entry> AUTHORS_BELONGS_TO_SOFTVARE =
+            authorIsOneOf(
+                    THOMAS_THUEM
+                    , CHICO_SUNDERMANN
+                    , TOBIAS_HESS
+                    , PAUL_MAXIMILIAN_BITTNER
+            );
+
+	public final static Predicate<Typo3Entry> BELONGS_TO_SOFTVARE =
+            AUTHORS_BELONGS_TO_SOFTVARE
 			.and(IS_MASTERSTHESIS.negate())
 			.and(WITH_PAUL_AT_ICG.negate());
 
-	public final static Predicate<Typo3Entry> BELONGS_TO_VARIANTSYNC = b -> {
-		if (b.tags == null) return false;
-		return b.tags.stream().anyMatch(Util.isOneOf("VariantSyncPub", "VariantSyncPre", "VariantSyncMT"));
-	};
-	
-	public final static Predicate<Typo3Entry> BELONGS_TO_OBDDIMAL = b -> {
-		if (b.tags == null) return false;
-		return b.tags.stream().anyMatch(Util.isOneOf("OBDDimal", "OBDDimalTheses"));
-	};
+    public final static Predicate<Typo3Entry> IS_SOFTVARE_WEBSITE_PAPER = BELONGS_TO_SOFTVARE.and(IS_MISC.negate());
+
+    public final static Predicate<Typo3Entry> THESIS_SUPERVISED_BY_SOFTVARE =
+            hasAtLeastOneTagOf("SupervisorTT", "SupervisorTH", "SupervisorPB", "SupervisorCS")
+                    .and(AUTHORS_BELONGS_TO_SOFTVARE.negate());
+    public final static Predicate<Typo3Entry> THESIS_AUTHORED_BY_SOFTVARE =
+            IS_MASTERSTHESIS.and(AUTHORS_BELONGS_TO_SOFTVARE);
+	public final static Predicate<Typo3Entry> BELONGS_TO_VARIANTSYNC = hasAtLeastOneTagOf(
+            "VariantSyncPub", "VariantSyncPre", "VariantSyncMT");
+	public final static Predicate<Typo3Entry> BELONGS_TO_OBDDIMAL = hasAtLeastOneTagOf(
+            "OBDDimal", "OBDDimalTheses");
+
+    public static Predicate<Typo3Entry> hasAtLeastOneTagOf(final String... tags) {
+        return b -> {
+            if (b.tags == null) return false;
+            return b.tags.stream().anyMatch(Util.isOneOf(tags));
+        };
+    }
 	
 	private Filters() {}
 	
