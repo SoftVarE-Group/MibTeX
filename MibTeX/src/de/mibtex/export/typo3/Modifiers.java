@@ -9,6 +9,7 @@ package de.mibtex.export.typo3;
 import de.mibtex.BibtexEntry;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -46,54 +47,55 @@ public class Modifiers {
 	public static final Function<Typo3Entry, Typo3Entry> ADD_PAPER_LINK_IF_SOFTVARE = 
 			Util.when(Filters.BELONGS_TO_SOFTVARE, setSoftVarEURL());
 	public static final Function<Typo3Entry, Typo3Entry> KEEP_URL_IF_PRESENT =
-			t -> {
+			sideffect(t -> {
 				final String url = t.source.getAttribute("url");
 				if (BibtexEntry.isDefined(url)) {
 					t.url = url;
 				}
-				return t;
-			};
+			});
 
 	public static final Function<Typo3Entry, Typo3Entry> SWITCH_AUTHORS_TO_EDITORS =
-			t -> {
+			sideffect(t -> {
 				t.editors = t.authors;
 				t.authors = new ArrayList<>();
-				return t;
-			};
+			});
+
+    public static final Function<Typo3Entry, Typo3Entry> CLEAR_URL = sideffect(t -> t.url = "");
 	
 	public static Function<Typo3Entry, Typo3Entry> appendToTitle(String suffix) {
-		return t -> {
-			t.title += " " + suffix;
-			return t;
-		};
+		return sideffect(t -> t.title += " " + suffix);
 	}
 	
 	public static Function<Typo3Entry, Typo3Entry> appendToVenue(String suffix) {
-		return t -> {
+		return sideffect(t -> {
 			if (t.isJournalPaper()) {
 				t.journal += " " + suffix;
 			} else {
 				t.booktitle += " " + suffix;
 			}
-			return t;
-		};
+        });
 	} 
 	
 	public static Function<Typo3Entry, Typo3Entry> addTag(String tag) {
-		return t -> {
-			t.tags.add(tag);
-			return t;
-		};
+		return sideffect(t -> t.tags.add(tag));
 	}
 	
 	public static Function<Typo3Entry, Typo3Entry> setSoftVarEURL() {
-		return t -> {
-			t.url = t.getPaperUrlInSoftVarERepo();
-			return t;
-		};
+		return sideffect(t -> t.url = t.getPaperUrlInSoftVarERepo());
 	}
+
+    public static Function<Typo3Entry, Typo3Entry> softVarEURLFile(final String pdfName) {
+        return sideffect(t -> t.url = Typo3Entry.getPaperUrlInSoftVarERepo(t.year, pdfName));
+    }
 	
 	public static Function<Typo3Entry, Typo3Entry> whenKeyIs(String key, Function<Typo3Entry, Typo3Entry> f) {
 		return Util.when(t -> t.key.equals(key), f);
 	}
+
+    public static Function<Typo3Entry, Typo3Entry> sideffect(final Consumer<Typo3Entry> sideffect) {
+        return t -> {
+            sideffect.accept(t);
+            return t;
+        };
+    }
 }

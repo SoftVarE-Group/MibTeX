@@ -57,7 +57,8 @@ public class ExportTypo3Bibtex extends Export {
 	private final Predicate<Typo3Entry> bibFilter =
 			//Filters.ANY
 			//Filters.keyIsOneOf("SBG+:MODELS21")
-			Filters.keyIsOneOf("DGT:EMSE21", "TCA:SPLC21")
+//			Filters.keyIsOneOf("DGT:EMSE21", "TCA:SPLC21")
+            Filters.BELONGS_TO_SOFTVARE.and(Filters.IS_MISC.negate())
 			// Filters.BELONGS_TO_SOFTVARE
 			//Filters.keyIsOneOf("HST:SPLC21")
 			//Filters.BELONGS_TO_OBDDIMAL
@@ -85,9 +86,22 @@ public class ExportTypo3Bibtex extends Export {
 			  TAG_IF_THOMAS_IS_EDITOR
 			, TAG_IF_SOFTVARE
 			, MARK_IF_TO_APPEAR
+
+            // Website
+            , whenKeyIs("AMK+:GPCE16", softVarEURLFile("2016-GPCE-Al-Hajjaji-Demo"))
+            , whenKeyIs("TLK:SPLC16", softVarEURLFile("2016-SPLC-Thuem-Tutorial"))
+            , whenKeyIs("RLB+:AOSDtool14", softVarEURLFile("2014-AOSD-Rebelo-Demo"))
+            , whenKeyIs("T15", softVarEURLFile("2015-PhD-Thuem"))
+            , whenKeyIs("TSP+:ISRN12", softVarEURLFile("2012-ISRN-Thuem"))
+            , whenKeyIs("SSS+16", softVarEURLFile("2016-WSRE-Schink"))
+            , whenKeyIs("JMJ+19", softVarEURLFile("2019-SPP1593-Jung"))
+            , whenKeyIs("THA+19", softVarEURLFile("2019-SPP1593-Thuem"))
+            , whenKeyIs("TKS:ConfWS18", softVarEURLFile("2018-CONFWS-Thuem"))
+            , whenKeyIs("TB12", CLEAR_URL)
+            , whenKeyIs("MTS+17", CLEAR_URL)
 			, ADD_PAPER_LINK_IF_SOFTVARE
 			
-			// Custom solutions
+			// Other custom solutions
 			, whenKeyIs("DGT:EMSE21", SWITCH_AUTHORS_TO_EDITORS)
 			, whenKeyIs("Y21", KEEP_URL_IF_PRESENT)
 

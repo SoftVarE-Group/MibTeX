@@ -6,16 +6,15 @@
  */
 package de.mibtex.export.typo3;
 
+import de.mibtex.BibtexEntry;
+import de.mibtex.export.ExportTypo3Bibtex;
+import org.jbibtex.BibTeXEntry;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.jbibtex.BibTeXEntry;
-
-import de.mibtex.BibtexEntry;
-import de.mibtex.export.ExportTypo3Bibtex;
 
 /**
  * Represents a bibtex entry similar to BibtexEntry.java that will conform
@@ -55,7 +54,8 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	public String shortVenue; // the variable used in the booktitle or journal field in BibTags
 	public String booktitle;
 	public String address;
-	public String publisher;
+    public String publisherVarname; // e.g. ACM
+	public String publisher; // e.g. Association of Computing Machinery
 	public String journal;
 	public String location;
 	public String school;
@@ -92,10 +92,11 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		
 		this.title = makeTypo3Safe(bib.title);
 		this.year = bib.year;
-		this.month = bib.getMonthAsNumber().map(i -> i.toString()).orElse("");
+		this.month = bib.getMonthAsNumber().map(Object::toString).orElse("");
 
 		this.address = makeTypo3Safe(lookup(bib.getAttribute(BibTeXEntry.KEY_ADDRESS), variables));
-		this.publisher = makeTypo3Safe(lookup(bib.getAttribute(BibTeXEntry.KEY_PUBLISHER), variables));
+        this.publisherVarname = bib.getAttribute(BibTeXEntry.KEY_PUBLISHER);
+		this.publisher = makeTypo3Safe(lookup(publisherVarname, variables));
 		this.journal = makeTypo3Safe(lookup(bib.getAttribute(BibTeXEntry.KEY_JOURNAL), variables));
 		this.location = makeTypo3Safe(lookup(bib.getAttribute("location"), variables));
 		
@@ -133,7 +134,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		typo3.append(genBibTeXAttributeIfPresent("doi", doi));
 		typo3.append(genBibTeXAttributeIfPresent("isbn", isbn));
 		typo3.append(genBibTeXAttributeIfPresent("issn", issn));
-		typo3.append(genBibTeXAttributeIfPresent("tags", tags.stream().reduce((a, b) -> a + ", " + b).orElseGet(() -> "")));
+		typo3.append(genBibTeXAttributeIfPresent("tags", tags.stream().reduce((a, b) -> a + ", " + b).orElse("")));
 		typo3.append(genBibTeXAttributeIfPresent("url", url));
 		// Generate note always in case it was "to appear" once but is empty now.
 		// Then it will be overriden in typo3 with empty string.
@@ -147,20 +148,33 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	public String getPaperUrlInSoftVarERepo() {
 		final String venue = makeTypo3Safe(shortVenue);
 		
-		final StringBuilder b = new StringBuilder();
-		b.append(SOFTVARE_PAPER_REPO_URL);
-		b.append(year);
-		b.append("/");
-		b.append(year);
-		if (!venue.isEmpty()) {
-			b.append("-");
-			b.append(venue);
+		final StringBuilder pdfname = new StringBuilder();
+        pdfname.append(year);
+        if (Filters.IS_TECHREPORT.test(this)) {
+            pdfname.append("-");
+            pdfname.append("TR");
+        } else if (!venue.isEmpty()) {
+            pdfname.append("-");
+            pdfname.append(venue);
 		}
-		b.append("-");
-		b.append(BibtexEntry.toURL(this.source.getLastnameOfFirstAuthor()));
-		b.append(".pdf");
-		return b.toString();
+        else if (publisherVarname.equals("GI")) {
+            pdfname.append("-");
+            pdfname.append(publisherVarname);
+        }
+        pdfname.append("-");
+        pdfname.append(BibtexEntry.toURL(this.source.getLastnameOfFirstAuthor()));
+		return getPaperUrlInSoftVarERepo(year, pdfname.toString());
 	}
+
+    public static String getPaperUrlInSoftVarERepo(int year, final String pdfname) {
+        final StringBuilder b = new StringBuilder();
+        b.append(SOFTVARE_PAPER_REPO_URL);
+        b.append(year);
+        b.append("/");
+        b.append(pdfname);
+        b.append(".pdf");
+        return b.toString();
+    }
 	
 	private String genAuthorList() {
 		List<String> persons;
@@ -180,7 +194,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		return genBibTeXAttributeIfPresent(personType,
 				persons.stream()
 				.reduce((a, b) -> a + " and " + b)
-				.orElseGet(() -> {throw new IllegalArgumentException("Person list is empty!");}));
+				.orElseThrow(() -> new IllegalArgumentException("Person list is empty!")));
 	}
 	
 	public boolean isJournalPaper() {
@@ -189,7 +203,7 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	
 	@Override
 	public boolean equals(Object other) {
-		return other != null && other instanceof Typo3Entry && ((Typo3Entry) other).title.equals(this.title);
+		return other instanceof Typo3Entry && ((Typo3Entry) other).title.equals(this.title);
 	}
 
 	@Override
