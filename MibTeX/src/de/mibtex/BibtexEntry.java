@@ -95,7 +95,36 @@ public class BibtexEntry {
 		return (int) (citations / totalYears + 0.5) + " (" + citations + ")";
 	}
 
+	private String getYearPath() {
+		String folder1 = (year - year % 10) + "s";
+		String folder2 = year + "";
+		String path = FileUtils.concat(folder1, folder2).toString();
+		return path;
+	}
+
+	private File getCommentsFile() {
+		String path = getYearPath();
+		String pdf = key.replace(":", "-").trim();
+		pdf += "-comments.pdf";
+		return FileUtils.concat(path, pdf);
+	}
+
+	private File getPDFFile() {
+		String path = getYearPath();
+		String pdf = key.replace(":", "-").trim();
+		pdf += ".pdf";
+		return FileUtils.concat(path, pdf);
+	}
+
+	public File getCommentsPath() {
+		return FileUtils.concat(BibtexViewer.COMMENTS_DIR, getCommentsFile().toString());
+	}
+
 	public File getPDFPath() {
+		return FileUtils.concat(BibtexViewer.PDF_DIR, getPDFFile().toString());
+	}
+
+	public File getOldPDFPath() {
 		String pdf = "";
 		
 		if (!authorList.isEmpty()) {
@@ -115,11 +144,19 @@ public class BibtexEntry {
 			pdf += " " + key;
 		}
 		pdf = pdf.trim() + ".pdf";
-		return FileUtils.concat(BibtexViewer.PDF_DIR, toURL(pdf));
+		return FileUtils.concat(BibtexViewer.MAIN_DIR, toURL(pdf));
+	}
+
+	public String getRelativeCommentsPath() {
+		return FileUtils.concat(BibtexViewer.COMMENTS_DIR_REL, getCommentsFile().toString()).toString();
 	}
 
 	public String getRelativePDFPath() {
-		return FileUtils.concat(BibtexViewer.PDF_DIR_REL, getPDFPath().getName()).toString();
+		return FileUtils.concat(BibtexViewer.PDF_DIR_REL, getPDFFile().toString()).toString();
+	}
+
+	public String getOldRelativePDFPath() {
+		return getOldPDFPath().getName();
 	}
 
 	private String getLastname(String name) {

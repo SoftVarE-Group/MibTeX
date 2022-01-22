@@ -7,6 +7,8 @@
 package de.mibtex.export;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import de.mibtex.BibtexEntry;
@@ -210,13 +212,42 @@ public class ExportHTML extends Export {
 			title = entry.title;
 		}
 		
-		String htmlTitle = "<a href=\"" + entry.getRelativePDFPath() + "\">";
-		if (entry.getPDFPath().exists()) {
+		String htmlTitle = "";
+		if (entry.getCommentsPath().exists()) {
+			htmlTitle += "<a href=\"" + entry.getRelativeCommentsPath() + "\">";
 			htmlTitle += title;
+			htmlTitle += "</a>";
 		} else {
-			htmlTitle = title + " " + htmlTitle + "pdf";
+			htmlTitle += title;
 		}
-		return htmlTitle + "</a>";
+
+		htmlTitle += " <a href=\"" + entry.getRelativePDFPath() + "\">";
+		if (entry.getPDFPath().exists()) {
+			htmlTitle += "(pdf)";
+		} else {
+			htmlTitle += "(missing)";
+		}
+		htmlTitle += "</a>";
+
+		if (entry.getOldPDFPath().exists()) {
+			htmlTitle += " <a href=\"" + entry.getOldRelativePDFPath() + "\">";
+			htmlTitle += "(old)";
+			htmlTitle += "</a>";
+
+			try {
+				if (entry.getPDFPath().getParentFile().exists() && entry.getCommentsPath().getParentFile().exists()
+						&& !entry.getCommentsPath().exists() && !entry.getPDFPath().exists()) {
+					Files.copy(entry.getOldPDFPath().toPath(), entry.getPDFPath().toPath(),
+							StandardCopyOption.COPY_ATTRIBUTES);
+					Files.move(entry.getOldPDFPath().toPath(), entry.getCommentsPath().toPath(),
+							StandardCopyOption.COPY_ATTRIBUTES);
+					//Files.delete(entry.getOldPDFPath().toPath());
+				}
+			} catch (IOException e) {
+				System.err.println("Failed to move " + entry.getOldPDFPath().getName());
+			}
+		}
+		return htmlTitle;
 	}
 
 	private String getHTMLVenue(BibtexEntry entry) {
