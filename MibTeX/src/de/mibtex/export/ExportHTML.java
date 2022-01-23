@@ -232,21 +232,22 @@ public class ExportHTML extends Export {
 			htmlTitle += "</a>";
 		}
 
-		if (entry.getOldPDFPath().exists()) {
-			htmlTitle += " <a href=\"" + entry.getOldRelativePDFPath() + "\">";
-			htmlTitle += "(old)";
-			htmlTitle += "</a>";
-
-			try {
-				if (entry.getPDFPath().getParentFile().exists() && entry.getCommentsPath().getParentFile().exists()
-						&& !entry.getCommentsPath().exists() && !entry.getPDFPath().exists()) {
-					Files.copy(entry.getOldPDFPath().toPath(), entry.getPDFPath().toPath());
-					Files.move(entry.getOldPDFPath().toPath(), entry.getCommentsPath().toPath());
-				}
-			} catch (IOException e) {
-				System.err.println("Failed to move " + entry.getOldPDFPath().getName());
-			}
-		}
+		// moving files into the new structure
+//		if (entry.getOldPDFPath().exists()) {
+//			htmlTitle += " <a href=\"" + entry.getOldRelativePDFPath() + "\">";
+//			htmlTitle += "(old)";
+//			htmlTitle += "</a>";
+//
+//			try {
+//				if (entry.getPDFPath().getParentFile().exists() && entry.getCommentsPath().getParentFile().exists()
+//						&& !entry.getCommentsPath().exists() && !entry.getPDFPath().exists()) {
+//					Files.copy(entry.getOldPDFPath().toPath(), entry.getPDFPath().toPath());
+//					Files.move(entry.getOldPDFPath().toPath(), entry.getCommentsPath().toPath());
+//				}
+//			} catch (IOException e) {
+//				System.err.println("Failed to move " + entry.getOldPDFPath().getName());
+//			}
+//		}
 		return htmlTitle;
 	}
 

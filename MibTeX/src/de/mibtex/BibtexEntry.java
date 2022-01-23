@@ -126,6 +126,7 @@ public class BibtexEntry {
 		return FileUtils.concat(BibtexViewer.PDF_DIR, getPDFFile().toString());
 	}
 
+	@Deprecated
 	public File getOldPDFPath() {
 		String pdf = "";
 		
@@ -157,6 +158,7 @@ public class BibtexEntry {
 		return FileUtils.concat(BibtexViewer.PDF_DIR_REL, getPDFFile().toString()).toString();
 	}
 
+	@Deprecated
 	public String getOldRelativePDFPath() {
 		return getOldPDFPath().getName();
 	}
