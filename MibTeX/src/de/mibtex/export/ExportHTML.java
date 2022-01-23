@@ -213,21 +213,24 @@ public class ExportHTML extends Export {
 		}
 		
 		String htmlTitle = "";
-		if (entry.getCommentsPath().exists()) {
-			htmlTitle += "<a href=\"" + entry.getRelativeCommentsPath() + "\">";
+		if (entry.getPDFPath().exists()) {
+			htmlTitle += "<a href=\"" + entry.getRelativePDFPath() + "\">";
 			htmlTitle += title;
 			htmlTitle += "</a>";
 		} else {
 			htmlTitle += title;
+			htmlTitle += " <a href=\"" + entry.getRelativePDFPath() + "\">";
+			htmlTitle += "(missing)";
+			htmlTitle += "</a>";
+			
+			// TODO add URL
 		}
 
-		htmlTitle += " <a href=\"" + entry.getRelativePDFPath() + "\">";
-		if (entry.getPDFPath().exists()) {
-			htmlTitle += "(pdf)";
-		} else {
-			htmlTitle += "(missing)";
+		if (entry.getCommentsPath().exists()) {
+			htmlTitle += " <a href=\"" + entry.getRelativeCommentsPath() + "\">";
+			htmlTitle += "(comments)";
+			htmlTitle += "</a>";
 		}
-		htmlTitle += "</a>";
 
 		if (entry.getOldPDFPath().exists()) {
 			htmlTitle += " <a href=\"" + entry.getOldRelativePDFPath() + "\">";
@@ -237,11 +240,8 @@ public class ExportHTML extends Export {
 			try {
 				if (entry.getPDFPath().getParentFile().exists() && entry.getCommentsPath().getParentFile().exists()
 						&& !entry.getCommentsPath().exists() && !entry.getPDFPath().exists()) {
-					Files.copy(entry.getOldPDFPath().toPath(), entry.getPDFPath().toPath(),
-							StandardCopyOption.COPY_ATTRIBUTES);
-					Files.move(entry.getOldPDFPath().toPath(), entry.getCommentsPath().toPath(),
-							StandardCopyOption.COPY_ATTRIBUTES);
-					//Files.delete(entry.getOldPDFPath().toPath());
+					Files.copy(entry.getOldPDFPath().toPath(), entry.getPDFPath().toPath());
+					Files.move(entry.getOldPDFPath().toPath(), entry.getCommentsPath().toPath());
 				}
 			} catch (IOException e) {
 				System.err.println("Failed to move " + entry.getOldPDFPath().getName());

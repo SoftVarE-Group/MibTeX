@@ -97,6 +97,8 @@ public class BibtexEntry {
 
 	private String getYearPath() {
 		String folder1 = (year - year % 10) + "s";
+		if (year < 1970) return "0000s";
+		if (year < 1990) return folder1;
 		String folder2 = year + "";
 		String path = FileUtils.concat(folder1, folder2).toString();
 		return path;
