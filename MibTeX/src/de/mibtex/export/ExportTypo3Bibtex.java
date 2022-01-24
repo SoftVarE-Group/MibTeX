@@ -55,8 +55,8 @@ public class ExportTypo3Bibtex extends Export {
 	 * Compose filters with the respective methods of Predicate<T> (such as `and`, `or`).
 	 */
 	private final Predicate<Typo3Entry> bibFilter =
-//            Filters.THESIS_SUPERVISED_BY_SOFTVARE
-            Filters.THESIS_AUTHORED_BY_SOFTVARE
+            Filters.THESIS_SUPERVISED_BY_SOFTVARE // upload to "Abschlussarbeiten"
+//            Filters.THESIS_AUTHORED_BY_SOFTVARE // upload to "Publikationen"
 //            Filters.IS_SOFTVARE_WEBSITE_PAPER.and(Filters.WITH_THOMAS_BEFORE_ULM)
 //            Filters.IS_SOFTVARE_WEBSITE_PAPER.and(Filters.WITH_THOMAS_BEFORE_ULM.negate())
 //			  Filters.BELONGS_TO_SOFTVARE
@@ -77,6 +77,7 @@ public class ExportTypo3Bibtex extends Export {
 			  TAG_IF_THOMAS_IS_EDITOR
 			, TAG_IF_SOFTVARE
 			, MARK_IF_TO_APPEAR
+            , KEEP_URL_IF_PRESENT // use this modifier (at least) when exporting theses for our website
 
             // Website
             , whenKeyIs("AMK+:GPCE16", softVarEURLFile("2016-GPCE-Al-Hajjaji-Demo"))
