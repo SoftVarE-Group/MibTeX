@@ -104,20 +104,38 @@ public class ExportNewHTML extends Export {
     }
 
     private String generateTagLinks(BibtexEntry entry) {
-        StringBuilder HTML = new StringBuilder();
-        HTML.append("<a href=\"\" style=\"color:red;\" onclick=\"setTag('searchTag','").append(entry.key)
-            .append("');event.preventDefault();Filter();\">").append(entry.key).append("</a>, ");
+        StringBuilder html = new StringBuilder();
+		if (entry.getCommentsPath().exists()) {
+			html.append(" <a href=\"");
+			html.append(entry.getRelativeCommentsPath());
+			html.append("\">");
+			html.append(entry.key);
+			html.append("</a>, ");
+		}
+		else {
+			html.append(entry.key).append(", ");
+		}
+		if (!entry.doi.isEmpty()) {
+			html.append("<a href=\"https://dx.doi.org/");
+			html.append(entry.doi);
+			html.append("\">doi</a>, ");
+		}
+		if (!entry.url.isEmpty()) {
+			html.append("<a href=\"");
+			html.append(entry.url);
+			html.append("\">url</a>, ");
+		}
         int i = 0;
         for (List<String> tags : entry.tagList.values()) {
             String prefix = BibtexViewer.TAGS.get(i).replace("tags", "");
             for (int j = 0; j < tags.size(); j++)
-                HTML.append("<a href=\"\" onclick=\"setTag('searchTag','").append(i!=0?prefix:"").append(tags.get(j).trim())
+                html.append("<a href=\"\" onclick=\"setTag('searchTag','").append(i!=0?prefix:"").append(tags.get(j).trim())
                     .append("');event.preventDefault();Filter();\">").append(i!=0?prefix:"").append(tags.get(j)).append("</a>").append((j == tags.size()-1)?"":", ");
-            HTML.append(", ");
+            html.append(", ");
             i += 1;
         }
-        HTML.delete(HTML.lastIndexOf(","), HTML.length());
-        return HTML.toString();
+        html.delete(html.lastIndexOf(","), html.length());
+        return html.toString();
     }
 
     private List<String> generateTagList(BibtexEntry entry) {

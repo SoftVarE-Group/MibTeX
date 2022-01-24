@@ -47,6 +47,9 @@ public class BibtexEntry {
 	public String title = UNKNOWN_ATTRIBUTE;
 	public String venue = UNKNOWN_ATTRIBUTE;
 
+	public String doi = EMPTY_ATTRIBUTE;
+	public String url = EMPTY_ATTRIBUTE;
+
 	public int year = 0;
 
 	public List<String> tags = new ArrayList<>();
@@ -67,6 +70,7 @@ public class BibtexEntry {
 		parseVenue();
 		parseYear();
 		parseTags();
+		parseDOIandURL();
 	}
 
 	public BibtexEntry(String key, String author, String title, String venue, List<String> tags, int year,
@@ -247,6 +251,21 @@ public class BibtexEntry {
 			}
 			try {
 				venue = entry.getField(BibTeXEntry.KEY_JOURNAL).toUserString();
+			} catch (Exception e) {
+			}
+		}
+	}
+
+	void parseDOIandURL() {
+		if (doi.equals(EMPTY_ATTRIBUTE)) {
+			try {
+				doi = entry.getField(BibTeXEntry.KEY_DOI).toUserString();
+			} catch (Exception e) {
+			}
+		}
+		if (url.equals(EMPTY_ATTRIBUTE)) {
+			try {
+				url = entry.getField(BibTeXEntry.KEY_URL).toUserString();
 			} catch (Exception e) {
 			}
 		}

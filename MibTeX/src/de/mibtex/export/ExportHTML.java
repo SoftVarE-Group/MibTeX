@@ -7,8 +7,6 @@
 package de.mibtex.export;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import de.mibtex.BibtexEntry;
@@ -222,15 +220,13 @@ public class ExportHTML extends Export {
 			htmlTitle += " <a href=\"" + entry.getRelativePDFPath() + "\">";
 			htmlTitle += "(missing)";
 			htmlTitle += "</a>";
-			
-			// TODO add URL
 		}
 
-		if (entry.getCommentsPath().exists()) {
-			htmlTitle += " <a href=\"" + entry.getRelativeCommentsPath() + "\">";
-			htmlTitle += "(comments)";
-			htmlTitle += "</a>";
-		}
+//		if (entry.getCommentsPath().exists()) {
+//			htmlTitle += " <a href=\"" + entry.getRelativeCommentsPath() + "\">";
+//			htmlTitle += "(comments)";
+//			htmlTitle += "</a>";
+//		}
 
 		// moving files into the new structure
 //		if (entry.getOldPDFPath().exists()) {
@@ -257,6 +253,9 @@ public class ExportHTML extends Export {
 
 	private String getHTMLTags(BibtexEntry entry) {
 		String s = entry.key + ", ";
+		if (entry.getCommentsPath().exists()) {
+			s = " <a href=\"" + entry.getRelativeCommentsPath() + "\">" + s + "</a>";
+		}
 		for (List<String> tags : entry.tagList.values())
 			for (String tag : tags)
 			s += "<a href=\"" + BibtexEntry.toURL(tag) + ".htm\">" + tag
