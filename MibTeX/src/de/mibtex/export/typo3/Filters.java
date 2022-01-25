@@ -74,6 +74,17 @@ public class Filters {
 	public final static Predicate<Typo3Entry> BELONGS_TO_OBDDIMAL = hasAtLeastOneTagOf(
             "OBDDimal", "OBDDimalTheses");
 
+    public final static Predicate<Typo3Entry> TYPO3DIR_Alte_Publikationen_Thomas_Thuem =
+            WITH_THOMAS_BEFORE_ULM;
+    public final static Predicate<Typo3Entry> TYPO3DIR_Alte_Publikationen_Paul_Bittner =
+            WITH_PAUL_BEFORE_OR_NOT_AT_ULM.and(TYPO3DIR_Alte_Publikationen_Thomas_Thuem.negate());
+    public final static Predicate<Typo3Entry> TYPO3DIR_Publikationen =
+            authorOrEditorIsOneOf(THOMAS_THUEM, CHICO_SUNDERMANN, TOBIAS_HESS, PAUL_MAXIMILIAN_BITTNER)
+                    .and(TYPO3DIR_Alte_Publikationen_Thomas_Thuem.negate())
+                    .and(TYPO3DIR_Alte_Publikationen_Paul_Bittner.negate());
+    public final static Predicate<Typo3Entry> TYPO3DIR_Abschlussarbeiten =
+            THESIS_SUPERVISED_BY_SOFTVARE;
+
     public static Predicate<Typo3Entry> hasAtLeastOneTagOf(final String... tags) {
         return b -> {
             if (b.tags == null) return false;
@@ -87,9 +98,7 @@ public class Filters {
 	 * The predicate returns true iff the entry's key matches one of the given keys.
 	 */
 	public static Predicate<Typo3Entry> keyIsOneOf(String... keys) {
-		return b -> Arrays.asList(keys)
-				.stream()
-				.anyMatch(b.key::equals);
+		return b -> Arrays.asList(keys).contains(b.key);
 	}
 	
 	/**

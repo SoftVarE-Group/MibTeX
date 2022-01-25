@@ -129,35 +129,52 @@ public class ExportTypo3Bibtex extends Export {
 				.map(modifiers.stream().reduce(Function.identity(), Function::compose))
 				.collect(Collectors.toList());
 
-		// Generate the typo3-conforming Bibtex source code.
-		final String typo3 = typo3Entries.stream()
-				.map(Typo3Entry::toString)
-				.reduce("", (a, b) -> a + "\n\n" + b);
-
-		System.out.println(typo3);
-		System.out.println();
-
-		// Check if we have some duplicates left that were not resolved.
-		final int duplicates = Util.getDuplicates(typo3Entries, (a, b) -> {
-			if (a.title.isBlank() && b.title.isBlank()) {
-				System.out.println("  > Found entries without title: " + a.key + ", " + b.key);
-				return;
-			}
-			System.out.println("  > Found unresolved duplicate title: " + a.title + " (" + a.key + ", " + b.key + ")");
-		});
-		final long numUniqueEntries = typo3Entries.size() - duplicates;
-
-		System.out.println("\nExported " + typo3Entries.size() + " entries.");
-		System.out.println("Thereof " + numUniqueEntries + " entries are unique (by title).\n");
-		System.out.flush();
-
-		if (duplicates > 0) {
-			System.err.flush();
-			System.err.println("There were unresolved duplicates that can cause problems when imported with TYPO3!");
-		}
-
-		writeToFileInUTF8(new File(BibtexViewer.OUTPUT_DIR, "typo3.bib"), typo3);
+        exportEntriesThat(Util.filter(typo3Entries, Filters.TYPO3DIR_Publikationen), "typo3_Publikationen.bib");
+        exportEntriesThat(Util.filter(typo3Entries, Filters.TYPO3DIR_Abschlussarbeiten), "typo3_Abschlussarbeiten.bib");
+        exportEntriesThat(Util.filter(typo3Entries, Filters.TYPO3DIR_Alte_Publikationen_Thomas_Thuem), "typo3_Alte_Publikationen_Thomas_Thuem.bib");
+        exportEntriesThat(Util.filter(typo3Entries, Filters.TYPO3DIR_Alte_Publikationen_Paul_Bittner), "typo3_Alte_Publikationen_Paul_Bittner.bib");
 	}
+
+    public static void exportEntriesThat(final List<Typo3Entry> typo3Entries, final String filename) {
+        final File file = new File(BibtexViewer.OUTPUT_DIR, filename);
+
+        // Generate the typo3-conforming Bibtex source code.
+        final String typo3 = typo3Entries.stream()
+                .map(Typo3Entry::toString)
+                .reduce("", (a, b) -> a + "\n\n" + b);
+
+        System.out.println("=== EXPORTING " + file + " ===");
+        if (!typo3.isBlank()) {
+            System.out.println(typo3);
+            System.out.println();
+
+            // Check if we have some duplicates left that were not resolved.
+            final int duplicates = Util.getDuplicates(typo3Entries, (a, b) -> {
+                if (a.title.isBlank() && b.title.isBlank()) {
+                    System.out.println("  > Found entries without title: " + a.key + ", " + b.key);
+                    return;
+                }
+                System.out.println("  > Found unresolved duplicate title: " + a.title + " (" + a.key + ", " + b.key + ")");
+            });
+            final long numUniqueEntries = typo3Entries.size() - duplicates;
+
+            System.out.println("\nExported " + typo3Entries.size() + " entries.");
+            System.out.println("Thereof " + numUniqueEntries + " entries are unique (by title).\n");
+            System.out.flush();
+
+            if (duplicates > 0) {
+                System.err.flush();
+                System.err.println("There were unresolved duplicates that can cause problems when imported with TYPO3!");
+            }
+
+            writeToFileInUTF8(file, typo3);
+            System.out.println();
+        } else {
+            System.out.println("No entries given, nothing to do.");
+        }
+
+        System.out.println("=== DONE ===");
+    }
 
 	private static Map<String, String> readVariablesFromBibtexFile(File pathToBibtex) {
 		final Map<String, String> vars = new HashMap<>();
