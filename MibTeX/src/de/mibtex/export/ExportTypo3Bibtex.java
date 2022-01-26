@@ -129,14 +129,30 @@ public class ExportTypo3Bibtex extends Export {
 				.map(modifiers.stream().reduce(Function.identity(), Function::compose))
 				.collect(Collectors.toList());
 
-        exportEntriesThat(Util.filter(typo3Entries, Filters.TYPO3DIR_Publikationen), "typo3_Publikationen.bib");
-        exportEntriesThat(Util.filter(typo3Entries, Filters.TYPO3DIR_Abschlussarbeiten), "typo3_Abschlussarbeiten.bib");
-        exportEntriesThat(Util.filter(typo3Entries, Filters.TYPO3DIR_Alte_Publikationen_Thomas_Thuem), "typo3_Alte_Publikationen_Thomas_Thuem.bib");
-        exportEntriesThat(Util.filter(typo3Entries, Filters.TYPO3DIR_Alte_Publikationen_Paul_Bittner), "typo3_Alte_Publikationen_Paul_Bittner.bib");
-	}
+        final boolean publications = exportEntriesThat(Util.filter(typo3Entries, Filters.TYPO3DIR_Publikationen), "typo3_Publikationen.bib");
+        final boolean theses = exportEntriesThat(Util.filter(typo3Entries, Filters.TYPO3DIR_Abschlussarbeiten), "typo3_Abschlussarbeiten.bib");
+        final boolean oldTT = exportEntriesThat(Util.filter(typo3Entries, Filters.TYPO3DIR_Alte_Publikationen_Thomas_Thuem), "typo3_Alte_Publikationen_Thomas_Thuem.bib");
+        final boolean oldPB = exportEntriesThat(Util.filter(typo3Entries, Filters.TYPO3DIR_Alte_Publikationen_Paul_Bittner), "typo3_Alte_Publikationen_Paul_Bittner.bib");
 
-    public static void exportEntriesThat(final List<Typo3Entry> typo3Entries, final String filename) {
+        System.out.println();
+        System.out.println("To correctly import your entries to Typo3, you should upload:");
+        if (publications) {
+            System.out.println("  - \"typo3_Publikationen.bib\" to directory \"Publikationen\" in Typo3.");
+        }
+        if (theses) {
+            System.out.println("  - \"typo3_Abschlussarbeiten.bib\" to directory \"Abschlussarbeiten\" in Typo3.");
+        }
+        if (oldTT) {
+            System.out.println("  - \"typo3_Alte_Publikationen_Thomas_Thuem.bib\" to directory \"Alte Publikationen Thomas Thuem\" in Typo3.");
+        }
+        if (oldPB) {
+            System.out.println("  - \"typo3_Alte_Publikationen_Paul_Bittner.bib\" to directory \"Alte Publikationen Paul Bittner\" in Typo3.");
+        }
+    }
+
+    public static boolean exportEntriesThat(final List<Typo3Entry> typo3Entries, final String filename) {
         final File file = new File(BibtexViewer.OUTPUT_DIR, filename);
+        boolean exportedAFile = false;
 
         // Generate the typo3-conforming Bibtex source code.
         final String typo3 = typo3Entries.stream()
@@ -168,12 +184,14 @@ public class ExportTypo3Bibtex extends Export {
             }
 
             writeToFileInUTF8(file, typo3);
+            exportedAFile = true;
             System.out.println();
         } else {
             System.out.println("No entries given, nothing to do.");
         }
 
         System.out.println("=== DONE ===");
+        return exportedAFile;
     }
 
 	private static Map<String, String> readVariablesFromBibtexFile(File pathToBibtex) {
