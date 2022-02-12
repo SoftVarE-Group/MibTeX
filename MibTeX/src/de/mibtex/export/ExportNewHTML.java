@@ -125,14 +125,19 @@ public class ExportNewHTML extends Export {
 			html.append(entry.url);
 			html.append("\">url</a>, ");
 		}
-        int i = 0;
-        for (List<String> tags : entry.tagList.values()) {
-            String prefix = BibtexViewer.TAGS.get(i).replace("tags", "");
-            for (int j = 0; j < tags.size(); j++)
-                html.append("<a href=\"\" onclick=\"setTag('searchTag','").append(i!=0?prefix:"").append(tags.get(j).trim())
-                    .append("');event.preventDefault();Filter();\">").append(i!=0?prefix:"").append(tags.get(j)).append("</a>").append((j == tags.size()-1)?"":", ");
-            html.append(", ");
-            i += 1;
+        for (int i = 0; i < BibtexViewer.TAGS.size(); i++) {
+        	String tag = BibtexViewer.TAGS.get(i);
+        	List<String> tags = entry.tagList.get(tag);
+        	if (tags != null) {
+                String prefix = tag.replace("-tags", ":").replace("Tags", ":");
+                for (int j = 0; j < tags.size(); j++) {
+                    html.append("<a href=\"\" onclick=\"setTag('searchTag','");
+                    html.append(prefix).append(tags.get(j).trim());
+                    html.append("');event.preventDefault();Filter();\">");
+                    html.append(prefix).append(tags.get(j).trim());
+                    html.append("</a>, ");
+                }
+        	}
         }
         html.delete(html.lastIndexOf(","), html.length());
         return html.toString();
