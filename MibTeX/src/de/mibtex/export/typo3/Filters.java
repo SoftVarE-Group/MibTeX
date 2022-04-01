@@ -49,8 +49,15 @@ public class Filters {
 			.and(t -> t.year >= 2020);
 	public final static Predicate<Typo3Entry> WITH_PAUL_BEFORE_OR_NOT_AT_ULM = WITH_PAUL.and(WITH_PAUL_AT_ULM.negate());
 
-    public final static Predicate<Typo3Entry> AUTHORS_BELONGS_TO_SOFTVARE =
+    public final static Predicate<Typo3Entry> AUTHORED_BY_SOFTVARE =
             authorIsOneOf(
+                    THOMAS_THUEM
+                    , CHICO_SUNDERMANN
+                    , TOBIAS_HESS
+                    , PAUL_MAXIMILIAN_BITTNER
+            );
+    public final static Predicate<Typo3Entry> EDITED_BY_SOFTVARE =
+            editorIsOneOf(
                     THOMAS_THUEM
                     , CHICO_SUNDERMANN
                     , TOBIAS_HESS
@@ -62,14 +69,14 @@ public class Filters {
             hasAtLeastOneTagOf("SupervisorTT", "SupervisorTH", "SupervisorPB", "SupervisorCS")
                     // or written by one of us.
                     .or(
-                            IS_MASTERSTHESIS.and(AUTHORS_BELONGS_TO_SOFTVARE)
+                            IS_MASTERSTHESIS.and(AUTHORED_BY_SOFTVARE)
                     );
 
     public final static Predicate<Typo3Entry> IS_SOFTVARE_PUBLICATION =
-            AUTHORS_BELONGS_TO_SOFTVARE.and(THESIS_BY_SOFTVARE.negate());
+            AUTHORED_BY_SOFTVARE.or(EDITED_BY_SOFTVARE).and(THESIS_BY_SOFTVARE.negate());
 
     public final static Predicate<Typo3Entry> THESIS_AUTHORED_BY_SOFTVARE =
-            IS_MASTERSTHESIS.and(AUTHORS_BELONGS_TO_SOFTVARE);
+            IS_MASTERSTHESIS.and(AUTHORED_BY_SOFTVARE);
 	public final static Predicate<Typo3Entry> BELONGS_TO_VARIANTSYNC = hasAtLeastOneTagOf(
             "VariantSyncPub", "VariantSyncPre", "VariantSyncMT");
 	public final static Predicate<Typo3Entry> BELONGS_TO_OBDDIMAL = hasAtLeastOneTagOf(
