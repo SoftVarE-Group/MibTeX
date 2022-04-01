@@ -59,8 +59,7 @@ public class Filters {
 
 	public final static Predicate<Typo3Entry> BELONGS_TO_SOFTVARE =
             AUTHORS_BELONGS_TO_SOFTVARE
-			.and(IS_MASTERSTHESIS.negate())
-			.and(WITH_PAUL_AT_ICG.negate());
+			.and(IS_MASTERSTHESIS.negate());
 
     public final static Predicate<Typo3Entry> IS_SOFTVARE_WEBSITE_PAPER = BELONGS_TO_SOFTVARE.and(IS_MISC.negate());
 
