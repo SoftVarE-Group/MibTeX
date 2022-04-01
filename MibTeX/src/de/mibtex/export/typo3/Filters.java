@@ -57,15 +57,13 @@ public class Filters {
                     , PAUL_MAXIMILIAN_BITTNER
             );
 
-	public final static Predicate<Typo3Entry> BELONGS_TO_SOFTVARE =
+	public final static Predicate<Typo3Entry> IS_SOFTVARE_PUBLICATION =
             AUTHORS_BELONGS_TO_SOFTVARE
 			.and(IS_MASTERSTHESIS.negate());
 
-    public final static Predicate<Typo3Entry> IS_SOFTVARE_WEBSITE_PAPER = BELONGS_TO_SOFTVARE.and(IS_MISC.negate());
-
     public final static Predicate<Typo3Entry> THESIS_SUPERVISED_BY_SOFTVARE =
             hasAtLeastOneTagOf("SupervisorTT", "SupervisorTH", "SupervisorPB", "SupervisorCS")
-                    .and(AUTHORS_BELONGS_TO_SOFTVARE.negate());
+            .and(AUTHORS_BELONGS_TO_SOFTVARE.negate());
     public final static Predicate<Typo3Entry> THESIS_AUTHORED_BY_SOFTVARE =
             IS_MASTERSTHESIS.and(AUTHORS_BELONGS_TO_SOFTVARE);
 	public final static Predicate<Typo3Entry> BELONGS_TO_VARIANTSYNC = hasAtLeastOneTagOf(
@@ -73,16 +71,8 @@ public class Filters {
 	public final static Predicate<Typo3Entry> BELONGS_TO_OBDDIMAL = hasAtLeastOneTagOf(
             "OBDDimal", "OBDDimalTheses");
 
-    public final static Predicate<Typo3Entry> TYPO3DIR_Alte_Publikationen_Thomas_Thuem =
-            WITH_THOMAS_BEFORE_ULM;
-    public final static Predicate<Typo3Entry> TYPO3DIR_Alte_Publikationen_Paul_Bittner =
-            WITH_PAUL_BEFORE_OR_NOT_AT_ULM.and(TYPO3DIR_Alte_Publikationen_Thomas_Thuem.negate());
-    public final static Predicate<Typo3Entry> TYPO3DIR_Publikationen =
-            authorOrEditorIsOneOf(THOMAS_THUEM, CHICO_SUNDERMANN, TOBIAS_HESS, PAUL_MAXIMILIAN_BITTNER)
-                    .and(TYPO3DIR_Alte_Publikationen_Thomas_Thuem.negate())
-                    .and(TYPO3DIR_Alte_Publikationen_Paul_Bittner.negate());
-    public final static Predicate<Typo3Entry> TYPO3DIR_Abschlussarbeiten =
-            THESIS_SUPERVISED_BY_SOFTVARE;
+    public final static Predicate<Typo3Entry> SHOULD_BE_PUT_ON_WEBSITE = IS_SOFTVARE_PUBLICATION.or(THESIS_SUPERVISED_BY_SOFTVARE);
+
 
     public static Predicate<Typo3Entry> hasAtLeastOneTagOf(final String... tags) {
         return b -> {

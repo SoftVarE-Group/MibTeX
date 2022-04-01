@@ -26,7 +26,7 @@ public class Modifiers {
 	public static final Function<Typo3Entry, Typo3Entry> TAG_IF_THOMAS_IS_EDITOR =
 			Util.when(t -> t.editors.contains(Filters.THOMAS_THUEM), TAG_THOMAS_AS_EDITOR);
 	public static final Function<Typo3Entry, Typo3Entry> TAG_IF_SOFTVARE = 
-			Util.when(Filters.BELONGS_TO_SOFTVARE, addTag("SoftVarE"));
+			Util.when(Filters.IS_SOFTVARE_PUBLICATION, addTag("SoftVarE"));
 
 	/** resolve special types of entries **/
 	
@@ -45,7 +45,7 @@ public class Modifiers {
 
 	/** misc **/
 	public static final Function<Typo3Entry, Typo3Entry> ADD_PAPER_LINK_IF_SOFTVARE = 
-			Util.when(Filters.BELONGS_TO_SOFTVARE, setSoftVarEURL());
+			Util.when(Filters.IS_SOFTVARE_PUBLICATION, setSoftVarEURL());
 	public static final Function<Typo3Entry, Typo3Entry> KEEP_URL_IF_PRESENT =
 			sideffect(t -> {
 				final String url = t.source.getAttribute("url");
