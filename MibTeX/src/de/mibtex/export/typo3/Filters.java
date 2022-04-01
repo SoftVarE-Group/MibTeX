@@ -57,13 +57,17 @@ public class Filters {
                     , PAUL_MAXIMILIAN_BITTNER
             );
 
-	public final static Predicate<Typo3Entry> IS_SOFTVARE_PUBLICATION =
-            AUTHORS_BELONGS_TO_SOFTVARE
-			.and(IS_MASTERSTHESIS.negate());
-
-    public final static Predicate<Typo3Entry> THESIS_SUPERVISED_BY_SOFTVARE =
+    public final static Predicate<Typo3Entry> THESIS_BY_SOFTVARE =
+            // Supervised by one of us
             hasAtLeastOneTagOf("SupervisorTT", "SupervisorTH", "SupervisorPB", "SupervisorCS")
-            .and(AUTHORS_BELONGS_TO_SOFTVARE.negate());
+                    // or written by one of us.
+                    .or(
+                            IS_MASTERSTHESIS.and(AUTHORS_BELONGS_TO_SOFTVARE)
+                    );
+
+    public final static Predicate<Typo3Entry> IS_SOFTVARE_PUBLICATION =
+            AUTHORS_BELONGS_TO_SOFTVARE.and(THESIS_BY_SOFTVARE.negate());
+
     public final static Predicate<Typo3Entry> THESIS_AUTHORED_BY_SOFTVARE =
             IS_MASTERSTHESIS.and(AUTHORS_BELONGS_TO_SOFTVARE);
 	public final static Predicate<Typo3Entry> BELONGS_TO_VARIANTSYNC = hasAtLeastOneTagOf(
@@ -71,7 +75,7 @@ public class Filters {
 	public final static Predicate<Typo3Entry> BELONGS_TO_OBDDIMAL = hasAtLeastOneTagOf(
             "OBDDimal", "OBDDimalTheses");
 
-    public final static Predicate<Typo3Entry> SHOULD_BE_PUT_ON_WEBSITE = IS_SOFTVARE_PUBLICATION.or(THESIS_SUPERVISED_BY_SOFTVARE);
+    public final static Predicate<Typo3Entry> SHOULD_BE_PUT_ON_WEBSITE = IS_SOFTVARE_PUBLICATION.or(THESIS_BY_SOFTVARE);
 
 
     public static Predicate<Typo3Entry> hasAtLeastOneTagOf(final String... tags) {

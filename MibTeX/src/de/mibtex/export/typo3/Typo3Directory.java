@@ -10,7 +10,7 @@ public record Typo3Directory(
         Predicate<Typo3Entry> belongsToDirectory
 ) {
     public final static Predicate<Typo3Entry> PublikationenSoftVarE = IS_SOFTVARE_PUBLICATION;
-    public final static Predicate<Typo3Entry> AbschlussarbeitenSoftVarE = THESIS_SUPERVISED_BY_SOFTVARE;
+    public final static Predicate<Typo3Entry> AbschlussarbeitenSoftVarE = THESIS_BY_SOFTVARE;
 
     @Deprecated
     public final static Predicate<Typo3Entry> Alte_Publikationen_Thomas_Thuem =
@@ -25,5 +25,5 @@ public record Typo3Directory(
                     .and(Alte_Publikationen_Paul_Bittner.negate());
     @Deprecated
     public final static Predicate<Typo3Entry> Abschlussarbeiten =
-            THESIS_SUPERVISED_BY_SOFTVARE;
+            THESIS_BY_SOFTVARE;
 }
