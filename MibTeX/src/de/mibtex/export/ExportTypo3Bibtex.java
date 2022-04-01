@@ -7,7 +7,6 @@
 package de.mibtex.export;
 
 import de.mibtex.BibtexViewer;
-import de.mibtex.FileUtils;
 import de.mibtex.export.typo3.Filters;
 import de.mibtex.export.typo3.Typo3Directory;
 import de.mibtex.export.typo3.Typo3Entry;
@@ -146,9 +145,9 @@ public class ExportTypo3Bibtex extends Export {
 				.map(modifiers.stream().reduce(Function.identity(), Function::compose))
 				.collect(Collectors.toList());
 
-        final StringBuilder uploadInstructions = new StringBuilder(FileUtils.LINEBREAK);
+        final StringBuilder uploadInstructions = new StringBuilder(System.lineSeparator());
         uploadInstructions.append("To correctly import your entries to Typo3, you should upload:");
-        uploadInstructions.append(FileUtils.LINEBREAK);
+        uploadInstructions.append(System.lineSeparator());
         for (final Typo3Directory t3dir : typo3Directories) {
             final boolean atLeastOneEntryExported = exportEntriesOfDirectory(typo3Entries, t3dir);
             if (atLeastOneEntryExported) {
@@ -158,7 +157,7 @@ public class ExportTypo3Bibtex extends Export {
                         .append("\" to directory \"")
                         .append(t3dir.directoryNameInTypo3())
                         .append("\" in Typo3.")
-                        .append(FileUtils.LINEBREAK);
+                        .append(System.lineSeparator());
             }
         }
 
@@ -178,9 +177,6 @@ public class ExportTypo3Bibtex extends Export {
 
         System.out.println("=== EXPORTING " + t3dir.generatedFileName() + " ===");
         if (!typo3.isBlank()) {
-//            System.out.println(typo3);
-//            System.out.println();
-
             // Check if we have some duplicates left that were not resolved.
             final int duplicates = Util.getDuplicates(typo3Entries, (a, b) -> {
                 if (a.title.isBlank() && b.title.isBlank()) {
@@ -202,7 +198,6 @@ public class ExportTypo3Bibtex extends Export {
 
             writeToFileInUTF8(file, typo3);
             exportedAFile = true;
-//            System.out.println();
         } else {
             System.out.println("  No entries given, nothing to do.");
         }
