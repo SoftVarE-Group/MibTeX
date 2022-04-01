@@ -6,10 +6,16 @@
  */
 package de.mibtex.export;
 
+import de.mibtex.BibtexViewer;
+import de.mibtex.export.typo3.Filters;
+import de.mibtex.export.typo3.Typo3Directory;
+import de.mibtex.export.typo3.Typo3Entry;
+import de.mibtex.export.typo3.Util;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -18,11 +24,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import de.mibtex.BibtexViewer;
-import de.mibtex.export.typo3.Filters;
-import de.mibtex.export.typo3.Modifiers;
-import de.mibtex.export.typo3.Typo3Entry;
-import de.mibtex.export.typo3.Util;
+import static de.mibtex.export.typo3.Modifiers.*;
 
 /**
  * Exports the bibtex file to bibtex in a carefully adjusted format such that the BibTex-Importer of Typo3 (Website-Framework) can read it correctly.
@@ -30,11 +32,20 @@ import de.mibtex.export.typo3.Util;
  * @author Paul Maximilian Bittner
  */
 public class ExportTypo3Bibtex extends Export {
-	// TODO: Having numbers in Bibtex tags is not conforming the Bibtex standard.
 	public final static String TYPO3_TAGS_ATTRIBUTE = "typo3Tags";
 	private final static String MYABRV = "MYabrv.bib";
 	private final static String MYSHORT = "MYshort.bib";
 	// We do not consider MYfull because it is deprecated.
+
+    private final static Typo3Directory PUBLICATIONS_DIR = new Typo3Directory(
+            "typo3_Publikationen_SoftVarE.bib",
+            "Publikationen SoftVarE",
+            Typo3Directory.PublikationenSoftVarE);
+    private final static Typo3Directory THESES_DIR = new Typo3Directory(
+            "typo3_Abschlussarbeiten_SoftVarE.bib",
+            "Abschlussarbeiten SoftVarE",
+            Typo3Directory.AbschlussarbeitenSoftVarE
+    );
 
 	/**
 	 * Choose the variables file that you want to use to substitute names in the exported bibtex file.
@@ -54,19 +65,14 @@ public class ExportTypo3Bibtex extends Export {
 	 * Compose filters with the respective methods of Predicate<T> (such as `and`, `or`).
 	 */
 	private final Predicate<Typo3Entry> bibFilter =
-			//Filters.ANY,
-			//Filters.keyIsOneOf("Y21", "YWT:SPLC20")
-			//Filters.keyIsOneOf("BST+:ESECFSE21")
-			// Filters.BELONGS_TO_SOFTVARE
-			//Filters.keyIsOneOf("HST:SPLC21")
-			Filters.BELONGS_TO_OBDDIMAL
-			//Filters.WithThomasAtUlm
-			//Filters.Any()
-			//Filters.keyIsOneOf("KTSB:ICSE21")
-			//Filters.WithPaulAtUlm
-			//Filters.WithPaulBeforeOrNotAtUlm
-			//Filters.WithPaul.and(Filters.WithThomasBeforeUlm)
-			//Filters.WITH_CHICO
+            Filters.SHOULD_BE_PUT_ON_WEBSITE
+//            Filters.THESIS_SUPERVISED_BY_SOFTVARE.or(Filters.WITH_PAUL_AT_ICG) // upload to "Abschlussarbeiten"
+//            Filters.THESIS_AUTHORED_BY_SOFTVARE // upload to "Publikationen"
+//            Filters.IS_SOFTVARE_WEBSITE_PAPER.and(Filters.WITH_THOMAS_BEFORE_ULM)
+//            Filters.IS_SOFTVARE_WEBSITE_PAPER.and(Filters.WITH_THOMAS_BEFORE_ULM.negate())
+//			  Filters.BELONGS_TO_SOFTVARE
+//            Filters.BELONGS_TO_OBDDIMAL
+//			  Filters.keyIsOneOf("TCA:SPLC21")
 			;
 
 	/**
@@ -79,27 +85,49 @@ public class ExportTypo3Bibtex extends Export {
 	 * If unsure, leave unchanged.
 	 */
 	private final List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
-			  Modifiers.TAG_IF_THOMAS_IS_EDITOR
-			, Modifiers.TAG_IF_SOFTVARE
-			, Modifiers.MARK_IF_TO_APPEAR
-			, Modifiers.ADD_PAPER_LINK_IF_SOFTVARE
+			  TAG_IF_THOMAS_IS_EDITOR
+			, TAG_IF_SOFTVARE
+			, MARK_IF_TO_APPEAR
+            , KEEP_URL_IF_PRESENT // use this modifier (at least) when exporting theses for our website
+
+            // Website
+            , whenKeyIs("AMK+:GPCE16", softVarEURLFile("2016-GPCE-Al-Hajjaji-Demo"))
+            , whenKeyIs("TLK:SPLC16", softVarEURLFile("2016-SPLC-Thuem-Tutorial"))
+            , whenKeyIs("RLB+:AOSDtool14", softVarEURLFile("2014-AOSD-Rebelo-Demo"))
+            , whenKeyIs("T15", softVarEURLFile("2015-PhD-Thuem"))
+            , whenKeyIs("TSP+:ISRN12", softVarEURLFile("2012-ISRN-Thuem"))
+            , whenKeyIs("SSS+16", softVarEURLFile("2016-WSRE-Schink"))
+            , whenKeyIs("JMJ+19", softVarEURLFile("2019-SPP1593-Jung"))
+            , whenKeyIs("THA+19", softVarEURLFile("2019-SPP1593-Thuem"))
+            , whenKeyIs("TKS:ConfWS18", softVarEURLFile("2018-CONFWS-Thuem"))
+            , whenKeyIs("TB12", CLEAR_URL)
+            , whenKeyIs("MTS+17", CLEAR_URL)
+			, ADD_PAPER_LINK_IF_SOFTVARE
 			
-			// Custom solutions
-			, Modifiers.whenKeyIs("DGT:EMSE21", Modifiers.TAG_THOMAS_AS_EDITOR)
-			, Modifiers.whenKeyIs("Y21", Modifiers.KEEP_URL_IF_PRESENT)
+			// Other custom solutions
+			, whenKeyIs("DGT:EMSE21", SWITCH_AUTHORS_TO_EDITORS)
+			, whenKeyIs("Y21", KEEP_URL_IF_PRESENT)
 
 			// Resolving duplicates
-			, Modifiers.whenKeyIs("Y21", Modifiers.MARK_AS_PHDTHESIS)
-			, Modifiers.whenKeyIs("KJN+:SE21", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
-			, Modifiers.whenKeyIs("RSC+:SE21", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
-			, Modifiers.whenKeyIs("TKK+:SPLC19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
-			, Modifiers.whenKeyIs("KTS+:SE19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
-			, Modifiers.whenKeyIs("KTP+:SE19", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
-			, Modifiers.whenKeyIs("TKL:SPLC18", Modifiers.appendToTitle("(Second Edition)"))
-			, Modifiers.whenKeyIs("KTM+:SE18", Modifiers.MARK_AS_EXTENDED_ABSTRACT)
-			, Modifiers.whenKeyIs("KAT:TR16", Modifiers.MARK_IF_TECHREPORT)
-			, Modifiers.whenKeyIs("useRLB+:AOSD14", Modifiers.MARK_IF_TECHREPORT)
+			, whenKeyIs("Y21", MARK_AS_PHDTHESIS)
+			, whenKeyIs("KJN+:SE21", MARK_AS_EXTENDED_ABSTRACT)
+			, whenKeyIs("RSC+:SE21", MARK_AS_EXTENDED_ABSTRACT)
+			, whenKeyIs("TKK+:SPLC19", MARK_AS_EXTENDED_ABSTRACT)
+			, whenKeyIs("KTS+:SE19", MARK_AS_EXTENDED_ABSTRACT)
+			, whenKeyIs("KTP+:SE19", MARK_AS_EXTENDED_ABSTRACT)
+			, whenKeyIs("TKL:SPLC18", appendToTitle("(Second Edition)"))
+			, whenKeyIs("KTM+:SE18", MARK_AS_EXTENDED_ABSTRACT)
+			, whenKeyIs("KAT:TR16", MARK_IF_TECHREPORT)
+			, whenKeyIs("RLB+:TR13subsumedbyRLB+:AOSD14", MARK_IF_TECHREPORT)
+			, whenKeyIs("Bittner19", MARK_AS_PROJECTTHESIS)
+			, whenKeyIs("Sprey19", MARK_AS_PROJECTTHESIS)
+			, whenKeyIs("PK14", MARK_IF_TECHREPORT)
 			);
+
+    private final List<Typo3Directory> typo3Directories = List.of(
+            PUBLICATIONS_DIR,
+            THESES_DIR
+    );
 
 	public ExportTypo3Bibtex(String path, String file) throws Exception {
 		super(path, file);
@@ -117,34 +145,74 @@ public class ExportTypo3Bibtex extends Export {
 				.map(modifiers.stream().reduce(Function.identity(), Function::compose))
 				.collect(Collectors.toList());
 
-		// Generate the typo3-conforming Bibtex source code.
-		final String typo3 = typo3Entries.stream()
-				.map(Typo3Entry::toString)
-				.reduce("", (a, b) -> a + "\n\n" + b);
+        final StringBuilder uploadInstructions = new StringBuilder(System.lineSeparator());
+        uploadInstructions.append("To correctly import your entries to Typo3, you should upload:");
+        uploadInstructions.append(System.lineSeparator());
+        for (final Typo3Directory t3dir : typo3Directories) {
+            final boolean atLeastOneEntryExported = exportEntriesOfDirectory(typo3Entries, t3dir);
+            if (atLeastOneEntryExported) {
+                uploadInstructions
+                        .append("  - \"")
+                        .append(t3dir.generatedFileName())
+                        .append("\" to directory \"")
+                        .append(t3dir.directoryNameInTypo3())
+                        .append("\" in Typo3.")
+                        .append(System.lineSeparator());
+            }
+        }
 
-		System.out.println(typo3);
-		System.out.println();
+        System.out.println(uploadInstructions);
+    }
 
-		// Check if we have some duplicates left that were not resolved.
-		final int duplicates = Util.getDuplicates(typo3Entries, (a, b) -> System.out.println("  > Found unresolved duplicate: " + a.title));
-		final long numUniqueEntries = typo3Entries.size() - duplicates;
+    public static boolean exportEntriesOfDirectory(List<Typo3Entry> typo3Entries, final Typo3Directory t3dir) {
+        typo3Entries = Util.filter(typo3Entries, t3dir.belongsToDirectory());
 
-		System.out.println("\nExported " + typo3Entries.size() + " entries.");
-		System.out.println("Thereof " + numUniqueEntries + " entries are unique (by title).\n");
-		System.out.flush();
+        final File file = new File(BibtexViewer.OUTPUT_DIR, t3dir.generatedFileName());
+        boolean exportedAFile = false;
 
-		if (duplicates > 0) {
-			System.err.flush();
-			System.err.println("There were unresolved duplicates that can cause problems when imported with TYPO3!");
-		}
+        // Generate the typo3-conforming Bibtex source code.
+        final String typo3 = typo3Entries.stream()
+                .map(Typo3Entry::toString)
+                .reduce("", (a, b) -> a + "\n\n" + b);
 
-		writeToFileInUTF8(new File(BibtexViewer.OUTPUT_DIR, "typo3.bib"), typo3);
-	}
+        System.out.println("=== EXPORTING " + t3dir.generatedFileName() + " ===");
+        if (!typo3.isBlank()) {
+            // Check if we have some duplicates left that were not resolved.
+            final int duplicates = Util.getDuplicates(typo3Entries, (a, b) -> {
+                if (a.title.isBlank() && b.title.isBlank()) {
+                    System.out.println("  > Found entries without title: " + a.key + ", " + b.key);
+                    return;
+                }
+                System.out.println("  > Found unresolved duplicate title: " + a.title + " (" + a.key + ", " + b.key + ")\n");
+            });
+            final long numUniqueEntries = typo3Entries.size() - duplicates;
+
+            System.out.println("  Exported " + typo3Entries.size() + " entries.");
+            System.out.println("  Thereof " + numUniqueEntries + " entries are unique (by title).\n");
+            System.out.flush();
+
+            if (duplicates > 0) {
+                System.err.flush();
+                System.err.println("  There were unresolved duplicates that can cause problems when imported with TYPO3!");
+            }
+
+            writeToFileInUTF8(file, typo3);
+            exportedAFile = true;
+        } else {
+            System.out.println("  No entries given, nothing to do.");
+        }
+
+        System.out.println("=== DONE ===");
+        return exportedAFile;
+    }
 
 	private static Map<String, String> readVariablesFromBibtexFile(File pathToBibtex) {
-		final Map<String, String> vars = new HashMap<String, String>();
+		final Map<String, String> vars = new HashMap<>();
 
-		final BufferedReader file = readFromFile(pathToBibtex, Charset.forName("UTF-8"));
+		final BufferedReader file = readFromFile(pathToBibtex, StandardCharsets.UTF_8);
+		if (file == null) {
+			throw new RuntimeException("Could read file " + pathToBibtex + " for some reason.");
+		}
 		try {
 			while (file.ready()) {
 				String line = file.readLine().trim();

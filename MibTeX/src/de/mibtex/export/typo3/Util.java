@@ -14,6 +14,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -60,7 +61,7 @@ public class Util {
 	 */
 	@SafeVarargs
 	public static <T> boolean anyMatch(Predicate<T> condition, T... elements) {
-		return Arrays.asList(elements).stream().anyMatch(condition);
+		return Arrays.stream(elements).anyMatch(condition);
 	}
 	
 	/**
@@ -102,17 +103,15 @@ public class Util {
 	 * @return
 	 */
 	public static List<String> splitAttributeListString(List<String> tags) {
-		Function<String, Function<List<String>, List<String>>> splitByDivider = div -> l -> {
-			return l.stream().collect(
-					() -> new ArrayList<String>(),
-					(list, kw) -> ((List<String>)list).addAll(
-							Arrays.stream(kw.split(div))
-							.map(String::trim)
-							.collect(Collectors.toList())),
-					(list1, list2) -> list1.addAll(list2));
-		};
+		Function<String, Function<List<String>, List<String>>> splitByDivider =
+                div -> l -> l.stream().collect(
+                        () -> new ArrayList<String>(),
+                        (list, kw) -> Arrays.stream(kw.split(div))
+                                .map(String::trim)
+                                .forEach(list::add),
+                        ArrayList::addAll);
 		
-		return Arrays.asList(",", ";").stream()
+		return Stream.of(",", ";")
 				.map(splitByDivider)
 				.reduce(Function.identity(), Function::compose)
 				.apply(tags);
@@ -141,4 +140,8 @@ public class Util {
 		}
 		return string.length();
 	}
+
+    public static <T> List<T> filter(final List<T> l, final Predicate<T> filter) {
+        return l.stream().filter(filter).collect(Collectors.toList());
+    }
 }
