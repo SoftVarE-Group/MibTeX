@@ -120,7 +120,7 @@ public class ExportTypo3Bibtex extends Export {
 			, whenKeyIs("KTM+:SE18", MARK_AS_EXTENDED_ABSTRACT)
 			, whenKeyIs("KAT:TR16", MARK_IF_TECHREPORT)
 			, whenKeyIs("RLB+:TR13subsumedbyRLB+:AOSD14", MARK_IF_TECHREPORT)
-			, whenKeyIs("B19", MARK_AS_PROJECTTHESIS)
+			, whenKeyIs("Bittner19", MARK_AS_PROJECTTHESIS)
 			, whenKeyIs("Sprey19", MARK_AS_PROJECTTHESIS)
 			, whenKeyIs("PK14", MARK_IF_TECHREPORT)
 			);
