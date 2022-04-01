@@ -6,43 +6,17 @@
  */
 package de.mibtex.export;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
+import de.mibtex.*;
+import de.mibtex.citationservice.CitationEntry;
+import org.jbibtex.*;
+
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.function.Supplier;
-
-import org.jbibtex.BibTeXDatabase;
-import org.jbibtex.BibTeXEntry;
-import org.jbibtex.BibTeXObject;
-import org.jbibtex.BibTeXParser;
-import org.jbibtex.BibTeXString;
-import org.jbibtex.Key;
-import org.jbibtex.ParseException;
-
-import de.mibtex.BibtexEntry;
-import de.mibtex.BibtexFilter;
-import de.mibtex.BibtexViewer;
-import de.mibtex.FileUtils;
-import de.mibtex.Levenshtein;
-import de.mibtex.citationservice.CitationEntry;
 
 /**
  * A abstract class that implements often used methods for the exporters
@@ -357,7 +331,7 @@ public abstract class Export {
     }
     
     protected static void writeToFileInUTF8(File path, String content) {
-		CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
+		CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
 		encoder.onMalformedInput(CodingErrorAction.REPORT);
 		encoder.onUnmappableCharacter(CodingErrorAction.REPORT);
 		writeToFile(path, content, encoder);
