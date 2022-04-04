@@ -22,6 +22,7 @@ public class Filters {
 	public final static String CHICO_SUNDERMANN = "Chico Sundermann";
 	public final static String TOBIAS_HESS = "Tobias Heß";
 	public final static String PAUL_MAXIMILIAN_BITTNER = "Paul Maximilian Bittner";
+    public final static String SEBASTIAN_KRIETER = "Sebastian Krieter";
 	
 	public final static Predicate<Typo3Entry> ANY = b -> true;
 	
@@ -55,6 +56,7 @@ public class Filters {
                     , CHICO_SUNDERMANN
                     , TOBIAS_HESS
                     , PAUL_MAXIMILIAN_BITTNER
+                    , SEBASTIAN_KRIETER
             );
     public final static Predicate<Typo3Entry> EDITED_BY_SOFTVARE =
             editorIsOneOf(
@@ -62,11 +64,12 @@ public class Filters {
                     , CHICO_SUNDERMANN
                     , TOBIAS_HESS
                     , PAUL_MAXIMILIAN_BITTNER
+                    , SEBASTIAN_KRIETER
             );
 
     public final static Predicate<Typo3Entry> THESIS_BY_SOFTVARE =
             // Supervised by one of us
-            hasAtLeastOneTagOf("SupervisorTT", "SupervisorTH", "SupervisorPB", "SupervisorCS")
+            hasAtLeastOneTagOf("SupervisorTT", "SupervisorTH", "SupervisorPB", "SupervisorCS", "SupervisorSK")
                     // or written by one of us.
                     .or(
                             IS_MASTERSTHESIS.and(AUTHORED_BY_SOFTVARE)
