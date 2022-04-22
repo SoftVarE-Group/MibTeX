@@ -84,6 +84,10 @@ public class Filters {
             "VariantSyncPub", "VariantSyncPre", "VariantSyncMT");
 	public final static Predicate<Typo3Entry> BELONGS_TO_OBDDIMAL = hasAtLeastOneTagOf(
             "OBDDimal", "OBDDimalTheses");
+    public final static Predicate<Typo3Entry> BELONGS_TO_UVL = hasAtLeastOneTagOf(
+            "UVL");
+    public final static Predicate<Typo3Entry> BELONGS_TO_FMCOUNTING = hasAtLeastOneTagOf(
+            "FMCounting");
 
     public final static Predicate<Typo3Entry> SHOULD_BE_PUT_ON_WEBSITE = IS_SOFTVARE_PUBLICATION.or(THESIS_BY_SOFTVARE);
 
