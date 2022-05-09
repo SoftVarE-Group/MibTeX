@@ -13,6 +13,8 @@ import org.ini4j.Wini;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -97,7 +99,7 @@ public class BibtexViewer {
                     COMMENTS_DIR = MAIN_DIR + ini.get("options", "comment-dir");
                     COMMENTS_DIR_REL = ini.get("options", "comment-dir-rel");
                     String[] tagArray = ini.get("options", "tags").split(",");
-                    for (String tag : tagArray) TAGS.add(tag);
+                    TAGS.addAll(Arrays.asList(tagArray));
                     cleanOutputDir = ini.get("options", "clean", Boolean.class);
                     updateCitations = ini.get("options", "citationService", Boolean.class);
                     String citationDir = ini.get("options", "citation-dir");
@@ -121,7 +123,7 @@ public class BibtexViewer {
             PDF_DIR_REL = args[3];
             PDF_DIR = MAIN_DIR + args[4];
             String[] tagArray = args[5].split(",");
-            for (String tag : tagArray) TAGS.add(tag);
+            Collections.addAll(TAGS, tagArray);
 
             try {
                 cleanOutputDir = Boolean.getBoolean(args[7]);
@@ -197,7 +199,7 @@ public class BibtexViewer {
                 exporter = new ExportHTML(BibtexViewer.BIBTEX_DIR, "literature.bib");
         }
         if (cleanOutputDir) {
-            exporter.cleanOutputFolder();
+            Export.cleanOutputFolder();
         }
         // exporter.printMissingPDFs();
         // exporter.renameFiles();

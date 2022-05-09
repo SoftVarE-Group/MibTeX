@@ -34,7 +34,7 @@ public class BibtexEntry {
 	public String key = UNKNOWN_ATTRIBUTE;
 
 	public String author = UNKNOWN_ATTRIBUTE;
-	public List<String> authorList = new ArrayList<String>();
+	public List<String> authorList = new ArrayList<>();
 	public boolean authorsAreEditors = false;
 
 	public String title = UNKNOWN_ATTRIBUTE;
@@ -109,8 +109,7 @@ public class BibtexEntry {
 		if (year < 1970) return "0000s";
 		if (year < 1990) return folder1;
 		String folder2 = year + "";
-		String path = FileUtils.concat(folder1, folder2).toString();
-		return path;
+        return FileUtils.concat(folder1, folder2).toString();
 	}
 
 	private File getCommentsFile() {
@@ -374,7 +373,7 @@ public class BibtexEntry {
 	}
 	
 	public static String toURL(String s, Map<String, String> overwrites) {
-		HashMap<String, String> replacements = new HashMap<String, String>(overwrites);
+		HashMap<String, String> replacements = new HashMap<>(overwrites);
 		replacements.putIfAbsent("&auml;", "ae");
 		replacements.putIfAbsent("&ouml;", "oe");
 		replacements.putIfAbsent("&uuml;", "ue");

@@ -10,7 +10,6 @@ import de.mibtex.BibtexEntry;
 import de.mibtex.BibtexFilter;
 import de.mibtex.BibtexViewer;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -38,7 +37,7 @@ public class ExportHTML extends Export {
 		}
 	}
 
-	void writeIndex() throws IOException {
+	void writeIndex() {
 		writeToHTML("index.htm", new BibtexFilter() {
 			@Override
 			public String getTitle() {
@@ -52,7 +51,7 @@ public class ExportHTML extends Export {
 		});
 	}
 
-	void writeAuthors() throws IOException {
+	void writeAuthors() {
 		for (final String author : authors) {
 			writeToHTML(BibtexEntry.toURL(author) + ".htm", new BibtexFilter() {
 				@Override
@@ -68,7 +67,7 @@ public class ExportHTML extends Export {
 		}
 	}
 
-	void writeYears() throws IOException {
+	void writeYears() {
 		for (final int year : years) {
 			writeToHTML(year + ".htm", new BibtexFilter() {
 				@Override
@@ -84,7 +83,7 @@ public class ExportHTML extends Export {
 		}
 	}
 
-	void writeVenues() throws IOException {
+	void writeVenues() {
 		for (final String venue : venues) {
 			writeToHTML(venue + ".htm", new BibtexFilter() {
 				@Override
@@ -100,7 +99,7 @@ public class ExportHTML extends Export {
 		}
 	}
 
-	void writeTags() throws IOException {
+	void writeTags() {
 		for (final String tag : tags) {
 			writeToHTML(BibtexEntry.toURL(tag) + ".htm", new BibtexFilter() {
 				@Override
@@ -110,7 +109,7 @@ public class ExportHTML extends Export {
 
 				@Override
 				public boolean include(BibtexEntry entry) {
-					return entry.tagList.values().contains(tag);
+					return entry.tagList.containsValue(tag);
 				}
 			});
 		}
@@ -257,7 +256,7 @@ public class ExportHTML extends Export {
 		String s = entry.key + ", ";
 		for (List<String> tags : entry.tagList.values())
 			for (String tag : tags)
-			s += "<a href=\"" + BibtexEntry.toURL(tag) + ".htm\">" + tag
+			    s += "<a href=\"" + BibtexEntry.toURL(tag) + ".htm\">" + tag
 					+ "</a>, ";
 		return s.substring(0, s.length() - 2);
 	}
