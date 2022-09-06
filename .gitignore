@@ -5,3 +5,8 @@
 /MibTeX/MibTeX.iml
 /options.ini
 /out
+
+# ignore eclipse files
+/MibTeX/.settings/
+/MibTeX/.classpath
+/MibTeX/.project
