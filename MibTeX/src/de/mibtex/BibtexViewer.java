@@ -176,6 +176,9 @@ public class BibtexViewer {
             case "CITATIONS":
                 exporter = new ExportCitations(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;
+            case "CONFLICTS":
+                exporter = new ExportConflicts(BibtexViewer.BIBTEX_DIR, "literature.bib");
+                break;
             case "CLASSIFICATION":
                 exporter = new ExportClassification(BibtexViewer.BIBTEX_DIR, "literature.bib");
                 break;

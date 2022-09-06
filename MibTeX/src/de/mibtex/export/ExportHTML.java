@@ -6,11 +6,11 @@
  */
 package de.mibtex.export;
 
+import java.util.List;
+
 import de.mibtex.BibtexEntry;
 import de.mibtex.BibtexFilter;
 import de.mibtex.BibtexViewer;
-
-import java.util.List;
 
 /**
  * A class to generate an HTML page for a given BibTeX file.
@@ -219,32 +219,7 @@ public class ExportHTML extends Export {
 			htmlTitle += " <a href=\"" + entry.getRelativePDFPath() + "\">";
 			htmlTitle += "(missing)";
 			htmlTitle += "</a>";
-
-			// TODO add URL
 		}
-
-		if (entry.getCommentsPath().exists()) {
-			htmlTitle += " <a href=\"" + entry.getRelativeCommentsPath() + "\">";
-			htmlTitle += "(comments)";
-			htmlTitle += "</a>";
-		}
-
-		// moving files into the new structure
-//		if (entry.getOldPDFPath().exists()) {
-//			htmlTitle += " <a href=\"" + entry.getOldRelativePDFPath() + "\">";
-//			htmlTitle += "(old)";
-//			htmlTitle += "</a>";
-//
-//			try {
-//				if (entry.getPDFPath().getParentFile().exists() && entry.getCommentsPath().getParentFile().exists()
-//						&& !entry.getCommentsPath().exists() && !entry.getPDFPath().exists()) {
-//					Files.copy(entry.getOldPDFPath().toPath(), entry.getPDFPath().toPath());
-//					Files.move(entry.getOldPDFPath().toPath(), entry.getCommentsPath().toPath());
-//				}
-//			} catch (IOException e) {
-//				System.err.println("Failed to move " + entry.getOldPDFPath().getName());
-//			}
-//		}
 		return htmlTitle;
 	}
 
@@ -254,6 +229,9 @@ public class ExportHTML extends Export {
 
 	private String getHTMLTags(BibtexEntry entry) {
 		String s = entry.key + ", ";
+		if (entry.getCommentsPath().exists()) {
+			s = " <a href=\"" + entry.getRelativeCommentsPath() + "\">" + s + "</a>";
+		}
 		for (List<String> tags : entry.tagList.values())
 			for (String tag : tags)
 			    s += "<a href=\"" + BibtexEntry.toURL(tag) + ".htm\">" + tag

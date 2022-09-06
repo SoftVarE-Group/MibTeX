@@ -53,7 +53,7 @@ public class ExportTypo3Bibtex extends Export {
 	 * @see MYabrv
 	 * @see MYshort
 	 */
-	private final String VariablesFile = MYABRV;
+	final String VariablesFile = MYABRV;
 	
 	/**
 	 * Select the filter you need to export only the publications you are interested in.
@@ -84,7 +84,7 @@ public class ExportTypo3Bibtex extends Export {
 	 * Some modifiers are dedicated to resolving duplicate entries (w.r.t. titles) because Typo3 considers entries with the same title to be the same.
 	 * If unsure, leave unchanged.
 	 */
-	private final List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
+	List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
 			  TAG_IF_THOMAS_IS_EDITOR
 			, TAG_IF_SOFTVARE
 			, MARK_IF_TO_APPEAR
@@ -206,7 +206,7 @@ public class ExportTypo3Bibtex extends Export {
         return exportedAFile;
     }
 
-	private static Map<String, String> readVariablesFromBibtexFile(File pathToBibtex) {
+	static Map<String, String> readVariablesFromBibtexFile(File pathToBibtex) {
 		final Map<String, String> vars = new HashMap<>();
 
 		final BufferedReader file = readFromFile(pathToBibtex, StandardCharsets.UTF_8);
