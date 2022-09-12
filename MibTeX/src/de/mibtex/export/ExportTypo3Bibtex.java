@@ -106,10 +106,10 @@ public class ExportTypo3Bibtex extends Export {
 			
 			// Other custom solutions
 			, whenKeyIs("DGT:EMSE21", SWITCH_AUTHORS_TO_EDITORS)
-			, whenKeyIs("Y21", KEEP_URL_IF_PRESENT)
+			, whenKeyIs("Young21", KEEP_URL_IF_PRESENT)
 
 			// Resolving duplicates
-			, whenKeyIs("Y21", MARK_AS_PHDTHESIS)
+			, whenKeyIs("Young21", MARK_AS_PHDTHESIS)
 			, whenKeyIs("KJN+:SE21", MARK_AS_EXTENDED_ABSTRACT)
 			, whenKeyIs("RSC+:SE21", MARK_AS_EXTENDED_ABSTRACT)
 			, whenKeyIs("TKK+:SPLC19", MARK_AS_EXTENDED_ABSTRACT)
