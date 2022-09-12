@@ -43,9 +43,12 @@ public class Modifiers {
 	public static final Function<Typo3Entry, Typo3Entry> MARK_AS_PROJECTTHESIS =
 			appendToTitle("(Project Thesis)");
 
+	public static Function<Typo3Entry, Typo3Entry> SET_SOFTVARE_URL =
+			sideffect(t -> t.url = t.getPaperUrlInSoftVarERepo());
+
 	/** misc **/
 	public static final Function<Typo3Entry, Typo3Entry> ADD_PAPER_LINK_IF_SOFTVARE = 
-			Util.when(Filters.IS_SOFTVARE_PUBLICATION, setSoftVarEURL());
+			Util.when(Filters.IS_SOFTVARE_PUBLICATION, SET_SOFTVARE_URL);
 	public static final Function<Typo3Entry, Typo3Entry> KEEP_URL_IF_PRESENT =
 			sideffect(t -> {
 				final String url = t.source.getAttribute("url");
@@ -78,10 +81,6 @@ public class Modifiers {
 	
 	public static Function<Typo3Entry, Typo3Entry> addTag(String tag) {
 		return sideffect(t -> t.tags.add(tag));
-	}
-	
-	public static Function<Typo3Entry, Typo3Entry> setSoftVarEURL() {
-		return sideffect(t -> t.url = t.getPaperUrlInSoftVarERepo());
 	}
 
     public static Function<Typo3Entry, Typo3Entry> softVarEURLFile(final String pdfName) {

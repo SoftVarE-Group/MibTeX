@@ -88,7 +88,6 @@ public class ExportTypo3Bibtex extends Export {
 			  TAG_IF_THOMAS_IS_EDITOR
 			, TAG_IF_SOFTVARE
 			, MARK_IF_TO_APPEAR
-            , KEEP_URL_IF_PRESENT // use this modifier (at least) when exporting theses for our website
 
             // Website
             , whenKeyIs("AMK+:GPCE16", softVarEURLFile("2016-GPCE-Al-Hajjaji-Demo"))
@@ -102,7 +101,10 @@ public class ExportTypo3Bibtex extends Export {
             , whenKeyIs("TKS:ConfWS18", softVarEURLFile("2018-CONFWS-Thuem"))
             , whenKeyIs("TB12", CLEAR_URL)
             , whenKeyIs("MTS+17", CLEAR_URL)
-			, ADD_PAPER_LINK_IF_SOFTVARE
+			, Util.when(Filters.PREPRINT_EXISTS_IN_PDF_DIR_REL,
+					ADD_PAPER_LINK_IF_SOFTVARE,
+					KEEP_URL_IF_PRESENT
+			)
 			
 			// Other custom solutions
 			, whenKeyIs("DGT:EMSE21", SWITCH_AUTHORS_TO_EDITORS)
