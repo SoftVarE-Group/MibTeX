@@ -93,7 +93,7 @@ public class ExportTypo3Bibtex extends Export {
             , whenKeyIs("AMK+:GPCE16", softVarEURLFile("2016-GPCE-Al-Hajjaji-Demo"))
             , whenKeyIs("TLK:SPLC16", softVarEURLFile("2016-SPLC-Thuem-Tutorial"))
             , whenKeyIs("RLB+:AOSDtool14", softVarEURLFile("2014-AOSD-Rebelo-Demo"))
-            , whenKeyIs("T15", softVarEURLFile("2015-PhD-Thuem"))
+            , whenKeyIs("Thuem15", softVarEURLFile("2015-PhD-Thuem"))
             , whenKeyIs("TSP+:ISRN12", softVarEURLFile("2012-ISRN-Thuem"))
             , whenKeyIs("SSS+16", softVarEURLFile("2016-WSRE-Schink"))
             , whenKeyIs("JMJ+19", softVarEURLFile("2019-SPP1593-Jung"))
