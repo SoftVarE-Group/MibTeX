@@ -4,7 +4,7 @@
  * 
  * https://github.com/tthuem/MibTeX
  */
-package de.mibtex.clean;
+package de.mibtex;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

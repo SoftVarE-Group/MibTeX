@@ -7,7 +7,10 @@
 package de.mibtex.export.typo3;
 
 import de.mibtex.BibtexEntry;
+import de.mibtex.BibtexViewer;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
@@ -91,6 +94,12 @@ public class Filters {
 
     public final static Predicate<Typo3Entry> SHOULD_BE_PUT_ON_WEBSITE = IS_SOFTVARE_PUBLICATION.or(THESIS_BY_SOFTVARE);
 
+	/**
+	 * The predicate returns true if the preprint for the given entry exists in our SoftVarE/Papers repository.
+	 * This predicate expects a local clone of the repository to be located at {@link BibtexViewer#PDF_DIR_REL}.
+	 */
+	public final static Predicate<Typo3Entry> PREPRINT_EXISTS_IN_PDF_DIR_REL = t ->
+			Files.exists(Path.of(t.getPaperUrlInRepo(BibtexViewer.PDF_DIR_REL)));
 
     public static Predicate<Typo3Entry> hasAtLeastOneTagOf(final String... tags) {
         return b -> {

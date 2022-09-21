@@ -88,13 +88,12 @@ public class ExportTypo3Bibtex extends Export {
 			  TAG_IF_THOMAS_IS_EDITOR
 			, TAG_IF_SOFTVARE
 			, MARK_IF_TO_APPEAR
-            , KEEP_URL_IF_PRESENT // use this modifier (at least) when exporting theses for our website
 
             // Website
             , whenKeyIs("AMK+:GPCE16", softVarEURLFile("2016-GPCE-Al-Hajjaji-Demo"))
             , whenKeyIs("TLK:SPLC16", softVarEURLFile("2016-SPLC-Thuem-Tutorial"))
             , whenKeyIs("RLB+:AOSDtool14", softVarEURLFile("2014-AOSD-Rebelo-Demo"))
-            , whenKeyIs("T15", softVarEURLFile("2015-PhD-Thuem"))
+            , whenKeyIs("Thuem15", softVarEURLFile("2015-PhD-Thuem"))
             , whenKeyIs("TSP+:ISRN12", softVarEURLFile("2012-ISRN-Thuem"))
             , whenKeyIs("SSS+16", softVarEURLFile("2016-WSRE-Schink"))
             , whenKeyIs("JMJ+19", softVarEURLFile("2019-SPP1593-Jung"))
@@ -102,14 +101,17 @@ public class ExportTypo3Bibtex extends Export {
             , whenKeyIs("TKS:ConfWS18", softVarEURLFile("2018-CONFWS-Thuem"))
             , whenKeyIs("TB12", CLEAR_URL)
             , whenKeyIs("MTS+17", CLEAR_URL)
-			, ADD_PAPER_LINK_IF_SOFTVARE
+			, Util.when(Filters.PREPRINT_EXISTS_IN_PDF_DIR_REL,
+					ADD_PAPER_LINK_IF_SOFTVARE,
+					KEEP_URL_IF_PRESENT
+			)
 			
 			// Other custom solutions
 			, whenKeyIs("DGT:EMSE21", SWITCH_AUTHORS_TO_EDITORS)
-			, whenKeyIs("Y21", KEEP_URL_IF_PRESENT)
+			, whenKeyIs("Young21", KEEP_URL_IF_PRESENT)
 
 			// Resolving duplicates
-			, whenKeyIs("Y21", MARK_AS_PHDTHESIS)
+			, whenKeyIs("Young21", MARK_AS_PHDTHESIS)
 			, whenKeyIs("KJN+:SE21", MARK_AS_EXTENDED_ABSTRACT)
 			, whenKeyIs("RSC+:SE21", MARK_AS_EXTENDED_ABSTRACT)
 			, whenKeyIs("TKK+:SPLC19", MARK_AS_EXTENDED_ABSTRACT)

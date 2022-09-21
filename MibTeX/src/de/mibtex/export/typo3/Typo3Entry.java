@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  *
  */
 public class Typo3Entry implements Comparable<Typo3Entry> {
-	private static final String SOFTVARE_PAPER_REPO_URL = "https://github.com/SoftVarE-Group/Papers/raw/master/";
+	private static final String SOFTVARE_PAPER_REPO_URL = "https://github.com/SoftVarE-Group/Papers/raw/main/";
 	private static final Map<String, String> TO_URL_OVERWRITES = new HashMap<>();
 	static {
 		TO_URL_OVERWRITES.put("&auml;", "ä");
@@ -146,35 +146,46 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 	}
 	
 	public String getPaperUrlInSoftVarERepo() {
+		return getPaperUrlInRepo(SOFTVARE_PAPER_REPO_URL);
+	}
+
+	public String getPaperUrlInRepo(final String reponame) {
 		final String venue = makeTypo3Safe(shortVenue);
-		
+
 		final StringBuilder pdfname = new StringBuilder();
-        pdfname.append(year);
-        if (Filters.IS_TECHREPORT.test(this)) {
-            pdfname.append("-");
-            pdfname.append("TR");
-        } else if (!venue.isEmpty()) {
-            pdfname.append("-");
-            pdfname.append(venue);
+		pdfname.append(year);
+		if (Filters.IS_TECHREPORT.test(this)) {
+			pdfname.append("-");
+			pdfname.append("TR");
+		} else if (!venue.isEmpty()) {
+			pdfname.append("-");
+			pdfname.append(venue);
 		}
-        else if (publisherVarname.equals("GI")) {
-            pdfname.append("-");
-            pdfname.append(publisherVarname);
-        }
-        pdfname.append("-");
-        pdfname.append(BibtexEntry.toURL(this.source.getLastnameOfFirstAuthor()));
-		return getPaperUrlInSoftVarERepo(year, pdfname.toString());
+		else if (publisherVarname.equals("GI")) {
+			pdfname.append("-");
+			pdfname.append(publisherVarname);
+		}
+		pdfname.append("-");
+		pdfname.append(BibtexEntry.toURL(this.source.getLastnameOfFirstAuthor()));
+		return getPaperUrlInRepo(reponame, year, pdfname.toString());
 	}
 
     public static String getPaperUrlInSoftVarERepo(int year, final String pdfname) {
-        final StringBuilder b = new StringBuilder();
-        b.append(SOFTVARE_PAPER_REPO_URL);
-        b.append(year);
-        b.append("/");
-        b.append(pdfname);
-        b.append(".pdf");
-        return b.toString();
+        return getPaperUrlInRepo(SOFTVARE_PAPER_REPO_URL, year, pdfname);
     }
+
+	public static String getPaperUrlInRepo(String reponame, int year, final String pdfname) {
+		final StringBuilder b = new StringBuilder();
+		b.append(reponame);
+		if (!reponame.endsWith("/") && !reponame.endsWith("\\")) {
+			b.append("/");
+		}
+		b.append(year);
+		b.append("/");
+		b.append(pdfname);
+		b.append(".pdf");
+		return b.toString();
+	}
 	
 	private String genAuthorList() {
 		List<String> persons;

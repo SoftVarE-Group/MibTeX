@@ -1,4 +1,4 @@
-package de.mibtex.clean;
+package de.mibtex;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,11 +16,12 @@ import java.util.List;
  * 
  */
 public class BibtexCleaner {
+	private static final String DOI = "doi";
 	private static List<String> attributesToRemove;
 
 	public static void main(String[] args) {
 		attributesToRemove = Arrays.asList(
-				  "doi",
+				  DOI,
 				  "issn",
 				  "isbn",
 				  "url",
@@ -30,18 +31,19 @@ public class BibtexCleaner {
 				);
 		
 		File file = new File(args[0]);
-		processBibtexFile(file);
-	}
 
-	public static void processDirectory(File dir) {
-		for (File file : dir.listFiles()) {
-			if (file.getName().endsWith(".bib"))
-				processBibtexFile(file);
+		String suffix = "-cleaned";
+
+		if (!attributesToRemove.contains(DOI)) {
+			suffix += "-withdois";
 		}
+
+		System.out.println("Cleaning " + file + " to " + suffix);
+		processBibtexFile(file, suffix);
 	}
 
-	public static void processBibtexFile(File file) {
-		String filename = file.getAbsolutePath().replaceAll("[.]bib$", "-cleaned.bib");
+	public static void processBibtexFile(File file, String suffix) {
+		String filename = file.getAbsolutePath().replaceAll("[.]bib$", suffix + ".bib");
 		File newFile = new File(filename);
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(file));
