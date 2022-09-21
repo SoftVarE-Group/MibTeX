@@ -21,7 +21,7 @@ public class BibtexCleaner {
 
 	public static void main(String[] args) {
 		attributesToRemove = Arrays.asList(
-//				  DOI,
+				  DOI,
 				  "issn",
 				  "isbn",
 				  "url",
