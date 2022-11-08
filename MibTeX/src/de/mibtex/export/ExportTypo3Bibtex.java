@@ -99,16 +99,16 @@ public class ExportTypo3Bibtex extends Export {
             , whenKeyIs("JMJ+19", softVarEURLFile("2019-SPP1593-Jung"))
             , whenKeyIs("THA+19", softVarEURLFile("2019-SPP1593-Thuem"))
             , whenKeyIs("TKS:ConfWS18", softVarEURLFile("2018-CONFWS-Thuem"))
+            , whenKeyIs("DGT:EMSE21", softVarEURLFile("2021-EMSE-Duchien"))
             , whenKeyIs("TB12", CLEAR_URL)
             , whenKeyIs("MTS+17", CLEAR_URL)
-			, Util.when(Filters.PREPRINT_EXISTS_IN_PDF_DIR_REL,
-					ADD_PAPER_LINK_IF_SOFTVARE,
-					KEEP_URL_IF_PRESENT
-			)
-			
-			// Other custom solutions
-			, whenKeyIs("DGT:EMSE21", SWITCH_AUTHORS_TO_EDITORS)
-			, whenKeyIs("Young21", KEEP_URL_IF_PRESENT)
+            , Util.when(Filters.PREPRINT_EXISTS_IN_PDF_DIR_REL,
+                    ADD_PAPER_LINK_IF_SOFTVARE,
+                    KEEP_URL_IF_PRESENT
+            )
+
+            // Other custom solutions
+            , whenKeyIs("Young21", KEEP_URL_IF_PRESENT)
 
 			// Resolving duplicates
 			, whenKeyIs("Young21", MARK_AS_PHDTHESIS)
