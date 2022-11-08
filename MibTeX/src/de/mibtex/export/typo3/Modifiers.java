@@ -97,4 +97,11 @@ public class Modifiers {
             return t;
         };
     }
+
+    public static Function<Typo3Entry, Typo3Entry> setEntryType(final org.jbibtex.Key type) {
+        return t -> {
+            t.type = type.getValue();
+            return t;
+        };
+    }
 }
