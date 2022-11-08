@@ -1,7 +1,7 @@
 /* MibTeX - Minimalistic tool to manage your references with BibTeX
- * 
+ *
  * Distributed under BSD 3-Clause License, available at Github
- * 
+ *
  * https://github.com/tthuem/MibTeX
  */
 package de.mibtex.export;
@@ -32,10 +32,10 @@ import static de.mibtex.export.typo3.Modifiers.*;
  * @author Paul Maximilian Bittner
  */
 public class ExportTypo3Bibtex extends Export {
-	public final static String TYPO3_TAGS_ATTRIBUTE = "typo3Tags";
-	private final static String MYABRV = "MYabrv.bib";
-	private final static String MYSHORT = "MYshort.bib";
-	// We do not consider MYfull because it is deprecated.
+    public final static String TYPO3_TAGS_ATTRIBUTE = "typo3Tags";
+    private final static String MYABRV = "MYabrv.bib";
+    private final static String MYSHORT = "MYshort.bib";
+    // We do not consider MYfull because it is deprecated.
 
     private final static Typo3Directory PUBLICATIONS_DIR = new Typo3Directory(
             "typo3_Publikationen_SoftVarE.bib",
@@ -47,25 +47,25 @@ public class ExportTypo3Bibtex extends Export {
             Typo3Directory.AbschlussarbeitenSoftVarE
     );
 
-	/**
-	 * Choose the variables file that you want to use to substitute names in the exported bibtex file.
-	 * Choose from
-	 * @see MYabrv
-	 * @see MYshort
-	 */
-	final String VariablesFile = MYABRV;
-	
-	/**
-	 * Select the filter you need to export only the publications you are interested in.
-	 * A Typo3Entry t gets selected if bibFilter.test(t) returns 'true'.
-	 * You may use or compose default filters and helper functions from de.mibtex.export.typo3.Filters.
-	 * For instance, if you want to select a subset of specific publications manually, use
-	 *     Filters.KeyIsOneOf("Key1", "Key2", ...)
-	 * to select all publications with these keys.
-	 * Compose filters with the respective methods of Predicate<T> (such as `and`, `or`).
-	 */
-	private final Predicate<Typo3Entry> bibFilter =
-            Filters.SHOULD_BE_PUT_ON_WEBSITE
+    /**
+     * Choose the variables file that you want to use to substitute names in the exported bibtex file.
+     * Choose from
+     * @see MYabrv
+     * @see MYshort
+     */
+    final String VariablesFile = MYABRV;
+
+    /**
+     * Select the filter you need to export only the publications you are interested in.
+     * A Typo3Entry t gets selected if bibFilter.test(t) returns 'true'.
+     * You may use or compose default filters and helper functions from de.mibtex.export.typo3.Filters.
+     * For instance, if you want to select a subset of specific publications manually, use
+     *     Filters.KeyIsOneOf("Key1", "Key2", ...)
+     * to select all publications with these keys.
+     * Compose filters with the respective methods of Predicate<T> (such as `and`, `or`).
+     */
+    private final Predicate<Typo3Entry> bibFilter =
+            Filters.SHOULD_BE_PUT_ON_WEBSITE//.and(Filters.keyIsOneOf("DGT:EMSE21"));
 //            Filters.THESIS_SUPERVISED_BY_SOFTVARE.or(Filters.WITH_PAUL_AT_ICG) // upload to "Abschlussarbeiten"
 //            Filters.THESIS_AUTHORED_BY_SOFTVARE // upload to "Publikationen"
 //            Filters.IS_SOFTVARE_WEBSITE_PAPER.and(Filters.WITH_THOMAS_BEFORE_ULM)
@@ -73,21 +73,21 @@ public class ExportTypo3Bibtex extends Export {
 //			  Filters.BELONGS_TO_SOFTVARE
 //            Filters.BELONGS_TO_OBDDIMAL
 //			  Filters.keyIsOneOf("TCA:SPLC21")
-			;
+            ;
 
-	/**
-	 * Select the modifiers you want to apply to each entry after filtering.
-	 * Each modifier is a function taking a Typo3Entry and returning the modified Typo3Entry.
-	 * Default implementations can be found in de.mibtex.export.typo3.Modifiers.
-	 * For instance, Modifiers.MarkIfThomasIsEditor checks if Thomas Thüm is an editor of the entry and if so,
-	 * adds a specific tag to the publication that we use for the website.
-	 * Some modifiers are dedicated to resolving duplicate entries (w.r.t. titles) because Typo3 considers entries with the same title to be the same.
-	 * If unsure, leave unchanged.
-	 */
-	List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
-			  TAG_IF_THOMAS_IS_EDITOR
-			, TAG_IF_SOFTVARE
-			, MARK_IF_TO_APPEAR
+    /**
+     * Select the modifiers you want to apply to each entry after filtering.
+     * Each modifier is a function taking a Typo3Entry and returning the modified Typo3Entry.
+     * Default implementations can be found in de.mibtex.export.typo3.Modifiers.
+     * For instance, Modifiers.MarkIfThomasIsEditor checks if Thomas Thüm is an editor of the entry and if so,
+     * adds a specific tag to the publication that we use for the website.
+     * Some modifiers are dedicated to resolving duplicate entries (w.r.t. titles) because Typo3 considers entries with the same title to be the same.
+     * If unsure, leave unchanged.
+     */
+    List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
+              TAG_IF_THOMAS_IS_EDITOR
+            , TAG_IF_SOFTVARE
+            , MARK_IF_TO_APPEAR
 
             // Website
             , whenKeyIs("AMK+:GPCE16", softVarEURLFile("2016-GPCE-Al-Hajjaji-Demo"))
@@ -110,42 +110,43 @@ public class ExportTypo3Bibtex extends Export {
             // Other custom solutions
             , whenKeyIs("Young21", KEEP_URL_IF_PRESENT)
 
-			// Resolving duplicates
-			, whenKeyIs("Young21", MARK_AS_PHDTHESIS)
-			, whenKeyIs("KJN+:SE21", MARK_AS_EXTENDED_ABSTRACT)
-			, whenKeyIs("RSC+:SE21", MARK_AS_EXTENDED_ABSTRACT)
-			, whenKeyIs("TKK+:SPLC19", MARK_AS_EXTENDED_ABSTRACT)
-			, whenKeyIs("KTS+:SE19", MARK_AS_EXTENDED_ABSTRACT)
-			, whenKeyIs("KTP+:SE19", MARK_AS_EXTENDED_ABSTRACT)
-			, whenKeyIs("TKL:SPLC18", appendToTitle("(Second Edition)"))
-			, whenKeyIs("KTM+:SE18", MARK_AS_EXTENDED_ABSTRACT)
-			, whenKeyIs("KAT:TR16", MARK_IF_TECHREPORT)
-			, whenKeyIs("RLB+:TR13subsumedbyRLB+:AOSD14", MARK_IF_TECHREPORT)
-			, whenKeyIs("Bittner19", MARK_AS_PROJECTTHESIS)
-			, whenKeyIs("Sprey19", MARK_AS_PROJECTTHESIS)
-			, whenKeyIs("PK14", MARK_IF_TECHREPORT)
-			);
+            // Resolving duplicates
+            , whenKeyIs("SHN+:EMSE23", appendToTitle("(Journal Extension)"))
+            , whenKeyIs("Young21", MARK_AS_PHDTHESIS)
+            , whenKeyIs("KJN+:SE21", MARK_AS_EXTENDED_ABSTRACT)
+            , whenKeyIs("RSC+:SE21", MARK_AS_EXTENDED_ABSTRACT)
+            , whenKeyIs("TKK+:SPLC19", MARK_AS_EXTENDED_ABSTRACT)
+            , whenKeyIs("KTS+:SE19", MARK_AS_EXTENDED_ABSTRACT)
+            , whenKeyIs("KTP+:SE19", MARK_AS_EXTENDED_ABSTRACT)
+            , whenKeyIs("TKL:SPLC18", appendToTitle("(Second Edition)"))
+            , whenKeyIs("KTM+:SE18", MARK_AS_EXTENDED_ABSTRACT)
+            , whenKeyIs("KAT:TR16", MARK_IF_TECHREPORT)
+            , whenKeyIs("RLB+:TR13subsumedbyRLB+:AOSD14", MARK_IF_TECHREPORT)
+            , whenKeyIs("Bittner19", MARK_AS_PROJECTTHESIS)
+            , whenKeyIs("Sprey19", MARK_AS_PROJECTTHESIS)
+            , whenKeyIs("PK14", MARK_IF_TECHREPORT)
+    );
 
     private final List<Typo3Directory> typo3Directories = List.of(
             PUBLICATIONS_DIR,
             THESES_DIR
     );
 
-	public ExportTypo3Bibtex(String path, String file) throws Exception {
-		super(path, file);
-	}
+    public ExportTypo3Bibtex(String path, String file) throws Exception {
+        super(path, file);
+    }
 
-	@Override
-	public void writeDocument() {
-		// Parse the variables defined in MYabrv.bib
-		final Map<String, String> variables = readVariablesFromBibtexFile(new File(BibtexViewer.BIBTEX_DIR, VariablesFile));
+    @Override
+    public void writeDocument() {
+        // Parse the variables defined in MYabrv.bib
+        final Map<String, String> variables = readVariablesFromBibtexFile(new File(BibtexViewer.BIBTEX_DIR, VariablesFile));
 
-		// Transform all Bibtex-Entries to Typo3Entries, filter them and apply all modifiers.
-		final List<Typo3Entry> typo3Entries = entries.values().stream()
-				.map(b -> new Typo3Entry(b, variables))
-				.filter(bibFilter)
-				.map(modifiers.stream().reduce(Function.identity(), Function::compose))
-				.collect(Collectors.toList());
+        // Transform all Bibtex-Entries to Typo3Entries, filter them and apply all modifiers.
+        final List<Typo3Entry> typo3Entries = entries.values().stream()
+                .map(b -> new Typo3Entry(b, variables))
+                .filter(bibFilter)
+                .map(modifiers.stream().reduce(Function.identity(), Function::compose))
+                .collect(Collectors.toList());
 
         final StringBuilder uploadInstructions = new StringBuilder(System.lineSeparator());
         uploadInstructions.append("To correctly import your entries to Typo3, you should upload:");
@@ -208,39 +209,39 @@ public class ExportTypo3Bibtex extends Export {
         return exportedAFile;
     }
 
-	static Map<String, String> readVariablesFromBibtexFile(File pathToBibtex) {
-		final Map<String, String> vars = new HashMap<>();
+    static Map<String, String> readVariablesFromBibtexFile(File pathToBibtex) {
+        final Map<String, String> vars = new HashMap<>();
 
-		final BufferedReader file = readFromFile(pathToBibtex, StandardCharsets.UTF_8);
-		if (file == null) {
-			throw new RuntimeException("Could read file " + pathToBibtex + " for some reason.");
-		}
-		try {
-			while (file.ready()) {
-				String line = file.readLine().trim();
-				if (line.startsWith("@String")) {
-					line = line.substring(line.indexOf("{") + 1);
-					String[] words = line.substring(0, line.lastIndexOf("}")).split("=");
-					if (words.length == 2) {
-						String var = words[0].trim().toUpperCase();
-						// Remove apostrophes ("") at the beginning and end.
-						String val = words[1].trim().substring(1, words[1].length() - 2);
-						vars.put(var, val);
-						//System.out.println("[ExportTypo3Bibtex.readVariablesFromBibtexFile] " + var + " -> " + val);
-					}
-				}
-			}
-			file.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				file.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+        final BufferedReader file = readFromFile(pathToBibtex, StandardCharsets.UTF_8);
+        if (file == null) {
+            throw new RuntimeException("Could read file " + pathToBibtex + " for some reason.");
+        }
+        try {
+            while (file.ready()) {
+                String line = file.readLine().trim();
+                if (line.startsWith("@String")) {
+                    line = line.substring(line.indexOf("{") + 1);
+                    String[] words = line.substring(0, line.lastIndexOf("}")).split("=");
+                    if (words.length == 2) {
+                        String var = words[0].trim().toUpperCase();
+                        // Remove apostrophes ("") at the beginning and end.
+                        String val = words[1].trim().substring(1, words[1].length() - 2);
+                        vars.put(var, val);
+                        //System.out.println("[ExportTypo3Bibtex.readVariablesFromBibtexFile] " + var + " -> " + val);
+                    }
+                }
+            }
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                file.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-		return vars;
-	}
+        return vars;
+    }
 }
