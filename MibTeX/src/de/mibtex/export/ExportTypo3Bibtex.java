@@ -111,7 +111,6 @@ public class ExportTypo3Bibtex extends Export {
             , whenKeyIs("Young21", KEEP_URL_IF_PRESENT)
 
             // Resolving duplicates
-            , whenKeyIs("SHN+:EMSE23", appendToTitle("(Journal Extension)"))
             , whenKeyIs("Young21", MARK_AS_PHDTHESIS)
             , whenKeyIs("KJN+:SE21", MARK_AS_EXTENDED_ABSTRACT)
             , whenKeyIs("RSC+:SE21", MARK_AS_EXTENDED_ABSTRACT)
