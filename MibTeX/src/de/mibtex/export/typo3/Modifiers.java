@@ -87,6 +87,10 @@ public class Modifiers {
         return sideffect(t -> t.url = Typo3Entry.getPaperUrlInSoftVarERepo(t.year, pdfName));
     }
 
+    public static Function<Typo3Entry, Typo3Entry> setURL(final String url) {
+        return sideffect(t -> t.url = url);
+    }
+
     public static Function<Typo3Entry, Typo3Entry> whenKeyIs(String key, Function<Typo3Entry, Typo3Entry> f) {
         return Util.when(t -> t.key.equals(key), f);
     }
