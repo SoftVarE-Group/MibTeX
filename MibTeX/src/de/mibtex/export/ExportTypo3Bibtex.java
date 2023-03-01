@@ -89,7 +89,9 @@ public class ExportTypo3Bibtex extends Export {
             , TAG_IF_SOFTVARE
             , MARK_IF_TO_APPEAR
 
-            // Website
+            // Custom Links to Preprints
+            , whenKeyIs("KKS+:SE23", softVarEURLFile("2023-SE-Kuiter-Tseitin"))
+            , whenKeyIs("KKK+:SE23", softVarEURLFile("2023-SE-Kuiter-variED"))
             , whenKeyIs("AMK+:GPCE16", softVarEURLFile("2016-GPCE-Al-Hajjaji-Demo"))
             , whenKeyIs("TLK:SPLC16", softVarEURLFile("2016-SPLC-Thuem-Tutorial"))
             , whenKeyIs("RLB+:AOSDtool14", softVarEURLFile("2014-AOSD-Rebelo-Demo"))
@@ -112,6 +114,9 @@ public class ExportTypo3Bibtex extends Export {
             , whenKeyIs("Young21", KEEP_URL_IF_PRESENT)
 
             // Resolving duplicates
+            , whenKeyIs("KKS+:SE23", MARK_AS_SE_GI_PAPER)
+            , whenKeyIs("KKK+:SE23", MARK_AS_SE_GI_PAPER)
+            , whenKeyIs("FSTR:SE23", MARK_AS_SE_GI_PAPER)
             , whenKeyIs("Young21", MARK_AS_PHDTHESIS)
             , whenKeyIs("KJN+:SE21", MARK_AS_EXTENDED_ABSTRACT)
             , whenKeyIs("RSC+:SE21", MARK_AS_EXTENDED_ABSTRACT)
