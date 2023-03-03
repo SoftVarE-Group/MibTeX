@@ -32,6 +32,13 @@ import static de.mibtex.export.typo3.Modifiers.*;
  * @author Paul Maximilian Bittner
  */
 public class ExportTypo3Bibtex extends Export {
+    /**
+     * This key exists in Typo3 and we need it for proper display of
+     * bachelor's and master's thesis.
+     * When just using the type "@mastersthesis" the line "Master's Thesis" is displayed
+     * on the website twice because reasons. >.<
+     */
+    public static final Key TYPE_THESIS = new Key("thesis");
     public final static String TYPO3_TAGS_ATTRIBUTE = "typo3Tags";
     private final static String MYABRV = "MYabrv.bib";
     private final static String MYSHORT = "MYshort.bib";
@@ -88,6 +95,7 @@ public class ExportTypo3Bibtex extends Export {
               TAG_IF_THOMAS_IS_EDITOR
             , TAG_IF_SOFTVARE
             , MARK_IF_TO_APPEAR
+            , when(IS_MASTERSTHESIS, setEntryType(TYPE_THESIS)) // Need for proper display on website
 
             // Custom Links to Preprints
             , whenKeyIs("KKS+:SE23", softVarEURLFile("2023-SE-Kuiter-Tseitin"))
@@ -105,7 +113,7 @@ public class ExportTypo3Bibtex extends Export {
             , whenKeyIs("TB12", CLEAR_URL)
             , whenKeyIs("MTS+17", CLEAR_URL)
             , whenKeyIs("SBB+:SoSyM22", setURL("https://seg.inf.unibe.ch/papers/SBB%2B_SoSyM22.pdf"))
-            , Util.when(Filters.PREPRINT_EXISTS_IN_PDF_DIR_REL,
+            , when(Filters.PREPRINT_EXISTS_IN_PDF_DIR_REL,
                     ADD_PAPER_LINK_IF_SOFTVARE,
                     KEEP_URL_IF_PRESENT
             )
