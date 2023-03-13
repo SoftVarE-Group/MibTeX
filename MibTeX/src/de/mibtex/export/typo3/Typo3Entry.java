@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 /**
  * Represents a bibtex entry similar to BibtexEntry.java that will conform
  * to the publication importer of Typo3 when transformed to string.
- * @see toString
+ * @see #toString
  * 
  * @author Paul Maximilian Bittner
  *
@@ -165,8 +165,12 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 			pdfname.append("-");
 			pdfname.append(publisherVarname);
 		}
-		pdfname.append("-");
-		pdfname.append(BibtexEntry.toURL(this.source.getLastnameOfFirstAuthor()));
+		if (!this.source.authorList.isEmpty()) {
+			pdfname.append("-");
+			pdfname.append(BibtexEntry.toURL(this.source.getLastnameOfFirstAuthor()));
+		} else {
+			return "INVALID";
+		}
 		return getPaperUrlInRepo(reponame, year, pdfname.toString());
 	}
 
