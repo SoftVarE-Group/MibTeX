@@ -11,6 +11,7 @@ import de.mibtex.export.typo3.Filters;
 import de.mibtex.export.typo3.Typo3Directory;
 import de.mibtex.export.typo3.Typo3Entry;
 import de.mibtex.export.typo3.Util;
+import org.jbibtex.Key;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,7 +25,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static de.mibtex.export.typo3.Filters.IS_MASTERSTHESIS;
 import static de.mibtex.export.typo3.Modifiers.*;
+import static de.mibtex.export.typo3.Util.when;
 
 /**
  * Exports the bibtex file to bibtex in a carefully adjusted format such that the BibTex-Importer of Typo3 (Website-Framework) can read it correctly.
