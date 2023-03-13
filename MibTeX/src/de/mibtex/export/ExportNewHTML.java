@@ -14,6 +14,7 @@ import java.util.Set;
 
 import de.mibtex.BibtexEntry;
 import de.mibtex.BibtexViewer;
+import de.mibtex.export.typo3.Typo3Entry;
 
 /**
  * A class that generates a single .html file with all BibTeX entries
@@ -104,6 +105,16 @@ public class ExportNewHTML extends Export {
     }
 
     private String generateTagLinks(BibtexEntry entry) {
+        final Typo3Entry entryAsT3 = ExportTypo3Bibtex.applyModifiers(
+                new Typo3Entry(
+                        entry,
+                        ExportTypo3Bibtex.readVariablesFromBibtexFile(new File(
+                                BibtexViewer.BIBTEX_DIR,
+                                ExportTypo3Bibtex.VariablesFile
+                        ))
+                )
+        );
+
         StringBuilder html = new StringBuilder();
 		if (entry.getCommentsPath().exists()) {
 			html.append(" <a href=\"");
@@ -115,16 +126,27 @@ public class ExportNewHTML extends Export {
 		else {
 			html.append(entry.key).append(", ");
 		}
+        // DOI
 		if (!entry.doi.isEmpty()) {
 			html.append("<a href=\"https://dx.doi.org/");
 			html.append(entry.doi);
 			html.append("\">doi</a>, ");
 		}
-		if (!entry.url.isEmpty()) {
+        // URL
+        final boolean hasURL = !entry.url.isEmpty();
+		if (hasURL) {
 			html.append("<a href=\"");
 			html.append(entry.url);
 			html.append("\">url</a>, ");
 		}
+        // Typo3 URL
+        final boolean hasT3URL = !entryAsT3.url.isBlank();
+        if (hasT3URL) {
+            html.append("<a href=\"");
+            html.append(entryAsT3.url);
+            html.append("\">preprint</a>, ");
+        }
+        // other tags
         for (int i = 0; i < BibtexViewer.TAGS.size(); i++) {
         	String tag = BibtexViewer.TAGS.get(i);
         	List<String> tags = entry.tagList.get(tag);
