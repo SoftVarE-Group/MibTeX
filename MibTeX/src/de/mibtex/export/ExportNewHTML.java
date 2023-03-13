@@ -141,7 +141,7 @@ public class ExportNewHTML extends Export {
 		}
         // Typo3 URL
         final boolean hasT3URL = !entryAsT3.url.isBlank();
-        if (hasT3URL) {
+        if (hasT3URL && !(hasURL && entry.url.equals(entryAsT3.url))) {
             html.append("<a href=\"");
             html.append(entryAsT3.url);
             html.append("\">preprint</a>, ");
