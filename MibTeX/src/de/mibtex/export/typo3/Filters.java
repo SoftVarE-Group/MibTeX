@@ -101,8 +101,8 @@ public class Filters {
      * The predicate returns true if the preprint for the given entry exists in our SoftVarE/Papers repository.
      * This predicate expects a local clone of the repository to be located at {@link BibtexViewer#PDF_DIR_REL}.
      */
-    public final static Predicate<Typo3Entry> PREPRINT_EXISTS_IN_PDF_DIR_REL = t ->
-        Files.exists(Path.of(t.getPaperUrlInRepo(BibtexViewer.PDF_DIR_REL)));
+    public final static Predicate<Typo3Entry> PREPRINT_EXISTS_IN_PREPRINT_DIR = t ->
+        Files.exists(Path.of(t.getPaperUrlInRepo(BibtexViewer.PREPRINTS_DIR)));
 
     public static Predicate<Typo3Entry> hasAtLeastOneTagOf(final String... tags) {
         return b -> {

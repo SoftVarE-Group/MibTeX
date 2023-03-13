@@ -11,6 +11,7 @@ import de.mibtex.export.typo3.Filters;
 import de.mibtex.export.typo3.Typo3Directory;
 import de.mibtex.export.typo3.Typo3Entry;
 import de.mibtex.export.typo3.Util;
+import org.jbibtex.Key;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,7 +25,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static de.mibtex.export.typo3.Filters.IS_MASTERSTHESIS;
 import static de.mibtex.export.typo3.Modifiers.*;
+import static de.mibtex.export.typo3.Util.when;
 
 /**
  * Exports the bibtex file to bibtex in a carefully adjusted format such that the BibTex-Importer of Typo3 (Website-Framework) can read it correctly.
@@ -60,7 +63,7 @@ public class ExportTypo3Bibtex extends Export {
      * @see MYabrv
      * @see MYshort
      */
-    final String VariablesFile = MYABRV;
+    static final String VariablesFile = MYABRV;
 
     /**
      * Select the filter you need to export only the publications you are interested in.
@@ -91,7 +94,7 @@ public class ExportTypo3Bibtex extends Export {
      * Some modifiers are dedicated to resolving duplicate entries (w.r.t. titles) because Typo3 considers entries with the same title to be the same.
      * If unsure, leave unchanged.
      */
-    List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
+    public static List<Function<Typo3Entry, Typo3Entry>> modifiers = Arrays.asList(
               TAG_IF_THOMAS_IS_EDITOR
             , TAG_IF_SOFTVARE
             , MARK_IF_TO_APPEAR
@@ -113,7 +116,7 @@ public class ExportTypo3Bibtex extends Export {
             , whenKeyIs("TB12", CLEAR_URL)
             , whenKeyIs("MTS+17", CLEAR_URL)
             , whenKeyIs("SBB+:SoSyM22", setURL("https://seg.inf.unibe.ch/papers/SBB%2B_SoSyM22.pdf"))
-            , when(Filters.PREPRINT_EXISTS_IN_PDF_DIR_REL,
+            , when(Filters.PREPRINT_EXISTS_IN_PREPRINT_DIR,
                     ADD_PAPER_LINK_IF_SOFTVARE,
                     KEEP_URL_IF_PRESENT
             )
@@ -149,6 +152,10 @@ public class ExportTypo3Bibtex extends Export {
         super(path, file);
     }
 
+    public static Typo3Entry applyModifiers(final Typo3Entry t) {
+        return modifiers.stream().reduce(Function.identity(), Function::compose).apply(t);
+    }
+
     @Override
     public void writeDocument() {
         // Parse the variables defined in MYabrv.bib
@@ -158,7 +165,7 @@ public class ExportTypo3Bibtex extends Export {
         final List<Typo3Entry> typo3Entries = entries.values().stream()
                 .map(b -> new Typo3Entry(b, variables))
                 .filter(bibFilter)
-                .map(modifiers.stream().reduce(Function.identity(), Function::compose))
+                .map(ExportTypo3Bibtex::applyModifiers)
                 .collect(Collectors.toList());
 
         final StringBuilder uploadInstructions = new StringBuilder(System.lineSeparator());
