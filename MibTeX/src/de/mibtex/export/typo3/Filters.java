@@ -32,6 +32,7 @@ public class Filters {
 
     public final static Predicate<Typo3Entry> IS_MISC = b -> b.type.equals("misc");
     public final static Predicate<Typo3Entry> IS_PROCEEDINGS = b -> b.type.equals("proceedings");
+    public final static Predicate<Typo3Entry> IS_SOFTWARE = b -> b.type.equals("software");
     public final static Predicate<Typo3Entry> IS_TECHREPORT = b -> b.type.equals("techreport");
     public final static Predicate<BibtexEntry> IS_TECHREPORT_BIB = b -> b.type.equals("techreport");
     public final static Predicate<Typo3Entry> IS_BACHELORSTHESIS =
@@ -96,6 +97,8 @@ public class Filters {
             "FMCounting");
 
     public final static Predicate<Typo3Entry> SHOULD_BE_PUT_ON_WEBSITE = IS_SOFTVARE_PUBLICATION.or(THESIS_BY_SOFTVARE);
+
+    public final static Predicate<Typo3Entry> OPARU = IS_SOFTVARE_PUBLICATION.and(IS_SOFTWARE.negate()); // and is from uni ulm
 
     /**
      * The predicate returns true if the preprint for the given entry exists in our SoftVarE/Papers repository.
