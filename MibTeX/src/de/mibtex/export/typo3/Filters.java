@@ -87,8 +87,11 @@ public class Filters {
 
     public final static Predicate<Typo3Entry> THESIS_AUTHORED_BY_SOFTVARE =
             IS_MASTERSTHESIS.and(AUTHORED_BY_SOFTVARE);
-    public final static Predicate<Typo3Entry> BELONGS_TO_VARIANTSYNC = hasAtLeastOneTagOf(
-            "VariantSyncPub", "VariantSyncPre", "VariantSyncMT");
+    public final static Predicate<Typo3Entry> BELONGS_TO_VARIANTSYNC_PUBLICATIONS = hasAtLeastOneTagOf(
+            "VariantSyncPub", "VariantSyncPre");
+    public final static Predicate<Typo3Entry> BELONGS_TO_VARIANTSYNC_THESES = hasAtLeastOneTagOf(
+            "VariantSyncMT");
+    public final static Predicate<Typo3Entry> BELONGS_TO_VARIANTSYNC = BELONGS_TO_VARIANTSYNC_PUBLICATIONS.or(BELONGS_TO_VARIANTSYNC_THESES);
     public final static Predicate<Typo3Entry> BELONGS_TO_OBDDIMAL = hasAtLeastOneTagOf(
             "OBDDimal", "OBDDimalTheses");
     public final static Predicate<Typo3Entry> BELONGS_TO_UVL = hasAtLeastOneTagOf(

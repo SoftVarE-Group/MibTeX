@@ -25,7 +25,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static de.mibtex.export.typo3.Filters.IS_MASTERSTHESIS;
+import static de.mibtex.export.typo3.Filters.*;
 import static de.mibtex.export.typo3.Modifiers.*;
 import static de.mibtex.export.typo3.Util.when;
 
@@ -50,11 +50,12 @@ public class ExportTypo3Bibtex extends Export {
     private final static Typo3Directory PUBLICATIONS_DIR = new Typo3Directory(
             "typo3_Publikationen_SoftVarE.bib",
             "Publikationen SoftVarE",
-            Typo3Directory.PublikationenSoftVarE);
+            Typo3Directory.PublikationenSoftVarE.or(BELONGS_TO_VARIANTSYNC_PUBLICATIONS)
+    );
     private final static Typo3Directory THESES_DIR = new Typo3Directory(
             "typo3_Abschlussarbeiten_SoftVarE.bib",
             "Abschlussarbeiten SoftVarE",
-            Typo3Directory.AbschlussarbeitenSoftVarE
+            Typo3Directory.AbschlussarbeitenSoftVarE.or(BELONGS_TO_VARIANTSYNC_THESES)
     );
 
     /**
