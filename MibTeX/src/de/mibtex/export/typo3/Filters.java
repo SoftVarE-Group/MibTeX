@@ -39,6 +39,8 @@ public class Filters {
             b -> b.type.equals("mastersthesis") && b.typeAttrib.toLowerCase().startsWith("bachelor");
     public final static Predicate<Typo3Entry> IS_MASTERSTHESIS = b -> b.type.equals("mastersthesis");
     public final static Predicate<Typo3Entry> IS_PHDTHESIS = b -> b.type.equals("phdthesis");
+    public final static Predicate<Typo3Entry> IS_THESIS = b -> b.type.equals("thesis");
+    public final static Predicate<Typo3Entry> IS_ANY_KIND_OF_THESIS = IS_MASTERSTHESIS.or(IS_PHDTHESIS).or(IS_THESIS);
 
     public final static Predicate<Typo3Entry> WITH_THOMAS = authorOrEditorIsOneOf(THOMAS_THUEM).and(IS_MISC.negate());
     public final static Predicate<Typo3Entry> WITH_THOMAS_BEFORE_ULM = WITH_THOMAS.and(b -> b.year < 2020);
@@ -76,10 +78,10 @@ public class Filters {
 
     public final static Predicate<Typo3Entry> THESIS_BY_SOFTVARE =
             // Supervised by one of us
-            hasAtLeastOneTagOf("SupervisorTT", "SupervisorTH", "SupervisorPB", "SupervisorCS", "SupervisorSK", "SupervisorSB")
+            hasAtLeastOneTagOf("SupervisorTT", "SupervisorTH", "SupervisorPB", "SupervisorCS", "SupervisorSK", "SupervisorSB", "SupervisorAS")
                     // or written by one of us.
                     .or(
-                            IS_MASTERSTHESIS.and(AUTHORED_BY_SOFTVARE)
+                            IS_ANY_KIND_OF_THESIS.and(AUTHORED_BY_SOFTVARE)
                     );
 
     public final static Predicate<Typo3Entry> IS_SOFTVARE_PUBLICATION =
