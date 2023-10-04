@@ -137,11 +137,11 @@ public class ExportTypo3Bibtex extends Export {
             , whenKeyIs("KTP+:SE19", MARK_AS_EXTENDED_ABSTRACT)
             , whenKeyIs("TKL:SPLC18", appendToTitle("(Second Edition)"))
             , whenKeyIs("KTM+:SE18", MARK_AS_EXTENDED_ABSTRACT)
-            , whenKeyIs("KAT:TR16", MARK_IF_TECHREPORT)
-            , whenKeyIs("RLB+:TR13subsumedbyRLB+:AOSD14", MARK_IF_TECHREPORT)
+            , whenKeyIs("KAT:TR16", MARK_AS_TECHREPORT)
+            , whenKeyIs("RLB+:TR13subsumedbyRLB+:AOSD14", MARK_AS_TECHREPORT)
             , whenKeyIs("Bittner19", MARK_AS_PROJECTTHESIS)
             , whenKeyIs("Sprey19", MARK_AS_PROJECTTHESIS)
-            , whenKeyIs("PK14", MARK_IF_TECHREPORT)
+            , whenKeyIs("PK14", MARK_AS_TECHREPORT)
     );
 
     private final List<Typo3Directory> typo3Directories = List.of(
