@@ -40,7 +40,7 @@ public class BibtexCleaner {
 				),
 				new NamedArgument(
 						"k", "keep-attributes",
-						"Followed by a space-separated list of bibtex attrbute names (from " + DEFAULT_ATTRIBUTES_TO_REMOVE + "). These attributes will be kept upon cleaning.",
+						"Followed by a space-separated list of bibtex attribute names (from " + DEFAULT_ATTRIBUTES_TO_REMOVE + "). These attributes will be kept upon cleaning.",
 						NamedArgument.Arity.ANY,
 						false,
 						null,
