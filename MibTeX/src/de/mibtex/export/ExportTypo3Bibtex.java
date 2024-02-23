@@ -127,6 +127,7 @@ public class ExportTypo3Bibtex extends Export {
 
             // Resolving duplicates
             , whenKeyIs("RBP+:TR22subsumedbyRBP+:LMCS23", MARK_AS_TECHREPORT)
+            , whenKeyIs("SHN+:SE24", MARK_AS_SE_GI_PAPER)
             , whenKeyIs("KKS+:SE23", MARK_AS_SE_GI_PAPER)
             , whenKeyIs("KKK+:SE23", MARK_AS_SE_GI_PAPER)
             , whenKeyIs("FSTR:SE23", MARK_AS_SE_GI_PAPER)
@@ -160,6 +161,11 @@ public class ExportTypo3Bibtex extends Export {
 
     @Override
     public void writeDocument() {
+        System.err.println(
+                "FIXME: SHN+:SE24 is currently marked as SE paper by a custom rule. " +
+                "It might get renamed in BibTags in the future. " +
+                "In case this happens, the rule might have be removed."
+        );
         // Parse the variables defined in MYabrv.bib
         final Map<String, String> variables = readVariablesFromBibtexFile(new File(BibtexViewer.BIBTEX_DIR, VariablesFile));
 
