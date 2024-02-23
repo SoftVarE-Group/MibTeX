@@ -178,7 +178,7 @@ public class ExportTypo3Bibtex extends Export {
             if (atLeastOneEntryExported) {
                 uploadInstructions
                         .append("  - \"")
-                        .append(t3dir.generatedFileName())
+                        .append(t3dir.getAbsolutePathToFile())
                         .append("\" to directory \"")
                         .append(t3dir.directoryNameInTypo3())
                         .append("\" in Typo3.")
@@ -192,7 +192,7 @@ public class ExportTypo3Bibtex extends Export {
     public static boolean exportEntriesOfDirectory(List<Typo3Entry> typo3Entries, final Typo3Directory t3dir) {
         typo3Entries = Util.filter(typo3Entries, t3dir.belongsToDirectory());
 
-        final File file = new File(BibtexViewer.OUTPUT_DIR, t3dir.generatedFileName());
+        final File file = t3dir.getAbsolutePathToFile();
         boolean exportedAFile = false;
 
         // Generate the typo3-conforming Bibtex source code.
