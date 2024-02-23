@@ -1,5 +1,8 @@
 package de.mibtex.export.typo3;
 
+import de.mibtex.BibtexViewer;
+
+import java.io.File;
 import java.util.function.Predicate;
 
 import static de.mibtex.export.typo3.Filters.*;
@@ -26,4 +29,8 @@ public record Typo3Directory(
     @Deprecated
     public final static Predicate<Typo3Entry> Abschlussarbeiten =
             THESIS_BY_SOFTVARE;
+    
+    public File getAbsolutePathToFile() {
+        return new File(BibtexViewer.OUTPUT_DIR, generatedFileName());
+    }
 }
