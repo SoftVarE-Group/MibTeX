@@ -109,7 +109,12 @@ public class Filters {
 
     public final static Predicate<Typo3Entry> SHOULD_BE_PUT_ON_WEBSITE = IS_SOFTVARE_PUBLICATION.or(THESIS_BY_SOFTVARE);
 
-    public final static Predicate<Typo3Entry> OPARU = IS_SOFTVARE_PUBLICATION.and(IS_SOFTWARE.negate()); // and is from uni ulm
+    public final static Predicate<Typo3Entry> OPARU =
+            IS_SOFTVARE_PUBLICATION
+                    .and(AUTHORED_BY_SOFTVARE) // remove editorials
+                    .and(IS_MISC.negate()) // remove non papers
+                    .and(IS_SOFTWARE.negate()); // remove tools
+                    // and is from uni ulm
 
     /**
      * The predicate returns true if the preprint for the given entry exists in our SoftVarE/Papers repository.
