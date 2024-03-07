@@ -116,7 +116,6 @@ public class ExportTypo3Bibtex extends Export {
             , whenKeyIs("DGT:EMSE21", softVarEURLFile("2021-EMSE-Duchien"))
             , whenKeyIs("TB12", CLEAR_URL)
             , whenKeyIs("MTS+17", CLEAR_URL)
-            , whenKeyIs("SBB+:SoSyM22", setURL("https://seg.inf.unibe.ch/papers/SBB%2B_SoSyM22.pdf"))
             , when(Filters.PREPRINT_EXISTS_IN_PREPRINT_DIR,
                     ADD_PAPER_LINK_IF_SOFTVARE,
                     KEEP_URL_IF_PRESENT
