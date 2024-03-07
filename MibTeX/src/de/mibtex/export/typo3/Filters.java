@@ -28,6 +28,7 @@ public class Filters {
     public final static String SEBASTIAN_KRIETER = "Sebastian Krieter";
     public final static String SABRINA_BOEHM = "Sabrina Böhm";
     public final static String RAHEL_SUNDERMANN = "Rahel Sundermann";
+    public final static String ALEXANDER_SCHULTHEISS = "Alexander Schultheiß";
 
     public final static Predicate<Typo3Entry> ANY = b -> true;
 
@@ -67,6 +68,7 @@ public class Filters {
                     , SEBASTIAN_KRIETER
                     , SABRINA_BOEHM
                     , RAHEL_SUNDERMANN
+                    , ALEXANDER_SCHULTHEISS
             );
     public final static Predicate<Typo3Entry> EDITED_BY_SOFTVARE =
             editorIsOneOf(
@@ -77,6 +79,7 @@ public class Filters {
                     , SEBASTIAN_KRIETER
                     , SABRINA_BOEHM
                     , RAHEL_SUNDERMANN
+                    , ALEXANDER_SCHULTHEISS
             );
 
     public final static Predicate<Typo3Entry> THESIS_BY_SOFTVARE =
