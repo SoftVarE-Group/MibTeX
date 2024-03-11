@@ -120,6 +120,10 @@ public class ExportTypo3Bibtex extends Export {
                     ADD_PAPER_LINK_IF_SOFTVARE,
                     KEEP_URL_IF_PRESENT
             )
+            , when(Filters.SLIDES_EXIST_IS_SLIDES_DIR,
+                    ADD_PAPER_LINK_IF_SOFTVARE, // TODO
+                    KEEP_URL_IF_PRESENT // TODO
+            )
 
             // Other custom solutions
             , whenKeyIs("Young21", KEEP_URL_IF_PRESENT)

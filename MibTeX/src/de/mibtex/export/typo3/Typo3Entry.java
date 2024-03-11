@@ -173,6 +173,10 @@ public class Typo3Entry implements Comparable<Typo3Entry> {
 		}
 		return getPaperUrlInRepo(reponame, year, pdfname.toString());
 	}
+	
+	public String getSlidesUrlInRepo(final String reponame) {
+		
+	}
 
     public static String getPaperUrlInSoftVarERepo(int year, final String pdfname) {
         return getPaperUrlInRepo(SOFTVARE_PAPER_REPO_URL, year, pdfname);

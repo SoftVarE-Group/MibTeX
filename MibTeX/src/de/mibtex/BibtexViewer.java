@@ -35,6 +35,8 @@ public class BibtexViewer {
     public static String PDF_DIR_REL = "";
 
     public static String PREPRINTS_DIR = "";
+    
+    public static String SLIDES_DIR = "";
 
     public static String COMMENTS_DIR = "";
 
@@ -100,6 +102,7 @@ public class BibtexViewer {
                     PDF_DIR_REL = ini.get("options", "pdf-dir-rel");
                     COMMENTS_DIR = MAIN_DIR + ini.get("options", "comment-dir");
                     PREPRINTS_DIR = ini.get("options", "preprints-dir");
+                    SLIDES_DIR = ini.get("options", "slides-dir");
                     COMMENTS_DIR_REL = ini.get("options", "comment-dir-rel");
                     String[] tagArray = ini.get("options", "tags").split(",");
                     TAGS.addAll(Arrays.asList(tagArray));
@@ -120,7 +123,7 @@ public class BibtexViewer {
                 System.out.println("Options file not found under: " + iniFile.getName());
             }
         } else {
-            // TODO: Does not support "preprints-dir" should this be deprecated?
+            // TODO: Does not support "preprints-dir" nor "slides-dir" should this be deprecated?
             BIBTEX_DIR = args[0];
             MAIN_DIR = args[1];
             OUTPUT_DIR = MAIN_DIR + args[2];
