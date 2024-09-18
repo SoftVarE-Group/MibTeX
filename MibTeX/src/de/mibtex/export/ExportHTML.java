@@ -211,12 +211,12 @@ public class ExportHTML extends Export {
 		
 		String htmlTitle = "";
 		if (entry.getPDFPath().exists()) {
-			htmlTitle += "<a href=\"" + entry.getRelativePDFPath() + "\">";
+			htmlTitle += "<a href=\"" + entry.getPDFPath() + "\">";
 			htmlTitle += title;
 			htmlTitle += "</a>";
 		} else {
 			htmlTitle += title;
-			htmlTitle += " <a href=\"" + entry.getRelativePDFPath() + "\">";
+			htmlTitle += " <a href=\"" + entry.getPDFPath() + "\">";
 			htmlTitle += "(missing)";
 			htmlTitle += "</a>";
 		}

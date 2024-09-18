@@ -166,10 +166,6 @@ public class BibtexEntry {
 		return FileUtils.concat(BibtexViewer.COMMENTS_DIR_REL, getCommentsFile().toString()).toString();
 	}
 
-	public String getRelativePDFPath() {
-		return FileUtils.concat(BibtexViewer.PDF_DIR_REL, getPDFFile().toString()).toString();
-	}
-
 	@Deprecated
 	public String getOldRelativePDFPath() {
 		return getOldPDFPath().getName();

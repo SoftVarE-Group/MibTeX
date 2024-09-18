@@ -32,8 +32,6 @@ public class BibtexViewer {
 
     public static String COMMENTS_DIR_REL = "";
 
-    public static String PDF_DIR_REL = "";
-
     public static String PREPRINTS_DIR = "";
 
     public static String COMMENTS_DIR = "";
@@ -74,7 +72,6 @@ public class BibtexViewer {
         MAIN_DIR = ini.get("main-dir");
         OUTPUT_DIR = MAIN_DIR + ini.get("out-dir-rel");
         PDF_DIR = MAIN_DIR + ini.get("pdf-dir");
-        PDF_DIR_REL = ini.get("pdf-dir-rel");
         COMMENTS_DIR = MAIN_DIR + ini.get("comment-dir");
         PREPRINTS_DIR = ini.get("preprints-dir");
         COMMENTS_DIR_REL = ini.get("comment-dir-rel");
