@@ -159,7 +159,7 @@ public class BibtexEntry {
 			pdf += " " + key;
 		}
 		pdf = pdf.trim() + ".pdf";
-		return FileUtils.concat(BibtexViewer.MAIN_DIR, toURL(pdf));
+		return FileUtils.concat("MAIN DIR DELETED", toURL(pdf));
 	}
 
 	public String getRelativeCommentsPath() {
