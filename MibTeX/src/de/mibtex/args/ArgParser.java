@@ -130,6 +130,13 @@ public class ArgParser {
     }
     
     public void help(final StringBuilder msg) {
+        if (namelessArgument != null) {
+            msg
+                .append("\n")
+                .append("The last argument should be the following: " + namelessArgument.description())
+                .append("\n")
+                ;
+        }
         msg.append("\n").append("Available arguments:");
         for (final NamedArgument arg : arguments) {
             msg
