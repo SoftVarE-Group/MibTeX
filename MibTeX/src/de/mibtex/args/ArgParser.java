@@ -3,11 +3,22 @@ package de.mibtex.args;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A simple argument parser.
+ * The argument parser may support any number of {@link named NamedArgument} arguments.
+ * Additionally, the parser supports a single {@link unnamed NamelessArgument} argument.
+ * This argument will be the last one supplied on the command line, and for example, might a path to an input file.
+ * The argument parser comes with a built-in help command (--help/-h), which is generated from all available arguments.
+ * @author Paul Bittner
+ */
 public class ArgParser {
-
     private final List<NamedArgument> arguments;
     private final NamelessArgument namelessArgument;
 
+    /**
+     * @param namelessArgument Default argument that has no name. May be null.
+     * @param args Any number of arguments this parser should support.
+     */
     public ArgParser(final NamelessArgument namelessArgument, final NamedArgument... args) {    
         this.arguments = new ArrayList<>(args.length + 1);
         this.arguments.addAll(List.of(args));
