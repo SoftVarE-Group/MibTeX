@@ -17,7 +17,7 @@ import java.util.function.Function;
  * Each filter is a java.util.Function that takes a Typo3Entry and returns its modified version.
  * Most of the modifiers here are used for handling duplicate Typo3Entries (with respect to their title).
  *
- * @author Paul Maximilian Bittner
+ * @author Paul Bittner
  */
 public class Modifiers {
     /** add tags for our website **/

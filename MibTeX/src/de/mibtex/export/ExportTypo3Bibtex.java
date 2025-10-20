@@ -53,7 +53,7 @@ import de.mibtex.export.typo3.Util;
 /**
  * Exports the bibtex file to bibtex in a carefully adjusted format such that the BibTex-Importer of Typo3 (Website-Framework) can read it correctly.
  *
- * @author Paul Maximilian Bittner
+ * @author Paul Bittner
  */
 public class ExportTypo3Bibtex extends Export {
     /**

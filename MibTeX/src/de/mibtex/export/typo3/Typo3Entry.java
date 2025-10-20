@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * to the publication importer of Typo3 when transformed to string.
  * @see #toString
  * 
- * @author Paul Maximilian Bittner
+ * @author Paul Bittner
  *
  */
 public class Typo3Entry implements Comparable<Typo3Entry> {
