@@ -7,6 +7,17 @@ import java.util.function.Predicate;
 
 import static de.mibtex.export.typo3.Filters.*;
 
+/**
+ * This record reflects a directory in the Typo3 backend.
+ * For different purposes, we created different directories in Typo3 at the Ulm University.
+ * These directories held all the imported BibTeX entries we exported via MibTeX.
+ * We used different directories for a better overview and to be able to re-generate particular BibTeX entries
+ * on the website if necessary (by deleting the directory in the backend and re-generating it with MibTeX and the use of this class).
+ * This record denotes such a directory by giving it a name and determining which entries should be
+ * put into that directory.
+ * For examples, see {@link de.mibtex.export.ExportTypo3Bibtex}.
+ * @author Paul Bittner
+ */
 public record Typo3Directory(
         String generatedFileName,
         String directoryNameInTypo3,

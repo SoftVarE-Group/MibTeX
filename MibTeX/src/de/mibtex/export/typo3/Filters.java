@@ -18,7 +18,7 @@ import java.util.function.Predicate;
  * This is a collection of default filters to use for the ExportTypo3Bibtex.
  * Each filter is a java.util.Predicate that can be combined with propositional operators (and, or, negate, ...)
  *
- * @author Paul Maximilian Bittner
+ * @author Paul Bittner
  */
 public class Filters {
     public final static String THOMAS_THUEM = "Thomas Thüm";

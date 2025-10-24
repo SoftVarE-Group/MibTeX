@@ -2,6 +2,11 @@ package de.mibtex;
 
 import java.io.File;
 
+/**
+ * A collection of functions for dealing with {@link File} objects safely.
+ * In particular, this comprises concatenation of paths.
+ * @author Paul Bittner
+ */
 public class FileUtils {
 	public static File concat(File dir, File path) {
 		return concat(dir, path.toString());

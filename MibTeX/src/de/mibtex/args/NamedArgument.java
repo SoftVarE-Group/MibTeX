@@ -3,6 +3,18 @@ package de.mibtex.args;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * A named argument for argument parsing.
+ * A named argument has a long name and a short name (e.g., "help" vs "h" for an argument "--help" and "-h", respectively).
+ * Each argument has an arity that denotes how many parameters can be passed to this argument.
+ * For example, if you want an argument for an input or output file, you would choose an arity of ONE.
+ * An argument may be specified as mandatory, which means that the argument parser issues an error if the user did not supply the respective argument.
+ * For processing arguments, each NamedArgument has two callbacks:
+ * - The definedCallback is invoked when the argument parser detects this named argument to be defined.
+ * - Additionally, the parameterCallback is invoked when the argument parser finds an argument with a non-zero arity.
+ *   The parameterCallback is invoked with all supplied parameters to this argument.
+ * @author Paul Bittner
+ */
 public class NamedArgument {
     public enum Arity {
         ZERO,

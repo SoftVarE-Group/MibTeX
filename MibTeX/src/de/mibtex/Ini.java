@@ -9,6 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * An abstract representation and parser of ini files.
+ * Ini files are maps of strings to strings, where each entry models an option and its value.
+ * You may add options or retrieve their values from an {@link Ini} object.
+ * @author Paul Bittner
+ */
 public class Ini {
     private final static String ASSIGNMENT_OP = "=";
 

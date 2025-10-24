@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 /**
  * Collection of utility functions used in the exporter for Typo3Entries and associated classes.
- * @author Paul Maximilian Bittner
+ * @author Paul Bittner
  */
 public class Util {
 	/**
