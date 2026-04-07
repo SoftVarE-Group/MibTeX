@@ -145,6 +145,9 @@ public class BibtexViewer {
             case "TYPO3":
             	exporter = new ExportTypo3Bibtex(BibtexViewer.BIBTEX_DIR, "literature.bib");
             	break;
+            case "DOILIST":
+                exporter = new ExportDOIList(BibtexViewer.BIBTEX_DIR, "literature.bib");
+                break;
             case "HTML":
             default:
                 exporter = new ExportHTML(BibtexViewer.BIBTEX_DIR, "literature.bib");

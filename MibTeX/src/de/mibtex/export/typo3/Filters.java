@@ -18,17 +18,22 @@ import java.util.function.Predicate;
  * This is a collection of default filters to use for the ExportTypo3Bibtex.
  * Each filter is a java.util.Predicate that can be combined with propositional operators (and, or, negate, ...)
  *
- * @author Paul Maximilian Bittner
+ * @author Paul Maximilian Bittner, Chico Sundermann
  */
 public class Filters {
     public final static String THOMAS_THUEM = "Thomas Thüm";
     public final static String CHICO_SUNDERMANN = "Chico Sundermann";
-    public final static String TOBIAS_HESS = "Tobias Heß";
-    public final static String PAUL_MAXIMILIAN_BITTNER = "Paul Maximilian Bittner";
     public final static String SEBASTIAN_KRIETER = "Sebastian Krieter";
     public final static String SABRINA_BOEHM = "Sabrina Böhm";
     public final static String RAHEL_SUNDERMANN = "Rahel Sundermann";
+    public final static String RAPHAEL_DUNKEL = "Raphael Dunkel";
+    public final static String RUBEN_DUNKEL = "Ruben Dunkel";
+    public final static String CHRISTOPHER_RAU = "Christopher Rau";
+    public final static String AARON_MOLT = "Aaron Molt";
+    
     public final static String ALEXANDER_SCHULTHEISS = "Alexander Schultheiß";
+    public final static String TOBIAS_HESS = "Tobias Heß";
+    public final static String PAUL_MAXIMILIAN_BITTNER = "Paul Maximilian Bittner";
 
     public final static Predicate<Typo3Entry> ANY = b -> true;
 
@@ -59,6 +64,19 @@ public class Filters {
                     .and(t -> t.year >= 2020);
     public final static Predicate<Typo3Entry> WITH_PAUL_BEFORE_OR_NOT_AT_ULM = WITH_PAUL.and(WITH_PAUL_AT_ULM.negate());
 
+    public final static Predicate<Typo3Entry> AUTHORED_BY_ISF = authorIsOneOf(
+          THOMAS_THUEM
+        , CHICO_SUNDERMANN
+        , SEBASTIAN_KRIETER
+        , SABRINA_BOEHM
+        , RAHEL_SUNDERMANN
+        , RAPHAEL_DUNKEL
+        , RUBEN_DUNKEL
+        , CHRISTOPHER_RAU
+        , PAUL_MAXIMILIAN_BITTNER
+        , AARON_MOLT
+    );
+    
     public final static Predicate<Typo3Entry> AUTHORED_BY_SOFTVARE =
             authorIsOneOf(
                     THOMAS_THUEM
@@ -70,6 +88,8 @@ public class Filters {
                     , RAHEL_SUNDERMANN
                     , ALEXANDER_SCHULTHEISS
             );
+
+
     public final static Predicate<Typo3Entry> EDITED_BY_SOFTVARE =
             editorIsOneOf(
                     THOMAS_THUEM
@@ -92,6 +112,8 @@ public class Filters {
 
     public final static Predicate<Typo3Entry> IS_SOFTVARE_PUBLICATION =
             AUTHORED_BY_SOFTVARE.or(EDITED_BY_SOFTVARE).and(THESIS_BY_SOFTVARE.negate());
+    
+    public final static Predicate<Typo3Entry> IS_ISF_PUBLICATION = AUTHORED_BY_ISF.or(EDITED_BY_SOFTVARE).and(THESIS_BY_SOFTVARE.negate());
 
     public final static Predicate<Typo3Entry> THESIS_AUTHORED_BY_SOFTVARE =
             IS_MASTERSTHESIS.and(AUTHORED_BY_SOFTVARE);
